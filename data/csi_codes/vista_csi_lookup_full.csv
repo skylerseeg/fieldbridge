@@ -1,0 +1,77 @@
+Seq,DatabaseValue,DisplayValue
+241,241-Demolition,241-Demolition
+242,242-Removal and Salvage of Construction Materials,242-Removal and Salvage of Construction Materials
+300,300-Concrete,300-Concrete
+310,310-Concrete Forming and Accessories,310-Concrete Forming and Accessories
+320,320-Concrete Reinforcing,320-Concrete Reinforcing
+330,330-Cast-in-Place Concrete,330-Cast-in-Place Concrete
+340,340-Precast Concrete,340-Precast Concrete
+500,500-Metals,500-Metals
+510,510-Structural Metal Framing,510-Structural Metal Framing
+550,550-Metal Fabrications,550-Metal Fabrications
+2100,2100-Fire Suppression,2100-Fire Suppression
+2200,2200-Plumbing,2200-Plumbing
+2210,2210-Plumbing Piping and Pumps,2210-Plumbing Piping and Pumps
+2300,2300-HVAC,2300-HVAC
+2310,2310-Common Work Results for HVAC,2310-Common Work Results for HVAC
+2600,2600-Electrical,2600-Electrical
+2610,2610-Medium-Voltage Electrical Distribution,2610-Medium-Voltage Electrical Distribution
+2620,2620-Low-Voltage Electrical Transmission,2620-Low-Voltage Electrical Transmission
+2650,2650-Lighting,2650-Lighting
+2700,2700-Communications,2700-Communications
+2710,2710-Structured Cabling,2710-Structured Cabling
+3100,3100-Site Clearing,3100-Site Clearing
+3110,3110-Site Clearing,3110-Site Clearing
+3120,3120-Earth Moving,3120-Earth Moving
+3130,3130-Earthwork Methods,3130-Earthwork Methods
+3140,3140-Shoring and Underpinning,3140-Shoring and Underpinning
+3150,3150-Excavation Support and Protection,3150-Excavation Support and Protection
+3160,3160-Special Foundations,3160-Special Foundations
+3170,3170-Tunneling and Mining,3170-Tunneling and Mining
+3210,3210-Base Courses,3210-Base Courses
+3211,3211-Base Courses,3211-Base Courses
+3212,3212-Flexible Paving,3212-Flexible Paving
+3213,3213-Rigid Paving,3213-Rigid Paving
+3214,3214-Unit Paving,3214-Unit Paving
+3216,3216-Curbs and Gutters,3216-Curbs and Gutters
+3217,3217-Paving Specialties,3217-Paving Specialties
+3218,3218-Sythetic Surfacing,3218-Sythetic Surfacing
+3230,3230-Ext Improv Site Improvements,3230-Ext Improv Site Improvements
+3231,3231-Fence and Gates,3231-Fence and Gates
+3232,3232-Retaining Walls,3232-Retaining Walls
+3234,3234-Fabricated Bridges,3234-Fabricated Bridges
+3280,3280-Landscape Irrigation,3280-Landscape Irrigation
+3290,3290-Landscaping Planting,3290-Landscaping Planting
+3305,3305-Utility Pipe - DI/PVC/WSP,3305-Utility Pipe - DI/PVC/WSP
+3308,3308-Commision Utilities,3308-Commision Utilities
+3310,3310-Utilities Water,3310-Utilities Water
+3311,3311-Water Wells/Pumps,3311-Water Wells/Pumps
+3312,3312-Surface Water Source,3312-Surface Water Source
+3314,3314-Water Distribution,3314-Water Distribution
+3316,3316-Water Storage Tanks,3316-Water Storage Tanks
+3319,3319-Water Metering,3319-Water Metering
+3331,3331-Sanitary Sewer Piping,3331-Sanitary Sewer Piping
+3332,3332-Sanitary Sewer Equipment,3332-Sanitary Sewer Equipment
+3334,3334-Septic System,3334-Septic System
+3336,3336-Wastewater Tanks,3336-Wastewater Tanks
+3341,3341-Stormwater Subdrainage,3341-Stormwater Subdrainage
+3342,3342-Stormwater Conveyance,3342-Stormwater Conveyance
+3370,3370-Electrical Utilities,3370-Electrical Utilities
+3470,3470-Transportation Trucking,3470-Transportation Trucking
+3510,3510-Waterway & Marine Control EQ,3510-Waterway & Marine Control EQ
+4000,4000-Process Integration,4000-Process Integration
+4020,4020-Liquids Process Piping,4020-Liquids Process Piping
+4023,4023-WW Water Process Piping,4023-WW Water Process Piping
+4040,4040-Process Piping & Eq Protect,4040-Process Piping & Eq Protect
+4122,4122-Cranes and Hoists,4122-Cranes and Hoists
+4342,4342-Surge Tank,4342-Surge Tank
+4605,4605-WW Water Equipment,4605-WW Water Equipment
+4621,4621-Screening Equipment,4621-Screening Equipment
+4623,4623-Grit Removal Equipment,4623-Grit Removal Equipment
+4624,4624-Griding & Shredding Equip,4624-Griding & Shredding Equip
+4625,4625-Oil/Grease Seperation Eq,4625-Oil/Grease Seperation Eq
+4631,4631-Chem Feed Equipment,4631-Chem Feed Equipment
+4640,4640-WW Water Clarification Equi,4640-WW Water Clarification Equi
+4650,4650-Secondary Treatment Eq,4650-Secondary Treatment Eq
+4661,4661-Filtration Equipment,4661-Filtration Equipment
+4810,4810-Electrical PW Generation,4810-Electrical PW Generation

@@ -1,0 +1,89 @@
+[project]
+name = "fieldbridge-backend"
+version = "0.1.0"
+description = "FieldBridge FastAPI backend (multi-tenant Vista wrapper)"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = [
+    "--strict-markers",
+    "-ra",
+]
+markers = [
+    "integration: spins up a SQLite engine with all marts (slower)",
+    "llm: smoke-tests an LLM prompt or tool contract",
+    "safety: AST/lint check against production source",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:pydantic",
+    "ignore::PendingDeprecationWarning",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+omit = [
+    "app/__init__.py",
+    "app/main.py",
+    "app/core/seed.py",
+    "app/services/excel_marts/*/ingest.py",
+    "app/services/excel_marts/_fte_shared.py",
+    "tests/*",
+]
+
+[tool.coverage.report]
+precision = 1
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [
+    ".venv",
+    "scripts/legacy",
+    "tests/integration/snapshots",
+]
+
+[tool.ruff.lint]
+# Ratcheting strategy:
+#   * `select` = the rules every contributor must pass today.
+#   * `extend-ignore` = rules we *want* on but have backlogged debt for.
+#     When a module worker clears their share of these, we move the
+#     rule out of extend-ignore and into select. Track the burn-down
+#     in agent_board.md under "Tests/CI".
+select = [
+    "E",  # pycodestyle errors
+    "F",  # pyflakes (real bugs: undefined names, unused, etc.)
+    "W",  # pycodestyle warnings
+]
+extend-ignore = [
+    "E501",  # long lines: enforced by formatter, not linter
+    "E402",  # top-of-file imports: app/main.py wires routers late
+    "E702",  # one-statement-per-line — minor style, batch-fixable
+    "E741",  # ambiguous var name (`l`, `O`) — 4 violations, batch-fixable
+    "F401",  # unused imports — many in __init__.py registries on purpose
+]
+
+# Strict rules tests must pass — caught early before they leak into app/.
+# The per-file ignores below are TODOs for the owning module worker.
+# When their PR removes the violation, also remove the entry here.
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]  # `assert False` is OK in tests
+"app/main.py" = ["E402"]  # late router wiring imports
+"app/api/v1/endpoints/bids.py" = ["E401"]  # combined `import os, tempfile`
+"app/api/v1/endpoints/media.py" = ["E401"]  # combined `import os, tempfile`
+"app/modules/vendors/service.py" = ["F402"]  # `field` loop var shadows import
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
