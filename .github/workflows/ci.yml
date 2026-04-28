@@ -10,12 +10,6 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-defaults:
-  run:
-    # Every job below runs from `fieldbridge/`. The repo's tree puts all
-    # app code there, so this saves a `cd fieldbridge` in every step.
-    working-directory: fieldbridge
-
 jobs:
   # --------------------------------------------------------------------- #
   # Backend                                                               #
@@ -30,20 +24,20 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: fieldbridge/backend/requirements.txt
+          cache-dependency-path: backend/requirements.txt
 
       - name: Install ruff
         run: pip install ruff==0.15.12
 
       - name: ruff check
-        working-directory: fieldbridge/backend
+        working-directory: backend
         run: ruff check app tests
 
       # `ruff format --check` is hard-enforced only on the harness
       # files the Tests/CI Worker owns. App-source + module-owned test
       # format debt is advisory-only until each module worker opts in.
       - name: ruff format --check (Tests/CI-owned harness)
-        working-directory: fieldbridge/backend
+        working-directory: backend
         run: |
           ruff format --check \
             tests/integration/__init__.py \
@@ -54,7 +48,7 @@ jobs:
             tests/safety
 
       - name: ruff format --check (app + module tests, advisory)
-        working-directory: fieldbridge/backend
+        working-directory: backend
         continue-on-error: true
         run: ruff format --check app tests
 
@@ -69,10 +63,10 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: fieldbridge/backend/requirements.txt
+          cache-dependency-path: backend/requirements.txt
 
       - name: Install backend deps
-        working-directory: fieldbridge/backend
+        working-directory: backend
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
@@ -87,7 +81,7 @@ jobs:
       #   2026-Q4        ->  75%
       #   2027-Q1        ->  80%
       - name: pytest with coverage
-        working-directory: fieldbridge/backend
+        working-directory: backend
         env:
           ENVIRONMENT: test
           DATABASE_URL: sqlite+aiosqlite:///./test.db
@@ -106,14 +100,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage-html
-          path: fieldbridge/backend/htmlcov
+          path: backend/htmlcov
 
       - name: Upload pytest junit
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-pytest-junit
-          path: fieldbridge/backend/pytest-junit.xml
+          path: backend/pytest-junit.xml
 
   # --------------------------------------------------------------------- #
   # Frontend                                                              #
@@ -128,18 +122,18 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: fieldbridge/frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install
-        working-directory: fieldbridge/frontend
+        working-directory: frontend
         run: npm ci
 
       - name: eslint
-        working-directory: fieldbridge/frontend
+        working-directory: frontend
         run: npm run lint
 
       - name: tsc --noEmit
-        working-directory: fieldbridge/frontend
+        working-directory: frontend
         run: npm run typecheck
 
   frontend-test:
@@ -153,10 +147,10 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-          cache-dependency-path: fieldbridge/frontend/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install
-        working-directory: fieldbridge/frontend
+        working-directory: frontend
         run: npm ci
 
       # `test` is opt-in: until vitest is wired up in package.json, the
@@ -164,7 +158,7 @@ jobs:
       # blocked. Once `npm run test` exists, the job runs it as a hard
       # gate.
       - name: Run vitest if configured
-        working-directory: fieldbridge/frontend
+        working-directory: frontend
         run: |
           if node -e "process.exit(require('./package.json').scripts.test ? 0 : 1)"; then
             npm test -- --run --reporter=default

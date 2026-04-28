@@ -30,7 +30,9 @@ from sqlalchemy.orm import sessionmaker
 
 from app.core.config import settings
 from app.core.ingest import _sync_url
+from app.core.llm import InsightResponse
 from app.models.tenant import Tenant
+from app.modules.predictive_maintenance import insights as insights_pipeline
 from app.modules.predictive_maintenance import service
 from app.modules.predictive_maintenance.schema import (
     AcknowledgeBody,
@@ -172,6 +174,30 @@ def insights(
 ) -> PredictiveMaintenanceInsights:
     """Page-body breakdowns + top-N exposure rollups."""
     return service.get_insights(engine, tenant_id, top_n=top_n)
+
+
+@router.get("/recommendations", response_model=InsightResponse)
+def recommendations(
+    engine: Engine = Depends(get_engine),
+    tenant_id: str = Depends(get_tenant_id),
+    refresh: bool = Query(
+        False,
+        description=(
+            "Bypass the ``llm_insights`` cache and force a fresh LLM call. "
+            "Used by the admin Regenerate button — most callers should "
+            "leave this false."
+        ),
+    ),
+) -> InsightResponse:
+    """Phase-6 LLM-generated predictive-maintenance recommendations.
+
+    Cached per ``(tenant, "predictive_maintenance")`` for
+    ``DEFAULT_TTL_HOURS`` (6h); the cache row is invalidated automatically
+    when the underlying mart context changes (revision-token mismatch).
+    """
+    return insights_pipeline.build_recommendations(
+        engine, tenant_id, force_refresh=refresh,
+    )
 
 
 # --------------------------------------------------------------------------- #
