@@ -26,6 +26,7 @@ RUN apt-get update \
         gnupg \
         ca-certificates \
         build-essential \
+        libffi-dev \
         unixodbc-dev \
     && curl -sSL https://packages.microsoft.com/keys/microsoft.asc \
         | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
