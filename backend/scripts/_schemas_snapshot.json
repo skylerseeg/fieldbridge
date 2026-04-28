@@ -1,0 +1,4568 @@
+[
+  {
+    "file": "All Bid History.xlsx",
+    "sheets": [
+      {
+        "name": "All Bid History",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Was Bid",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Heavy Bid #",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "UDOT Mona Main Street Improvements",
+              "UDOT Springville Safe Routes FY23",
+              "Provo Rock Canyon Tank Fill Line"
+            ]
+          },
+          {
+            "header": "Owner",
+            "dtype": "str",
+            "null_rate": 0.2,
+            "sample": [
+              "UDOT ",
+              "UDOT ",
+              "Provo City Public Works"
+            ]
+          },
+          {
+            "header": "Bid Type",
+            "dtype": "str",
+            "null_rate": 0.28,
+            "sample": [
+              "Pressurized (Water, Irrigation) \u2013 Transmission",
+              "Misc (vehicle bridges, traffic signals, etc.)",
+              "Water Tanks"
+            ]
+          },
+          {
+            "header": "County",
+            "dtype": "str",
+            "null_rate": 0.84,
+            "sample": [
+              "Salt Lake, UT",
+              "Tooele, UT",
+              "Salt Lake, UT"
+            ]
+          },
+          {
+            "header": "Estimator",
+            "dtype": "str",
+            "null_rate": 0.46,
+            "sample": [
+              "Douglas Griffiths",
+              "Paul Hunsaker",
+              "Douglas Griffiths"
+            ]
+          },
+          {
+            "header": "Bid Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-05-07 00:00:00",
+              "2026-05-07 00:00:00",
+              "2026-05-06 00:00:00"
+            ]
+          },
+          {
+            "header": "Completion Date",
+            "dtype": "datetime",
+            "null_rate": 0.4,
+            "sample": [
+              "2026-11-15",
+              "2026-06-22",
+              "2026-10-15"
+            ]
+          },
+          {
+            "header": "Labor % Cost Factor",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "0.1459",
+              "0.1313",
+              "0.1366"
+            ]
+          },
+          {
+            "header": "Avg Mark Up %",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "0.3",
+              "0.0996",
+              "0.2"
+            ]
+          },
+          {
+            "header": "Mark Up",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "230787.0",
+              "83025.0",
+              "885829.0"
+            ]
+          },
+          {
+            "header": "Overhead Add On",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "99681.0",
+              "91398.0",
+              "528584.0"
+            ]
+          },
+          {
+            "header": "Equip OP Exp",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "33373.0",
+              "33520.0",
+              "388245.0"
+            ]
+          },
+          {
+            "header": "CO Equip",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "22109.0",
+              "24546.0",
+              "413594.0"
+            ]
+          },
+          {
+            "header": "High",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "801760.0",
+              "138500.0",
+              "6367039.0"
+            ]
+          },
+          {
+            "header": "Low",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "583398.0",
+              "83000.0",
+              "4984688.0"
+            ]
+          },
+          {
+            "header": "VanCon",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "592000.0",
+              "138500.0",
+              "5957000.0"
+            ]
+          },
+          {
+            "header": "Rank",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "2.0",
+              "4.0",
+              "2.0"
+            ]
+          },
+          {
+            "header": "Won",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "583398.0",
+              "83000.0",
+              "4984688.0"
+            ]
+          },
+          {
+            "header": "Lost By",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "8602.0",
+              "55500.0",
+              "972312.0"
+            ]
+          },
+          {
+            "header": "% Over",
+            "dtype": "float",
+            "null_rate": 0.74,
+            "sample": [
+              "0.014744651164385206",
+              "0.6686746987951807",
+              "0.19505975098140546"
+            ]
+          },
+          {
+            "header": "Number Bidders",
+            "dtype": "float",
+            "null_rate": 0.62,
+            "sample": [
+              "3.0",
+              "4.0",
+              "5.0"
+            ]
+          },
+          {
+            "header": "Bids",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "[object Object],[object Object],[object Object]",
+              "[object Object],[object Object],[object Object],[object Object]",
+              "[object Object],[object Object],[object Object],[object Object],[object Object]"
+            ]
+          },
+          {
+            "header": "PQ",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Plan Source",
+            "dtype": "str",
+            "null_rate": 0.22,
+            "sample": [
+              "UDOT",
+              "UDOT",
+              "Bonfire"
+            ]
+          },
+          {
+            "header": "D.B. Wages",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Engineer Estimate",
+            "dtype": "str",
+            "null_rate": 0.6,
+            "sample": [
+              "$1M to $2M",
+              "$250K to $500K",
+              "$1M to $2M"
+            ]
+          },
+          {
+            "header": "Notice To Proceed Date",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Competitor Ids",
+            "dtype": "str",
+            "null_rate": 0.78,
+            "sample": [
+              "650",
+              "627,214,100118,636,600",
+              "660,622,613,225,639"
+            ]
+          },
+          {
+            "header": "Deep",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Traffic Control",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Dewatering",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bypass Pumping",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Tight Time Frame",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Tight Job Site",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Haul Off",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Insurance Requirement",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 1 Comp",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "J.\u00a0Lyne Roberts\u00a0&\u00a0Sons, Inc.",
+              "MJM Construction\u00a0Inc.",
+              "JLR & Sons"
+            ]
+          },
+          {
+            "header": "Bid 1 Amt",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "583398.0",
+              "83000.0",
+              "4984688.0"
+            ]
+          },
+          {
+            "header": "Bid 1 Won",
+            "dtype": "float",
+            "null_rate": 0.62,
+            "sample": [
+              "1.0",
+              "1.0",
+              "1.0"
+            ]
+          },
+          {
+            "header": "Bid 2 Comp",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "VanCon",
+              "Corrio Construction, Inc",
+              "VanCon"
+            ]
+          },
+          {
+            "header": "Bid 2 Amt",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "592000.0",
+              "128421.0",
+              "5957000.0"
+            ]
+          },
+          {
+            "header": "Bid 2 Won",
+            "dtype": "float",
+            "null_rate": 0.62,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 3 Comp",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "Lightning Ridge Excavation",
+              "Whitaker Construction Co.",
+              "COP Construction"
+            ]
+          },
+          {
+            "header": "Bid 3 Amt",
+            "dtype": "float",
+            "null_rate": 0.72,
+            "sample": [
+              "801760.0",
+              "131790.0",
+              "5969424.0"
+            ]
+          },
+          {
+            "header": "Bid 3 Won",
+            "dtype": "float",
+            "null_rate": 0.62,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 4 Comp",
+            "dtype": "str",
+            "null_rate": 0.64,
+            "sample": [
+              "VanCon",
+              "Corrio Construction, Inc",
+              "Stapp"
+            ]
+          },
+          {
+            "header": "Bid 4 Amt",
+            "dtype": "float",
+            "null_rate": 0.74,
+            "sample": [
+              "138500.0",
+              "5982789.0",
+              "1874990.0"
+            ]
+          },
+          {
+            "header": "Bid 4 Won",
+            "dtype": "float",
+            "null_rate": 0.64,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 5 Comp",
+            "dtype": "str",
+            "null_rate": 0.7,
+            "sample": [
+              "Whitaker Construction Co.",
+              "RC Enterprises",
+              "J.\u00a0Lyne Roberts\u00a0&\u00a0Sons, Inc."
+            ]
+          },
+          {
+            "header": "Bid 5 Amt",
+            "dtype": "float",
+            "null_rate": 0.8,
+            "sample": [
+              "6367039.0",
+              "1899820.0",
+              "2787900.0"
+            ]
+          },
+          {
+            "header": "Bid 5 Won",
+            "dtype": "float",
+            "null_rate": 0.7,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 6 Comp",
+            "dtype": "str",
+            "null_rate": 0.76,
+            "sample": [
+              "B. Hansen",
+              "VanCon",
+              "VanCon"
+            ]
+          },
+          {
+            "header": "Bid 6 Amt",
+            "dtype": "float",
+            "null_rate": 0.82,
+            "sample": [
+              "1993823.0",
+              "3167000.0",
+              "625500.0"
+            ]
+          },
+          {
+            "header": "Bid 6 Won",
+            "dtype": "float",
+            "null_rate": 0.76,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 7 Comp",
+            "dtype": "str",
+            "null_rate": 0.8,
+            "sample": [
+              "J.\u00a0Lyne Roberts\u00a0&\u00a0Sons, Inc.",
+              "Pronghorn Construction, Inc.",
+              "J.\u00a0Lyne Roberts\u00a0&\u00a0Sons, Inc."
+            ]
+          },
+          {
+            "header": "Bid 7 Amt",
+            "dtype": "float",
+            "null_rate": 0.86,
+            "sample": [
+              "2108075.0",
+              "639920.0",
+              "1012219.0"
+            ]
+          },
+          {
+            "header": "Bid 7 Won",
+            "dtype": "float",
+            "null_rate": 0.8,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 8 Comp",
+            "dtype": "str",
+            "null_rate": 0.88,
+            "sample": [
+              "Red Pine Construction",
+              "VanCon",
+              "Ralph Tye"
+            ]
+          },
+          {
+            "header": "Bid 8 Amt",
+            "dtype": "float",
+            "null_rate": 0.92,
+            "sample": [
+              "2119515.0",
+              "1117000.0",
+              "5980820.0"
+            ]
+          },
+          {
+            "header": "Bid 8 Won",
+            "dtype": "float",
+            "null_rate": 0.88,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 9 Comp",
+            "dtype": "str",
+            "null_rate": 0.94,
+            "sample": [
+              "VanCon",
+              "North Ridge Construction, Inc.",
+              "VanCon"
+            ]
+          },
+          {
+            "header": "Bid 9 Amt",
+            "dtype": "float",
+            "null_rate": 0.96,
+            "sample": [
+              "2562895.0",
+              "8198835.0"
+            ]
+          },
+          {
+            "header": "Bid 9 Won",
+            "dtype": "float",
+            "null_rate": 0.94,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 10 Comp",
+            "dtype": "str",
+            "null_rate": 0.98,
+            "sample": [
+              "Stapp"
+            ]
+          },
+          {
+            "header": "Bid 10 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 10 Won",
+            "dtype": "float",
+            "null_rate": 0.98,
+            "sample": [
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 11 Comp",
+            "dtype": "str",
+            "null_rate": 0.98,
+            "sample": [
+              "Strong Solutions"
+            ]
+          },
+          {
+            "header": "Bid 11 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 11 Won",
+            "dtype": "float",
+            "null_rate": 0.98,
+            "sample": [
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 12 Comp",
+            "dtype": "str",
+            "null_rate": 0.98,
+            "sample": [
+              "England Construction\u00a0LLC"
+            ]
+          },
+          {
+            "header": "Bid 12 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 12 Won",
+            "dtype": "float",
+            "null_rate": 0.98,
+            "sample": [
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 13 Comp",
+            "dtype": "str",
+            "null_rate": 0.98,
+            "sample": [
+              "Commercial Mechanical"
+            ]
+          },
+          {
+            "header": "Bid 13 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 13 Won",
+            "dtype": "float",
+            "null_rate": 0.98,
+            "sample": [
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 14 Comp",
+            "dtype": "str",
+            "null_rate": 0.98,
+            "sample": [
+              "Judd Construction"
+            ]
+          },
+          {
+            "header": "Bid 14 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 14 Won",
+            "dtype": "float",
+            "null_rate": 0.98,
+            "sample": [
+              "0.0"
+            ]
+          },
+          {
+            "header": "Bid 15 Comp",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 15 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 15 Won",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 16 Comp",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 16 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 16 Won",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 17 Comp",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 17 Amt",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bid 17 Won",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Barcodes.xlsx",
+    "sheets": [
+      {
+        "name": "Barcodes",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Barcode",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "1",
+              "1222",
+              "165"
+            ]
+          },
+          {
+            "header": "Manufacturer",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Fitting Reamer",
+              "Crescent",
+              "MILWAUKEE"
+            ]
+          },
+          {
+            "header": "Material",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "PVCFITTINGREAMER",
+              "SPUDWRENCH",
+              "GRINDER"
+            ]
+          },
+          {
+            "header": "Model",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "1/2-4\"",
+              "AT215Spud",
+              "2780-20"
+            ]
+          },
+          {
+            "header": "Retired Date",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Bid History.xlsx",
+    "sheets": [
+      {
+        "name": "Bid History",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Was Bid",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "True",
+              "True",
+              "True"
+            ]
+          },
+          {
+            "header": "Heavy Bid #",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Santaquin ULS Connection PRV",
+              "West Haven SSD 4450 Lift Station Repump",
+              "GHID 23L Watts Well No 18 Equipping"
+            ]
+          },
+          {
+            "header": "Owner",
+            "dtype": "str",
+            "null_rate": 0.04,
+            "sample": [
+              "Santaquin City Corporation",
+              "West Haven Special Service District",
+              "Granger-Hunter Improvement District"
+            ]
+          },
+          {
+            "header": "Bid Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Pump Station",
+              "Pump Station",
+              "Well House"
+            ]
+          },
+          {
+            "header": "County",
+            "dtype": "str",
+            "null_rate": 0.24,
+            "sample": [
+              "Salt Lake, UT",
+              "Tooele, UT",
+              "Salt Lake, UT"
+            ]
+          },
+          {
+            "header": "Estimator",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Douglas Griffiths",
+              "Paul Hunsaker",
+              "Douglas Riley"
+            ]
+          },
+          {
+            "header": "Bid Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-17 06:00:00",
+              "2026-04-15 06:00:00",
+              "2026-04-14 06:00:00"
+            ]
+          },
+          {
+            "header": "Completion Date",
+            "dtype": "datetime",
+            "null_rate": 0.14,
+            "sample": [
+              "2026-08-02",
+              "2026-06-06",
+              "2027-05-05"
+            ]
+          },
+          {
+            "header": "Abstracts",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Labor % Cost Factor",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "0.1459",
+              "0.1313",
+              "0.1366"
+            ]
+          },
+          {
+            "header": "Avg Mark Up %",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "0.3",
+              "0.0996",
+              "0.2"
+            ]
+          },
+          {
+            "header": "Mark Up",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "230787.0",
+              "83025.0",
+              "885829.0"
+            ]
+          },
+          {
+            "header": "Overhead Add On",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "99681.0",
+              "91398.0",
+              "528584.0"
+            ]
+          },
+          {
+            "header": "Equip OP Exp",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "33373.0",
+              "33520.0",
+              "388245.0"
+            ]
+          },
+          {
+            "header": "CO Equip",
+            "dtype": "float",
+            "null_rate": 0.24,
+            "sample": [
+              "22109.0",
+              "24546.0",
+              "413594.0"
+            ]
+          },
+          {
+            "header": "High",
+            "dtype": "float",
+            "null_rate": 0.2,
+            "sample": [
+              "801760.0",
+              "138500.0",
+              "6367039.0"
+            ]
+          },
+          {
+            "header": "Low",
+            "dtype": "float",
+            "null_rate": 0.2,
+            "sample": [
+              "583398.0",
+              "83000.0",
+              "4984688.0"
+            ]
+          },
+          {
+            "header": "Won",
+            "dtype": "float",
+            "null_rate": 0.28,
+            "sample": [
+              "583398.0",
+              "83000.0",
+              "4984688.0"
+            ]
+          },
+          {
+            "header": "VanCon",
+            "dtype": "float",
+            "null_rate": 0.2,
+            "sample": [
+              "592000.0",
+              "138500.0",
+              "5957000.0"
+            ]
+          },
+          {
+            "header": "Rank",
+            "dtype": "float",
+            "null_rate": 0.2,
+            "sample": [
+              "2.0",
+              "4.0",
+              "2.0"
+            ]
+          },
+          {
+            "header": "Lost By",
+            "dtype": "float",
+            "null_rate": 0.2,
+            "sample": [
+              "8602.0",
+              "55500.0",
+              "972312.0"
+            ]
+          },
+          {
+            "header": "% Over",
+            "dtype": "float",
+            "null_rate": 0.3,
+            "sample": [
+              "0.014744651164385206",
+              "0.6686746987951807",
+              "0.19505975098140546"
+            ]
+          },
+          {
+            "header": "Number Bidders",
+            "dtype": "float",
+            "null_rate": 0.12,
+            "sample": [
+              "3.0",
+              "4.0",
+              "5.0"
+            ]
+          },
+          {
+            "header": "Bids",
+            "dtype": "str",
+            "null_rate": 0.12,
+            "sample": [
+              "[object Object],[object Object],[object Object]",
+              "[object Object],[object Object],[object Object],[object Object]",
+              "[object Object],[object Object],[object Object],[object Object],[object Object]"
+            ]
+          },
+          {
+            "header": "PQ",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "True"
+            ]
+          },
+          {
+            "header": "Plan Source",
+            "dtype": "str",
+            "null_rate": 0.12,
+            "sample": [
+              "Bonfire",
+              "Bonfire ",
+              "Bonfire"
+            ]
+          },
+          {
+            "header": "D.B. Wages",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "True"
+            ]
+          },
+          {
+            "header": "Engineer Estimate",
+            "dtype": "str",
+            "null_rate": 0.28,
+            "sample": [
+              "$2M to $5M",
+              "$250K to $500K",
+              "$250K to $500K"
+            ]
+          },
+          {
+            "header": "Notice To Proceed Date",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Competitor Ids",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "650",
+              "627,214,100118,636,600",
+              "660,622,613,225,639"
+            ]
+          },
+          {
+            "header": "Deep",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Traffic Control",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Dewatering",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Bypass Pumping",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Tight Time Frame",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Tight Job Site",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Haul Off",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Insurance Requirement",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Bid Outlook.xlsx",
+    "sheets": [
+      {
+        "name": "Bid Outlook",
+        "rows_sampled": 21,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "TBID 2026 Waterline",
+              "Jordanelle Ridge North Marcella Pump Station",
+              "JVWCD SWGWTP Chemical Feed Modifications"
+            ]
+          },
+          {
+            "header": "Need Plans",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Bid Bond",
+            "dtype": "str",
+            "null_rate": 0.857,
+            "sample": [
+              "bb",
+              "bb",
+              "bb"
+            ]
+          },
+          {
+            "header": "PQ",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "SD",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "True",
+              "True",
+              "False"
+            ]
+          },
+          {
+            "header": "CM GC",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Plan Source",
+            "dtype": "str",
+            "null_rate": 0.476,
+            "sample": [
+              "J & D",
+              "JVWCD site",
+              "Quest CDN"
+            ]
+          },
+          {
+            "header": "Delivery Type",
+            "dtype": "str",
+            "null_rate": 0.429,
+            "sample": [
+              "Hand deliver",
+              "Email",
+              "Email"
+            ]
+          },
+          {
+            "header": "Public Opening",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Owner",
+            "dtype": "str",
+            "null_rate": 0.048,
+            "sample": [
+              "Taylorsville Bennion Improvement District",
+              "Jordanelle Ridge North, LLC",
+              "Jordan Valley Water Conservancy District"
+            ]
+          },
+          {
+            "header": "Completion Date",
+            "dtype": "datetime",
+            "null_rate": 0.619,
+            "sample": [
+              "2026-11-20",
+              "2026-11-20",
+              "2027-04-02"
+            ]
+          },
+          {
+            "header": "Engineer Estimate",
+            "dtype": "str",
+            "null_rate": 0.619,
+            "sample": [
+              "$1M to $2M",
+              "$1M to $2M",
+              "$2M to $5M"
+            ]
+          },
+          {
+            "header": "Ready For Review",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "True",
+              "True",
+              "False"
+            ]
+          },
+          {
+            "header": "Estimator Time Off",
+            "dtype": "str",
+            "null_rate": 0.857,
+            "sample": [
+              "Doug G",
+              "Doug G",
+              "Doug G"
+            ]
+          },
+          {
+            "header": "Estimator Name",
+            "dtype": "str",
+            "null_rate": 0.143,
+            "sample": [
+              "Paul Hunsaker",
+              "David Lancaster",
+              "David Lancaster"
+            ]
+          },
+          {
+            "header": "Bid Date",
+            "dtype": "datetime",
+            "null_rate": 0.333,
+            "sample": [
+              "2026-04-21 13:00:00",
+              "2026-04-21 15:00:00",
+              "2026-04-22 12:00:00"
+            ]
+          },
+          {
+            "header": "Anticipated Bid Date",
+            "dtype": "datetime",
+            "null_rate": 0.857,
+            "sample": [
+              "2026-04-01",
+              "2026-11-01",
+              "2024-10-01"
+            ]
+          },
+          {
+            "header": "Pre Bid Date",
+            "dtype": "datetime",
+            "null_rate": 0.619,
+            "sample": [
+              "2026-04-14 14:00:00",
+              "2026-04-07 13:00:00",
+              "2026-04-08 09:00:00"
+            ]
+          },
+          {
+            "header": "Pre-Bid Competitors",
+            "dtype": "str",
+            "null_rate": 0.905,
+            "sample": [
+              "639,665,627,600,214",
+              "225,660,-1,613,671,698,757,764,621"
+            ]
+          },
+          {
+            "header": "Man-datory",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Person Going",
+            "dtype": "str",
+            "null_rate": 0.619,
+            "sample": [
+              "Paul Hunsaker",
+              "Dustin Mower",
+              "Shane Koense"
+            ]
+          },
+          {
+            "header": "Bid Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Distribution Line",
+              "Pump Station",
+              "Treatment Plant & Appurtenance"
+            ]
+          },
+          {
+            "header": "Labor Fade/Gain",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Costs Fade/Gain",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "D.B. Wages",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "AIS",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Notes",
+            "dtype": "str",
+            "null_rate": 0.952,
+            "sample": [
+              "Prequaled for projects under $2.5M"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Competitor Bids.xlsx",
+    "sheets": [
+      {
+        "name": "Competitor Bids",
+        "rows_sampled": 0,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Bid Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Heavy Bid #",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Bid Date",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Bid Amount",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Rank",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Won",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "# Bidders",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Low",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "High",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "VanCon",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Lower Than VanCon",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Employee Assets.xlsx",
+    "sheets": [
+      {
+        "name": "Employee Assets",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Asset",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "MULTI-TOOL | 2896116 | F40BD184303415",
+              "SKILLSAW | 3064341 | F31AD212807404",
+              "IMPACTWRENCH | 2895009 | H96AD202103221"
+            ]
+          },
+          {
+            "header": "Description",
+            "dtype": "str",
+            "null_rate": 0.62,
+            "sample": [
+              "IPAD 9.7 32 SGRAY VZ",
+              "Fuel Credit Card",
+              "P185-2026 CHEVROLET SILVERADO 2500HD (Beto Candia)"
+            ]
+          },
+          {
+            "header": "Category",
+            "dtype": "str",
+            "null_rate": 0.52,
+            "sample": [
+              "JETPACK",
+              "DESK PHONE",
+              "IPAD"
+            ]
+          },
+          {
+            "header": "Device",
+            "dtype": "str",
+            "null_rate": 0.92,
+            "sample": [
+              "VCC-LAPTOP20",
+              "VCC-LAPTOP-113",
+              "VCC-LAPTOP81"
+            ]
+          },
+          {
+            "header": "Identifier",
+            "dtype": "str",
+            "null_rate": 0.72,
+            "sample": [
+              "805EC0C86527",
+              "SERIAL: GG7YJHANJF88",
+              "5565"
+            ]
+          },
+          {
+            "header": "OS Install",
+            "dtype": "datetime",
+            "null_rate": 0.92,
+            "sample": [
+              "2024-12-10",
+              "2023-11-09",
+              "2025-01-07"
+            ]
+          },
+          {
+            "header": "Unassiged Location",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Employee",
+            "dtype": "str",
+            "null_rate": 0.18,
+            "sample": [
+              " ",
+              " ",
+              " "
+            ]
+          },
+          {
+            "header": "Employee Active",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "HrRef",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "On Truck",
+            "dtype": "str",
+            "null_rate": 0.48,
+            "sample": [
+              "P96",
+              "P96",
+              "P96"
+            ]
+          },
+          {
+            "header": "Date Out",
+            "dtype": "datetime",
+            "null_rate": 0.58,
+            "sample": [
+              "2020-10-08",
+              "2020-11-23",
+              "2024-06-03"
+            ]
+          },
+          {
+            "header": "Memo Out",
+            "dtype": "str",
+            "null_rate": 0.9,
+            "sample": [
+              "GIVEN NEW FOR NEW WORK STATION",
+              "Anthony's other iPad was stolen out of his truck.",
+              "Given new with charger"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Equipment Utilization.xlsx",
+    "sheets": [
+      {
+        "name": "Equipment Utilization",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              " 2516. Ephraim Lower Penstock Replacement",
+              " 2516. Ephraim Lower Penstock Replacement",
+              " 2516. Ephraim Lower Penstock Replacement"
+            ]
+          },
+          {
+            "header": "Images",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "7a96c148-7552-43cb-a3c1-002cb88e255e/421dfef8-9caf-45cf-968f-c4f6741b0e32.jpg",
+              "a5e6880e-c019-4514-bd33-0edc37893ad3/a221bf9e-1428-45a8-9eb9-455d2052cbd3.jpg",
+              "946e1020-fcb9-4de6-95ae-0fb674d1d89b/ce39a349-397c-4df3-bda0-4d4241c4a5ed.jpg"
+            ]
+          },
+          {
+            "header": "Ticket Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-17 08:24:09.956",
+              "2026-04-17 08:24:09.956",
+              "2026-04-17 08:24:09.956"
+            ]
+          },
+          {
+            "header": "Ticket",
+            "dtype": "float",
+            "null_rate": 0.04,
+            "sample": [
+              "2154.0",
+              "2146.0",
+              "2148.0"
+            ]
+          },
+          {
+            "header": "Is Lessor",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Invoiced",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "False"
+            ]
+          },
+          {
+            "header": "Invoice Number",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Invoice Date",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Price",
+            "dtype": "float",
+            "null_rate": 0.08,
+            "sample": [
+              "3.0",
+              "3.0",
+              "3.0"
+            ]
+          },
+          {
+            "header": "Extended Price",
+            "dtype": "float",
+            "null_rate": 0.08,
+            "sample": [
+              "53.25",
+              "50.61",
+              "51.599999999999994"
+            ]
+          },
+          {
+            "header": "Vendor",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Christensen Ready Mix Inc",
+              "Christensen Ready Mix Inc",
+              "Christensen Ready Mix Inc"
+            ]
+          },
+          {
+            "header": "Pit",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Willow Creek Pit",
+              "Willow Creek Pit",
+              "Willow Creek Pit"
+            ]
+          },
+          {
+            "header": "Material",
+            "dtype": "str",
+            "null_rate": 0.08,
+            "sample": [
+              "Bedding Sand (3/8\" Natural Sand)",
+              "Bedding Sand (3/8\" Natural Sand)",
+              "Bedding Sand (3/8\" Natural Sand)"
+            ]
+          },
+          {
+            "header": "Truck",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "TK149",
+              "TK148",
+              "TK149"
+            ]
+          },
+          {
+            "header": "Trailer 1",
+            "dtype": "str",
+            "null_rate": 0.84,
+            "sample": [
+              "TR156",
+              "TR156",
+              "TR156"
+            ]
+          },
+          {
+            "header": "Trailer 2",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Qty",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "17.75",
+              "16.87",
+              "17.2"
+            ]
+          },
+          {
+            "header": "Units",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Tons",
+              "Tons",
+              "Tons"
+            ]
+          },
+          {
+            "header": "Driver",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Trent Siemers",
+              "Jeremy Crofts",
+              "Trent Siemers"
+            ]
+          },
+          {
+            "header": "Notes",
+            "dtype": "str",
+            "null_rate": 0.08,
+            "sample": [
+              "Stand for Ephraim",
+              "Stand for Ephraim",
+              "Stand for Ephraim"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Estimate Vs Actual.xlsx",
+    "sheets": [
+      {
+        "name": "Estimate Vs Actual",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Job / Grouping",
+            "dtype": "str",
+            "null_rate": 0.02,
+            "sample": [
+              "Pump Station",
+              "1101. Geneva Road Sewer Lift Station",
+              "1336. PONY EXPRESS PUMP STATION"
+            ]
+          },
+          {
+            "header": "Close Month",
+            "dtype": "datetime",
+            "null_rate": 0.08,
+            "sample": [
+              "2021-07-01",
+              "2016-01-01",
+              "2016-02-01"
+            ]
+          },
+          {
+            "header": "Estimate",
+            "dtype": "float",
+            "null_rate": 0.06,
+            "sample": [
+              "0.0",
+              "2045654.57",
+              "624587.11"
+            ]
+          },
+          {
+            "header": "Actual",
+            "dtype": "float",
+            "null_rate": 0.06,
+            "sample": [
+              "1177634.9",
+              "1952391.3",
+              "608613.84"
+            ]
+          },
+          {
+            "header": "Variance",
+            "dtype": "float",
+            "null_rate": 0.06,
+            "sample": [
+              "-1177634.9",
+              "93263.27000000002",
+              "15973.270000000019"
+            ]
+          },
+          {
+            "header": "Percent",
+            "dtype": "float",
+            "null_rate": 0.06,
+            "sample": [
+              "0.0",
+              "0.04559091811869294",
+              "0.02557412688199732"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Estimates.xlsx",
+    "sheets": [
+      {
+        "name": "Estimates",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "26071",
+              "26071MISC",
+              "23117INSULAT"
+            ]
+          },
+          {
+            "header": "Name",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "PRWUA 48\" Gate Valve Replacement",
+              "PRWUA 48\" Gate Valve Replacement MISC",
+              "Santaquin Reach Insulation"
+            ]
+          },
+          {
+            "header": "Date Created",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-01",
+              "2026-04-01",
+              "2026-03-31"
+            ]
+          },
+          {
+            "header": "Estimate Total Cost",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "36327.78",
+              "1192.95",
+              "114074.86"
+            ]
+          },
+          {
+            "header": "Actual Bid Markup",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "6419.16",
+              "114.0",
+              "43298.88"
+            ]
+          },
+          {
+            "header": "Actual Markup Takeoff",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "6419.17",
+              "114.0",
+              "43298.89"
+            ]
+          },
+          {
+            "header": "Addon Bond Total",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "4231.92",
+              "129.39",
+              "15690.43"
+            ]
+          },
+          {
+            "header": "Addon Cost",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "3847.2",
+              "117.63",
+              "14451.72"
+            ]
+          },
+          {
+            "header": "Bond Total",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "384.72000000000025",
+              "11.759999999999991",
+              "1238.710000000001"
+            ]
+          },
+          {
+            "header": "Addon Markup",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Bid Date",
+            "dtype": "float",
+            "null_rate": 0.7,
+            "sample": [
+              "46115.0",
+              "46127.0",
+              "46127.0"
+            ]
+          },
+          {
+            "header": "Bid Total",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "42746.95",
+              "1306.95",
+              "157373.75"
+            ]
+          },
+          {
+            "header": "Overhead %",
+            "dtype": "float",
+            "null_rate": 0.02,
+            "sample": [
+              "0.08999940346621221",
+              "0.09000344313095374",
+              "0.0918305625938252"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "FabShopStockProducts.xlsx",
+    "sheets": [
+      {
+        "name": "FabShopStockProducts",
+        "rows_sampled": 38,
+        "columns": [
+          {
+            "header": "Description",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "VanCon Std. 2 Rail Carbon Steel hand/guard rail Galvanized $",
+              "VanCon Std. 3 Rail Carbon Steel hand/guard rail Galvanized $",
+              "Carbon Air Vac Box (All Sizes)"
+            ]
+          },
+          {
+            "header": "Price",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "125",
+              "125",
+              "1250"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Firm Contacts.xlsx",
+    "sheets": [
+      {
+        "name": "Firm Contacts",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Name",
+            "dtype": "str",
+            "null_rate": 0.46,
+            "sample": [
+              "1st Choice Pilot Car Service LLC",
+              "3A Composites USA Inc.",
+              "A Good Brick Mason Inc."
+            ]
+          },
+          {
+            "header": "Firm Type",
+            "dtype": "str",
+            "null_rate": 0.46,
+            "sample": [
+              "Service",
+              "Supplier",
+              "Contractor"
+            ]
+          },
+          {
+            "header": "Contact",
+            "dtype": "str",
+            "null_rate": 0.4,
+            "sample": [
+              "Dave Smith",
+              "Not Specified",
+              "Not Specified"
+            ]
+          },
+          {
+            "header": "Title",
+            "dtype": "str",
+            "null_rate": 0.96,
+            "sample": [
+              "V.P.",
+              "Estimating"
+            ]
+          },
+          {
+            "header": "Email",
+            "dtype": "str",
+            "null_rate": 0.82,
+            "sample": [
+              "dave@lonepeakmasonry.com",
+              "russ@a-core.com",
+              "kylej@absdoors.com"
+            ]
+          },
+          {
+            "header": "Phone",
+            "dtype": "str",
+            "null_rate": 0.34,
+            "sample": [
+              "801-318-4148",
+              "801-718-4383",
+              "801-796-0846"
+            ]
+          },
+          {
+            "header": "Code 1",
+            "dtype": "str",
+            "null_rate": 0.72,
+            "sample": [
+              "0420-Masonry",
+              "0380-Concrete Cutting",
+              "0611-Wood Framing"
+            ]
+          },
+          {
+            "header": "Code 2",
+            "dtype": "str",
+            "null_rate": 0.92,
+            "sample": [
+              "0241-Demolition",
+              "3311-Water Wells/Pumps",
+              "0871-Door Hardware"
+            ]
+          },
+          {
+            "header": "Code 3",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Code 4",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Code 5",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "HCSS Activities.xlsx",
+    "sheets": [
+      {
+        "name": "HCSS Activities",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Estimate Code",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "26071MISC",
+              "26071",
+              "26071MISC"
+            ]
+          },
+          {
+            "header": "Estimate Name",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "PRWUA 48\" Gate Valve Replacement MISC",
+              "PRWUA 48\" Gate Valve Replacement",
+              "PRWUA 48\" Gate Valve Replacement MISC"
+            ]
+          },
+          {
+            "header": "Activity Code",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "1101.100",
+              "1400.100",
+              "1705"
+            ]
+          },
+          {
+            "header": "Activity Description",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "TF Temporary Office Trailer VanCon",
+              "ER Equipment Rental",
+              "FS Estimator/Change Orders/Scheduling"
+            ]
+          },
+          {
+            "header": "Date Created",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-01",
+              "2026-04-01",
+              "2026-04-01"
+            ]
+          },
+          {
+            "header": "Man Hours",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "0.0",
+              "1.0"
+            ]
+          },
+          {
+            "header": "Direct Total Cost",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "250.0",
+              "3799.58",
+              "108.55"
+            ]
+          },
+          {
+            "header": "Labor Cost",
+            "dtype": "float",
+            "null_rate": 0.4,
+            "sample": [
+              "98.0",
+              "465.4",
+              "30.97"
+            ]
+          },
+          {
+            "header": "Permanent Material Cost",
+            "dtype": "float",
+            "null_rate": 0.92,
+            "sample": [
+              "1.08",
+              "1338.47",
+              "757.75"
+            ]
+          },
+          {
+            "header": "Construction Material Cost",
+            "dtype": "float",
+            "null_rate": 0.96,
+            "sample": [
+              "129.9",
+              "541.25"
+            ]
+          },
+          {
+            "header": "Equipment Cost",
+            "dtype": "float",
+            "null_rate": 0.16,
+            "sample": [
+              "250.0",
+              "3799.58",
+              "10.55"
+            ]
+          },
+          {
+            "header": "Subcontract Cost",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Job Scheduling.xlsx",
+    "sheets": [
+      {
+        "name": "Job Scheduling",
+        "rows_sampled": 44,
+        "columns": [
+          {
+            "header": "Priority",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "1",
+              "2",
+              "2"
+            ]
+          },
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              " 2508. Turner Dam & Joint Diversion Rehab",
+              " 2509. Corix Utah City Heating & Cooling Distribution Piping 1.1",
+              " 2519. Corix IEC Site Utilities"
+            ]
+          },
+          {
+            "header": "Start",
+            "dtype": "datetime",
+            "null_rate": 0.159,
+            "sample": [
+              "2025-06-23",
+              "2025-08-01",
+              "2025-12-03"
+            ]
+          },
+          {
+            "header": "Proj End",
+            "dtype": "float",
+            "null_rate": 0.205,
+            "sample": [
+              "46022.0",
+              "46113.0",
+              "45945.0"
+            ]
+          },
+          {
+            "header": "Milestone",
+            "dtype": "datetime",
+            "null_rate": 0.523,
+            "sample": [
+              "2026-04-24 06:00:00",
+              "2026-05-01 06:00:00",
+              "2026-04-30 06:00:00"
+            ]
+          },
+          {
+            "header": "Reason",
+            "dtype": "str",
+            "null_rate": 0.273,
+            "sample": [
+              "Finish up",
+              "Get through the intersections",
+              "Pave in June, Need 90's Fabricated"
+            ]
+          },
+          {
+            "header": "Priority Department(s)",
+            "dtype": "str",
+            "null_rate": 0.432,
+            "sample": [
+              "[object Object],[object Object]",
+              "[object Object],[object Object]",
+              "[object Object],[object Object],[object Object]"
+            ]
+          },
+          {
+            "header": "Liquidated Damage",
+            "dtype": "float",
+            "null_rate": 0.977,
+            "sample": [
+              "5000.0"
+            ]
+          },
+          {
+            "header": "Chad Wants",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Job class FTE Projections.xlsx",
+    "sheets": [
+      {
+        "name": "FTE Projections",
+        "rows_sampled": 28,
+        "columns": [
+          {
+            "header": "Class",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "*Class Not Found",
+              "Building Painter",
+              "Concrete Foreman"
+            ]
+          },
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.036,
+            "sample": [
+              "|",
+              "UT-C | BD-PNT",
+              "HB2019 | FC"
+            ]
+          },
+          {
+            "header": "Craft/Class",
+            "dtype": "str",
+            "null_rate": 0.036,
+            "sample": [
+              "|",
+              "UT-C | BD-PNT",
+              "HB2019 | FC"
+            ]
+          },
+          {
+            "header": "Monthly Hours",
+            "dtype": "float",
+            "null_rate": 0.036,
+            "sample": [
+              "220.0",
+              "220.0",
+              "220.0"
+            ]
+          },
+          {
+            "header": "Last Month Actuals",
+            "dtype": "float",
+            "null_rate": 0.036,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.23331744502038962",
+              "0.01202506242742303",
+              "0.8470641377447077"
+            ]
+          },
+          {
+            "header": "Apr 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.5407452420419642",
+              "0.027869734696941924",
+              "1.9631875454053636"
+            ]
+          },
+          {
+            "header": "May 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.5558351036291452",
+              "0.02864745848691043",
+              "2.01797162120782"
+            ]
+          },
+          {
+            "header": "Jun 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.3914196083722641",
+              "0.02017356749977532",
+              "1.4210575340101474"
+            ]
+          },
+          {
+            "header": "Jul 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.2917486786915851",
+              "0.015036578486781832",
+              "1.059200022237723"
+            ]
+          },
+          {
+            "header": "Aug 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.24338680112530697",
+              "0.01254403191877419",
+              "0.8836211574991065"
+            ]
+          },
+          {
+            "header": "Sep 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.21757225726530022",
+              "0.011213563460125916",
+              "0.7899008858145838"
+            ]
+          },
+          {
+            "header": "Oct 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.19849169900992986",
+              "0.010230161193952208",
+              "0.7206284976103479"
+            ]
+          },
+          {
+            "header": "Nov 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.15834855513483304",
+              "0.00816120397950612",
+              "0.5748879270758598"
+            ]
+          },
+          {
+            "header": "Dec 26",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.08087573373754757",
+              "0.004168294175228356",
+              "0.29362113774595583"
+            ]
+          },
+          {
+            "header": "Jan 27",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.05109912914014104",
+              "0.0026336231216806294",
+              "0.18551651703890565"
+            ]
+          },
+          {
+            "header": "Feb 27",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.05109912914014104",
+              "0.0026336231216806294",
+              "0.18551651703890565"
+            ]
+          },
+          {
+            "header": "Mar 27",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.01918740295651735",
+              "0.0009889089877187656",
+              "0.06966029025177384"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals.1",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.23331744502038962",
+              "0.01202506242742303",
+              "0.8470641377447077"
+            ]
+          },
+          {
+            "header": "Apr 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "May 27",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.08301085532376473",
+              "0.0042783372556424925",
+              "0.3013727438260374"
+            ]
+          },
+          {
+            "header": "Jun 27",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.08301085532376473",
+              "0.0042783372556424925",
+              "0.3013727438260374"
+            ]
+          },
+          {
+            "header": "Jul 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Aug 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Sep 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Oct 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Nov 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Dec 27",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Jan 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Feb 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Mar 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "24-Month Avg Totals",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.013835142553960789",
+              "0.0007130562092737487",
+              "0.0502287906376729"
+            ]
+          },
+          {
+            "header": "Apr 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "May 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Jun 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Jul 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Aug 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Sep 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Oct 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Nov 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Dec 28",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Jan 29",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Feb 29",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Mar 29",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "36-Month Avg Totals",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Job class FTE actual projections.xlsx",
+    "sheets": [
+      {
+        "name": "FTE Projections",
+        "rows_sampled": 28,
+        "columns": [
+          {
+            "header": "Class",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "*Class Not Found",
+              "Building Painter",
+              "Concrete Foreman"
+            ]
+          },
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.036,
+            "sample": [
+              "|",
+              "UT-C | BD-PNT",
+              "HB2019 | FC"
+            ]
+          },
+          {
+            "header": "Craft/Class",
+            "dtype": "str",
+            "null_rate": 0.036,
+            "sample": [
+              "|",
+              "UT-C | BD-PNT",
+              "HB2019 | FC"
+            ]
+          },
+          {
+            "header": "Monthly Hours",
+            "dtype": "float",
+            "null_rate": 0.036,
+            "sample": [
+              "220.0",
+              "220.0",
+              "220.0"
+            ]
+          },
+          {
+            "header": "Last Month Actuals",
+            "dtype": "float",
+            "null_rate": 0.036,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.5659090909090909",
+              "0.029166666666666664",
+              "2.054545454545455"
+            ]
+          },
+          {
+            "header": "Feb 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.3",
+              "0.0",
+              "2.540909090909091"
+            ]
+          },
+          {
+            "header": "Mar 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "-0.004545454545454545",
+              "0.0",
+              "2.7636363636363637"
+            ]
+          },
+          {
+            "header": "Apr 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.045454545454545456",
+              "0.0",
+              "2.640909090909091"
+            ]
+          },
+          {
+            "header": "May 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.08636363636363636",
+              "0.0",
+              "2.772727272727273"
+            ]
+          },
+          {
+            "header": "Jun 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.3090909090909091",
+              "0.0",
+              "2.6363636363636362"
+            ]
+          },
+          {
+            "header": "Jul 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "1.0636363636363637",
+              "0.0",
+              "2.918181818181818"
+            ]
+          },
+          {
+            "header": "Aug 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.9681818181818181",
+              "0.0",
+              "2.05"
+            ]
+          },
+          {
+            "header": "Sep 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.8136363636363636",
+              "0.0",
+              "1.7363636363636363"
+            ]
+          },
+          {
+            "header": "Oct 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.9272727272727272",
+              "0.10909090909090909",
+              "1.5136363636363637"
+            ]
+          },
+          {
+            "header": "Nov 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.7636363636363637",
+              "0.031818181818181815",
+              "0.7454545454545455"
+            ]
+          },
+          {
+            "header": "Dec 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.7636363636363637",
+              "0.0",
+              "1.1727272727272726"
+            ]
+          },
+          {
+            "header": "Jan 25",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.7545454545454545",
+              "0.20909090909090908",
+              "1.1636363636363636"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals.1",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.5659090909090909",
+              "0.029166666666666664",
+              "2.054545454545455"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Job type FTE actual.xlsx",
+    "sheets": [
+      {
+        "name": "FTE Projections",
+        "rows_sampled": 12,
+        "columns": [
+          {
+            "header": "Job Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "*Job Type Not Found",
+              "Concrete Structures",
+              "Distribution Line"
+            ]
+          },
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.083,
+            "sample": [
+              "*Job Type Not Found",
+              "Concrete Structures",
+              "Distribution Line"
+            ]
+          },
+          {
+            "header": "Craft/Class",
+            "dtype": "str",
+            "null_rate": 0.083,
+            "sample": [
+              "*Job Type Not Found",
+              "Concrete Structures",
+              "Distribution Line"
+            ]
+          },
+          {
+            "header": "Monthly Hours",
+            "dtype": "float",
+            "null_rate": 0.083,
+            "sample": [
+              "220.0",
+              "220.0",
+              "220.0"
+            ]
+          },
+          {
+            "header": "Last Month Actuals",
+            "dtype": "float",
+            "null_rate": 0.083,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "6.743939393939393",
+              "1.151136363636364",
+              "4.243939393939394"
+            ]
+          },
+          {
+            "header": "Feb 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "6.1454545454545455",
+              "3.75",
+              "3.05"
+            ]
+          },
+          {
+            "header": "Mar 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "12.813636363636364",
+              "5.3545454545454545",
+              "4.422727272727273"
+            ]
+          },
+          {
+            "header": "Apr 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "7.954545454545454",
+              "4.5181818181818185",
+              "7.277272727272727"
+            ]
+          },
+          {
+            "header": "May 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.245454545454546",
+              "0.10454545454545454",
+              "3.85"
+            ]
+          },
+          {
+            "header": "Jun 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "7.609090909090909",
+              "0.02727272727272727",
+              "9.586363636363636"
+            ]
+          },
+          {
+            "header": "Jul 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "3.577272727272727",
+              "0.00909090909090909",
+              "12.463636363636363"
+            ]
+          },
+          {
+            "header": "Aug 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "4.077272727272727",
+              "0.013636363636363636",
+              "5.613636363636363"
+            ]
+          },
+          {
+            "header": "Sep 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "4.5636363636363635",
+              "0.03636363636363636",
+              "2.231818181818182"
+            ]
+          },
+          {
+            "header": "Oct 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "5.427272727272728",
+              "0.0",
+              "1.4136363636363636"
+            ]
+          },
+          {
+            "header": "Nov 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "4.081818181818182",
+              "0.0",
+              "0.7136363636363636"
+            ]
+          },
+          {
+            "header": "Dec 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "8.05",
+              "0.0",
+              "0.2545454545454545"
+            ]
+          },
+          {
+            "header": "Jan 25",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "5.381818181818182",
+              "0.0",
+              "0.05"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals.1",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "6.743939393939393",
+              "1.151136363636364",
+              "4.243939393939394"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Material analytics Fuel Totals.xlsx",
+    "sheets": [
+      {
+        "name": "Fuel Totals",
+        "rows_sampled": 11,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "14701. DO NOT USE VanCon Yard",
+              "2321. CUWCD Santaquin Reach",
+              "2325. Santaquin Flowfill/CLSM Project"
+            ]
+          },
+          {
+            "header": "Job Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "No Type",
+              "Steel Pipe",
+              "Other"
+            ]
+          },
+          {
+            "header": "Material (Tons)",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "0.0",
+              "37.14"
+            ]
+          },
+          {
+            "header": "Concrete (Yards)",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "0",
+              "0"
+            ]
+          },
+          {
+            "header": "Flowfill (Yards)",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "0",
+              "20",
+              "0"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Overhead FTE Actuals.xlsx",
+    "sheets": [
+      {
+        "name": "FTE Projections",
+        "rows_sampled": 10,
+        "columns": [
+          {
+            "header": "Department",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "SHOP-Mechanic",
+              "Superintendents (Site&People)",
+              "Operations (PM/PE)"
+            ]
+          },
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.1,
+            "sample": [
+              "50",
+              "57",
+              "60"
+            ]
+          },
+          {
+            "header": "Craft/Class",
+            "dtype": "str",
+            "null_rate": 0.1,
+            "sample": [
+              "50",
+              "57",
+              "60"
+            ]
+          },
+          {
+            "header": "Monthly Hours",
+            "dtype": "float",
+            "null_rate": 0.1,
+            "sample": [
+              "220.0",
+              "220.0",
+              "173.0"
+            ]
+          },
+          {
+            "header": "Last Month Actuals",
+            "dtype": "float",
+            "null_rate": 0.1,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.532196969696969",
+              "0.7962121212121213",
+              "2.358381502890173"
+            ]
+          },
+          {
+            "header": "Feb 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "13.14090909090909",
+              "0.0",
+              "4.236994219653179"
+            ]
+          },
+          {
+            "header": "Mar 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "12.363636363636363",
+              "0.0",
+              "1.1560693641618498"
+            ]
+          },
+          {
+            "header": "Apr 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "12.65",
+              "0.0",
+              "1.7976878612716762"
+            ]
+          },
+          {
+            "header": "May 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.959090909090909",
+              "0.36363636363636365",
+              "1.9826589595375723"
+            ]
+          },
+          {
+            "header": "Jun 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.231818181818182",
+              "0.5727272727272728",
+              "2.069364161849711"
+            ]
+          },
+          {
+            "header": "Jul 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.686363636363636",
+              "1.5363636363636364",
+              "3.3179190751445087"
+            ]
+          },
+          {
+            "header": "Aug 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.95",
+              "2.3136363636363635",
+              "3.7167630057803467"
+            ]
+          },
+          {
+            "header": "Sep 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "10.909090909090908",
+              "0.9318181818181818",
+              "1.8786127167630058"
+            ]
+          },
+          {
+            "header": "Oct 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.631818181818181",
+              "0.35454545454545455",
+              "1.7341040462427746"
+            ]
+          },
+          {
+            "header": "Nov 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "10.340909090909092",
+              "1.2727272727272727",
+              "2.1040462427745665"
+            ]
+          },
+          {
+            "header": "Dec 24",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "9.9",
+              "1.3772727272727272",
+              "2.445086705202312"
+            ]
+          },
+          {
+            "header": "Jan 25",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "10.622727272727273",
+              "0.8318181818181818",
+              "1.861271676300578"
+            ]
+          },
+          {
+            "header": "12-Month Avg Totals.1",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "11.532196969696969",
+              "0.7962121212121213",
+              "2.358381502890173"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Overhead FTE Projections.xlsx",
+    "sheets": [
+      {
+        "name": "FTE Projections",
+        "rows_sampled": 0,
+        "columns": [
+          {
+            "header": "Department",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Code",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Craft/Class",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Monthly Hours",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Last Month Actuals",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "12-Month Avg Totals",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Feb 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Mar 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Apr 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "May 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Jun 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Jul 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Aug 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Sep 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Oct 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Nov 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Dec 24",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "Jan 25",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          },
+          {
+            "header": "12-Month Avg Totals.1",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Projected Hours.xlsx",
+    "sheets": [
+      {
+        "name": "Projected Hours",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "14924. Elberta Pit Job",
+              "14924. Elberta Pit Job",
+              "14924. Elberta Pit Job"
+            ]
+          },
+          {
+            "header": "Phase",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "150.1220. Toilet/Dumpster",
+              "150.2700. SG Sand Processing & Loading Trucks",
+              "150.2710. "
+            ]
+          },
+          {
+            "header": "Phase Master",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "TD Tempoary Toilets for Job Site",
+              "SG Sand & Gravel",
+              "FWF Flowable Fill"
+            ]
+          },
+          {
+            "header": "PR Dept",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "00 _Unknown PR Dept",
+              "11 Earth Work",
+              "15 Concrete"
+            ]
+          },
+          {
+            "header": "Actual Hours",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "2.0",
+              "5381.34",
+              "193.51"
+            ]
+          },
+          {
+            "header": "Progress % Complete",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Current Estimated Hours",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Projected Hours Remaining",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "171.23",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Projected Hours Allocated",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "328.4",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Projected Hours Unallocated",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "-157.17",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Workoff Start",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Workoff Comp",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Mar \u2013 Mar '26",
+            "dtype": "float",
+            "null_rate": 0.96,
+            "sample": [
+              "150.0",
+              "125.0"
+            ]
+          },
+          {
+            "header": "Apr \u2013 Jun '26",
+            "dtype": "float",
+            "null_rate": 0.86,
+            "sample": [
+              "150.0",
+              "125.0",
+              "80.0"
+            ]
+          },
+          {
+            "header": "Jul \u2013 Sep '26",
+            "dtype": "float",
+            "null_rate": 0.86,
+            "sample": [
+              "28.4",
+              "107.0",
+              "50.0"
+            ]
+          },
+          {
+            "header": "Oct \u2013 Dec '26",
+            "dtype": "float",
+            "null_rate": 0.88,
+            "sample": [
+              "100.0",
+              "50.0",
+              "47.0"
+            ]
+          },
+          {
+            "header": "2026 Totals",
+            "dtype": "float",
+            "null_rate": 0.86,
+            "sample": [
+              "328.4",
+              "457.0",
+              "180.0"
+            ]
+          },
+          {
+            "header": "Jan \u2013 Mar '27",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Apr \u2013 Jun '27",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Jul \u2013 Sep '27",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Oct \u2013 Dec '27",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "2027 Totals",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Jan \u2013 Mar '28",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Apr \u2013 Jun '28",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Jul \u2013 Sep '28",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Oct \u2013 Dec '28",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "2028 Totals",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Jan \u2013 Mar '29",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Apr \u2013 Jun '29",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Jul \u2013 Sep '29",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Oct \u2013 Dec '29",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "2029 Totals",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Proposal Bid Details.xlsx",
+    "sheets": [
+      {
+        "name": "Proposal Bid Details",
+        "rows_sampled": 1,
+        "columns": [
+          {
+            "header": "Competitor",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "10-Thirteen Development"
+            ]
+          },
+          {
+            "header": "Design Fee",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "12"
+            ]
+          },
+          {
+            "header": "CM Fee",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "13"
+            ]
+          },
+          {
+            "header": "CM Monthly Fee",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "14"
+            ]
+          },
+          {
+            "header": "Contractor OHP Fee",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "15"
+            ]
+          },
+          {
+            "header": "Contractor Bonds/Ins",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "16"
+            ]
+          },
+          {
+            "header": "Contractor CO Markup",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "17"
+            ]
+          },
+          {
+            "header": "City Budget",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "18"
+            ]
+          },
+          {
+            "header": "Contractor Start",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-02-01"
+            ]
+          },
+          {
+            "header": "Contractor Days",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "1"
+            ]
+          },
+          {
+            "header": "Contractor Projects",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "2"
+            ]
+          },
+          {
+            "header": "PM Projects",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "3"
+            ]
+          },
+          {
+            "header": "Contractor PM",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Contractor Super",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Reference 1",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Reference 2",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Reference 3",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Proposal Bids.xlsx",
+    "sheets": [
+      {
+        "name": "Proposal Bids",
+        "rows_sampled": 2,
+        "columns": [
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "New Test Job",
+              "santaquin city zone 11"
+            ]
+          },
+          {
+            "header": "Owner",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Alpine City",
+              "Santaquin City Corporation"
+            ]
+          },
+          {
+            "header": "Bid Type",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Concrete Structures (Vaults, Canals)",
+              "Pressurized (Water, Irrigation) \u2013 Transmission"
+            ]
+          },
+          {
+            "header": "County",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Beaver, UT",
+              "Utah, UT"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Rentals.xlsx",
+    "sheets": [
+      {
+        "name": "Rentals",
+        "rows_sampled": 4,
+        "columns": [
+          {
+            "header": "Equipment",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "safety road signs",
+              "heaters",
+              "LD56 Cat 950 Loader"
+            ]
+          },
+          {
+            "header": "Images",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Rental Company",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Utah Barricade",
+              "Sunbelt Rentals, Inc",
+              "Wheeler Machinery Co."
+            ]
+          },
+          {
+            "header": "Job",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              " 2409. JVWCD 2024 Vault Improvement Project",
+              " 2512. South SLC Davis Tank Lid Replacement",
+              " 2509. Corix Utah City Heating & Cooling Distribution Piping 1.1"
+            ]
+          },
+          {
+            "header": "Rented By",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Shane Koense",
+              "Nathaniel Voss",
+              "Jarod Moffitt"
+            ]
+          },
+          {
+            "header": "Picked Up By",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Shane Peart",
+              "Nathaniel Voss",
+              "Eric Thomas"
+            ]
+          },
+          {
+            "header": "Picked Up Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-03-11",
+              "2026-02-25",
+              "2026-03-10"
+            ]
+          },
+          {
+            "header": "Scheduled Return Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-30",
+              "2026-05-01",
+              "2026-12-31"
+            ]
+          },
+          {
+            "header": "Returned Date",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Maintained By",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "True",
+              "True",
+              "True"
+            ]
+          },
+          {
+            "header": "Rental Length",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "2 Weeks",
+              "> Month",
+              "> Month"
+            ]
+          },
+          {
+            "header": "Rate",
+            "dtype": "float",
+            "null_rate": 0.25,
+            "sample": [
+              "2500.0",
+              "10900.0",
+              "8600.0"
+            ]
+          },
+          {
+            "header": "Rate Unit",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Hourly",
+              "Monthly",
+              "Monthly"
+            ]
+          },
+          {
+            "header": "Hours Start",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Hours End",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Serial Number",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "Is RPO",
+            "dtype": "bool",
+            "null_rate": 0.0,
+            "sample": [
+              "False",
+              "False",
+              "True"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "Transfer Records.xlsx",
+    "sheets": [
+      {
+        "name": "Transfer Records",
+        "rows_sampled": 50,
+        "columns": [
+          {
+            "header": "Id",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "1827",
+              "1826",
+              "1825"
+            ]
+          },
+          {
+            "header": "Transfer Date",
+            "dtype": "datetime",
+            "null_rate": 0.0,
+            "sample": [
+              "2026-04-16 06:48:42.462",
+              "2026-04-16 06:47:27.960",
+              "2026-04-15 07:10:30.277"
+            ]
+          },
+          {
+            "header": "Tool/Consumable",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "4-1/2\" TACTI-CUT DIAMOND BLADE",
+              "4\"X5/8\" DIAMOND CUP WHEEL",
+              "WD 40"
+            ]
+          },
+          {
+            "header": "Location",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              " 2409. JVWCD 2024 Vault Improvement Project",
+              " 2409. JVWCD 2024 Vault Improvement Project",
+              " 2609. JVWCD JA-1 Internal Buttstraps"
+            ]
+          },
+          {
+            "header": "Quantity",
+            "dtype": "int",
+            "null_rate": 0.0,
+            "sample": [
+              "1",
+              "1",
+              "1"
+            ]
+          },
+          {
+            "header": "Total Price",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "0.0",
+              "0.0"
+            ]
+          },
+          {
+            "header": "Requested By",
+            "dtype": "float",
+            "null_rate": 1.0,
+            "sample": []
+          },
+          {
+            "header": "User",
+            "dtype": "str",
+            "null_rate": 0.0,
+            "sample": [
+              "Patrick Couchis",
+              "Patrick Couchis",
+              "Patrick Couchis"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "WIP report - Job Scheduling.xlsx",
+    "sheets": [
+      {
+        "name": "Job Scheduling",
+        "rows_sampled": 42,
+        "columns": [
+          {
+            "header": "Contract Job Description",
+            "dtype": "str",
+            "null_rate": 0.024,
+            "sample": [
+              " 2231. UDOT Bangerter Hwy Aqueduct Protection",
+              " 2312. SLC SW1 Sewer Forcemains & Influent Pipe",
+              " 2316. CUWCD CWP Wellhouse 16"
+            ]
+          },
+          {
+            "header": "Total Contract",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "1872000.0",
+              "21919978.29",
+              "20019214.71"
+            ]
+          },
+          {
+            "header": "Contract Cost TD",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "876456.94",
+              "17058641.35",
+              "16610839.03"
+            ]
+          },
+          {
+            "header": "Est Cost to Complete",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "449899.56000000006",
+              "9004.289999999106",
+              "322766.8800000008"
+            ]
+          },
+          {
+            "header": "Est Total Cost",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "1326356.5",
+              "17067645.64",
+              "16933605.91"
+            ]
+          },
+          {
+            "header": "Est Gross Profit",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "545643.5",
+              "4852332.6499999985",
+              "3085608.8000000007"
+            ]
+          },
+          {
+            "header": "Est Gross Profit %",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.29147622863247863",
+              "0.22136575984720097",
+              "0.15413235957046192"
+            ]
+          },
+          {
+            "header": "Percent Complete",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.6608004258281992",
+              "0.9994724351448394",
+              "0.9809392706009892"
+            ]
+          },
+          {
+            "header": "Gain (Fade) From Prior Mth",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.0",
+              "0.0",
+              "-1202.8500000000931"
+            ]
+          },
+          {
+            "header": "Billings To Date",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "1274515.59",
+              "21878831.02",
+              "19938265.26"
+            ]
+          },
+          {
+            "header": "(Over) / Under Billings",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "-37497.192849611165",
+              "29583.059828311205",
+              "-300631.38436800614"
+            ]
+          },
+          {
+            "header": "Contract Revenues Earned",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "1237018.397150389",
+              "21908414.07982831",
+              "19637633.875631995"
+            ]
+          },
+          {
+            "header": "Gross Profit (Loss) TD",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "360561.45715038903",
+              "4849772.72982831",
+              "3026794.8456319943"
+            ]
+          },
+          {
+            "header": "Gross Profit % TD",
+            "dtype": "float",
+            "null_rate": 0.0,
+            "sample": [
+              "0.19260761599913945",
+              "0.22124897505216964",
+              "0.15119448437305832"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

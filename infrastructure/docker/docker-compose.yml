@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  api:
+    build: ../../backend
+    ports: ['8000:8000']
+    env_file: ../../.env
+    depends_on: [db, redis]
+    volumes: ['../../backend:/app']
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    # Vite dev server. No Dockerfile — we use the stock node image and
+    # volume-mount the source tree so edits hot-reload. `npm install`
+    # runs on every `compose up`; cheap after the first run because
+    # npm's cache + the volume-mounted node_modules both persist.
+    image: node:20-alpine
+    working_dir: /app
+    ports: ['5173:5173']
+    env_file: ../../.env
+    volumes: ['../../frontend:/app']
+    command: sh -c "npm install && npm run dev"
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: fieldbridge
+      POSTGRES_USER: fieldbridge
+      POSTGRES_PASSWORD: password
+    ports: ['5432:5432']
+    volumes: ['pgdata:/var/lib/postgresql/data']
+
+  redis:
+    image: redis:7-alpine
+    ports: ['6379:6379']
+
+  n8n:
+    image: n8nio/n8n:latest
+    ports: ['5678:5678']
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: 'true'
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: changeme
+    volumes: ['n8n_data:/home/node/.n8n']
+
+volumes:
+  pgdata:
+  n8n_data:

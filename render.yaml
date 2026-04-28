@@ -1,0 +1,96 @@
+# Render Blueprint — FieldBridge backend.
+#
+# Apply via Render dashboard:  New → Blueprint → connect this repo.
+# After first apply, Render reads any future edits to this file and
+# proposes them as a PR-style review in the dashboard.
+#
+# Two services:
+#   * fieldbridge-api   — FastAPI web service (Dockerfile-based)
+#   * fieldbridge-db    — managed Postgres (auto-injects DATABASE_URL)
+#
+# Secret values (SECRET_KEY, ANTHROPIC_API_KEY, anything Vista/Azure)
+# are NOT committed here. They're set in the Render dashboard after the
+# Blueprint applies — see docs/deploy-render.md for the full list.
+#
+# Phase-1 scope: just the API + DB. Cron jobs / background workers /
+# Redis ship in a follow-on Phase 4. Adding them here later is a
+# Blueprint edit, not a redeploy from scratch.
+
+services:
+  - type: web
+    name: fieldbridge-api
+    runtime: docker
+    plan: starter            # $7/mo. Bump to standard ($25) when traffic warrants.
+    region: oregon           # closest US-West datacenter; fine for VanCon (Utah).
+    dockerfilePath: ./fieldbridge/backend/Dockerfile
+    dockerContext: ./fieldbridge/backend
+    healthCheckPath: /health
+    autoDeploy: true         # push-to-tracked-branch ⇒ deploy
+    envVars:
+      # Auto-injected by Render from the database below.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+
+      # Non-secret defaults — safe to commit and visible in the dashboard.
+      - key: ENVIRONMENT
+        value: production
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+
+      # Production CORS allowlist. Update this list when adding new
+      # frontend origins (preview deploys, custom domains, etc.) — it
+      # accepts comma-separated values via the validator in
+      # app/core/config.py::Settings.cors_allowed_origins.
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://fieldbridge.vercel.app,http://localhost:3000
+
+      # Secrets — values entered manually in the Render dashboard,
+      # never committed. `sync: false` tells Render not to sync the
+      # placeholder back to this file.
+      - key: SECRET_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: FIELDBRIDGE_ADMIN_EMAIL
+        sync: false
+      - key: FIELDBRIDGE_ADMIN_PASSWORD
+        sync: false
+
+      # Vista creds — leave unset until the Trimble Data Xchange
+      # contract is signed. Setting them blank is fine; the Vista
+      # endpoints will simply 503 when called.
+      - key: VISTA_SQL_HOST
+        sync: false
+      - key: VISTA_SQL_PORT
+        sync: false
+      - key: VISTA_SQL_DB
+        sync: false
+      - key: VISTA_SQL_USER
+        sync: false
+      - key: VISTA_SQL_PASSWORD
+        sync: false
+      - key: VISTA_API_BASE_URL
+        sync: false
+      - key: VISTA_API_KEY
+        sync: false
+
+      # Azure / M365 OAuth creds — leave unset for v1 password-only auth.
+      - key: AZURE_TENANT_ID
+        sync: false
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+
+databases:
+  - name: fieldbridge-db
+    plan: starter            # $7/mo, 1 GB. Upgrade path: standard $19/mo, 10 GB.
+    region: oregon           # MUST match the service region for low latency.
+    databaseName: fieldbridge
+    user: fieldbridge
+    # No `ipAllowList` — keep DB private to Render's network. The
+    # api service reaches it via the auto-injected DATABASE_URL above.
