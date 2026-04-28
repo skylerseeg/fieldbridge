@@ -40,15 +40,27 @@ RUN apt-get update \
 # Python-level dependencies. Copy requirements.txt FIRST so this layer
 # only invalidates when deps change — application code edits below
 # don't trigger a re-install.
-COPY requirements.txt /app/requirements.txt
+#
+# Build context is the REPO ROOT (see render.yaml dockerContext: .) so
+# we have to path-prefix everything we copy.
+COPY backend/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r /app/requirements.txt
 
-# Application code. The agents/ directory at repo level is reached via
-# the sys.path bootstrap in app/main.py (parents[2] / parents[3]).
-# Copying just backend/ here is intentional — when worker deploys land
-# they'll get their own image rather than bloating the API container.
-COPY . /app
+# Application code. Two trees, both required at runtime:
+#   * backend/  — FastAPI app. WORKDIR drops into here so `app.main:app`
+#                 resolves cleanly for uvicorn.
+#   * agents/   — Anthropic Claude agent modules. 15+ endpoint files in
+#                 backend/app/api/v1/endpoints/ do `from agents.*` at
+#                 module load time, so this MUST be on PYTHONPATH or
+#                 uvicorn crashes on import.
+COPY backend /app/backend
+COPY agents  /app/agents
+
+# `app/*` resolves under /app/backend (cwd-relative once WORKDIR shifts);
+# `agents/*` resolves under /app. Both must be on sys.path.
+ENV PYTHONPATH=/app:/app/backend
+WORKDIR /app/backend
 
 # Render injects $PORT at runtime; we default to 8000 for local docker
 # compose / docker run convenience. Bind 0.0.0.0 so external traffic

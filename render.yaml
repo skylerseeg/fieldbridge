@@ -23,7 +23,7 @@ services:
     plan: starter            # $7/mo. Bump to standard ($25) when traffic warrants.
     region: oregon           # closest US-West datacenter; fine for VanCon (Utah).
     dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    dockerContext: .         # repo root — Dockerfile copies backend/ AND agents/, since FastAPI endpoints import from agents.* at module load time.
     healthCheckPath: /health
     autoDeploy: true         # push-to-tracked-branch ⇒ deploy
     envVars:
