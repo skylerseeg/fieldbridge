@@ -357,7 +357,11 @@
       "Bash(git stash *)",
       "Bash(git checkout *)",
       "Bash(git branch *)",
-      "Bash(gh pr create --base main --head fix/render-db-plan-current-tier --title 'fix\\(deploy\\): bump render.yaml database plan to current Render tier' --body ' *)"
+      "Bash(gh pr create --base main --head fix/render-db-plan-current-tier --title 'fix\\(deploy\\): bump render.yaml database plan to current Render tier' --body ' *)",
+      "Bash(gh run *)",
+      "Bash(gh pr *)",
+      "Bash(gh api *)",
+      "Bash(git fetch *)"
     ]
   }
 }

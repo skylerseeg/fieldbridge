@@ -22,8 +22,8 @@ services:
     runtime: docker
     plan: starter            # $7/mo. Bump to standard ($25) when traffic warrants.
     region: oregon           # closest US-West datacenter; fine for VanCon (Utah).
-    dockerfilePath: ./fieldbridge/backend/Dockerfile
-    dockerContext: ./fieldbridge/backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /health
     autoDeploy: true         # push-to-tracked-branch ⇒ deploy
     envVars:
