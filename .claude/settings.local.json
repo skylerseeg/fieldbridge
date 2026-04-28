@@ -351,7 +351,13 @@
       "Bash(cd \"\\\\\\\\wsl.localhost\\\\Ubuntu-24.04\\\\home\\\\sseegmiller\\\\fieldbridge_repo\")",
       "Bash(git mv *)",
       "Bash(wsl -- bash -lc 'cd ~/fieldbridge_repo/fieldbridge/backend && source .venv/bin/activate 2>/dev/null && python -c \" *)",
-      "Bash(wsl -- bash -lc 'cd ~/fieldbridge_repo/fieldbridge/backend && source .venv/bin/activate && python -c \" *)"
+      "Bash(wsl -- bash -lc 'cd ~/fieldbridge_repo/fieldbridge/backend && source .venv/bin/activate && python -c \" *)",
+      "WebFetch(domain:render.com)",
+      "Bash(gh auth *)",
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(gh pr create --base main --head fix/render-db-plan-current-tier --title 'fix\\(deploy\\): bump render.yaml database plan to current Render tier' --body ' *)"
     ]
   }
 }
