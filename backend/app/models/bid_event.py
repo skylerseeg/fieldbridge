@@ -16,12 +16,12 @@ from __future__ import annotations
 import uuid
 from datetime import date, datetime, timezone
 from sqlalchemy import (
-    ARRAY,
     CHAR,
     DateTime,
     Date,
     ForeignKey,
     Index,
+    JSON,
     Numeric,
     String,
     Text,
@@ -78,9 +78,15 @@ class BidEvent(Base):
     project_owner: Mapped[str | None] = mapped_column(Text)
     work_scope: Mapped[str | None] = mapped_column(Text)
     csi_codes: Mapped[list[str] | None] = mapped_column(
-        ARRAY(String(8)),
+        JSON,
         # 4-digit Vista CSI format, inferred via shared keyword map
         # in services/email_bridge/csi_inference. Multiple per project.
+        #
+        # JSON (not ARRAY) for cross-dialect portability — Postgres
+        # stores as jsonb, SQLite as TEXT, both round-trip Python lists
+        # transparently via SQLAlchemy's generic JSON type. CLAUDE.md
+        # mandates SQLite compatibility for the test suite; ARRAY is
+        # Postgres-only and breaks every test that imports this model.
     )
 
     # Timeline

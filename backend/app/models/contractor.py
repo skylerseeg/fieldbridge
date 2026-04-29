@@ -22,10 +22,10 @@ from __future__ import annotations
 
 import uuid
 from sqlalchemy import (
-    ARRAY,
     CHAR,
     ForeignKey,
     Integer,
+    JSON,
     Numeric,
     String,
     Text,
@@ -61,9 +61,12 @@ class Contractor(Base):
 
     canonical_name: Mapped[str] = mapped_column(Text, nullable=False)
     name_variants: Mapped[list[str] | None] = mapped_column(
-        ARRAY(Text),
+        JSON,
         # All raw bidder strings observed for this canonical entity.
         # Searched first on resolution; new variants appended.
+        #
+        # JSON (not ARRAY) for cross-dialect portability — see the
+        # equivalent comment on bid_event.csi_codes for rationale.
     )
 
     headquarters_state: Mapped[str | None] = mapped_column(CHAR(2))
