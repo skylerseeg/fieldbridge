@@ -7,20 +7,22 @@ brief lives in `PROPOSED_CHANGES.md` next to this file. Design doc:
 
 ## Status (2026-04-29)
 
-**Slices 1–3 of 4 landed.** Module skeleton + plumbing + KPIs +
-Competitor curves tab + Opportunity gaps tab.
+**Brief closed — all 4 slices merged.** The module ships the page
+shell, three tabs against live + mocked data, four-state coverage
+on every tab, and the `--color-good` / `--color-watch` token system.
 
 | Slice | Scope                                                                | State |
 |------:|----------------------------------------------------------------------|-------|
 |     1 | Types, client, mock fixtures, hooks, page shell, KPI strip, tab stubs | done  |
-|     2 | Tab 1 — Competitor curves: scatter chart, side-sheet drilldown, table; `--color-good` / `--color-watch` token add; first per-tab vitest | done |
+|     2 | Tab 1 — Competitor curves: scatter, side-sheet drilldown, sortable table; `--color-good` / `--color-watch` token add; first per-tab vitest | done |
 |     3 | Tab 2 — Opportunity gaps: grouped BarChart + top-10 list + scope-code multi-select; coral-ramp first use; per-tab vitest; route asks filed in `PROPOSED_CHANGES_routes.md` | done |
-|     4 | Tab 3 — Bid calibration: dual-axis ComposedChart + highlighted-row table; CSS bundle delta in PR description | next  |
+|     4 | Tab 3 — Bid calibration: dual-axis ComposedChart + most-recent-row highlight + brief-locked annotation; final per-tab vitest; placeholder ContractorDetailPage + GapDetailPage | done |
 
-Only the Bid calibration tab still renders a slice-1 "lands in
-slice N" placeholder inside its populated branch; empty / loading /
-error branches are final. Swapping placeholder → real chart remains
-additive.
+All three tabs render real visualizations against mock data (or
+live API when `VITE_USE_MOCK_DATA` is unset). Empty / loading /
+error / populated branches final on all three. Per-tab vitest
+locks the four required states for each tab plus the slice-4
+"highlight one row" assertion.
 
 ## API contract
 
@@ -58,8 +60,11 @@ flipping back to real data in any single hook is a one-line edit.
 ```
 frontend/src/modules/market-intel/
 ├── MarketIntelPage.tsx                # route entry — page shell + lazy tabs
+├── ContractorDetailPage.tsx           # placeholder for /contractor/:slug
+├── GapDetailPage.tsx                  # placeholder for /gap/:state/:county
 ├── README.md
 ├── PROPOSED_CHANGES.md                # worker brief
+├── PROPOSED_CHANGES_routes.md         # Lead ask: routes.tsx wiring for detail pages
 ├── api/
 │   ├── types.ts                       # mirrors backend schema.py
 │   ├── client.ts                      # axios fetchers
@@ -68,15 +73,19 @@ frontend/src/modules/market-intel/
 │   ├── useCompetitorCurves.ts
 │   ├── useOpportunityGaps.ts
 │   └── useBidCalibration.ts
-└── components/
-    ├── ModuleHeader.tsx               # H1 + subtitle + filter bar
-    ├── StateMultiSelect.tsx           # dropdown-menu-based state filter
-    ├── ScopeMultiSelect.tsx           # dropdown-menu-based scope-code filter
-    ├── KpiStrip.tsx                   # 4 KPI tiles, derives from datasets
-    ├── EmptyState.tsx                 # default / info / error variants
-    ├── CompetitorCurves.tsx           # tab 1 — scatter + sheet + table (slice 2)
-    ├── OpportunityGaps.tsx            # tab 2 — bars + top-10 list (slice 3)
-    └── BidCalibration.tsx             # tab 3 — slice 4 will land the chart
+├── components/
+│   ├── ModuleHeader.tsx               # H1 + subtitle + filter bar
+│   ├── StateMultiSelect.tsx           # dropdown-menu-based state filter
+│   ├── ScopeMultiSelect.tsx           # dropdown-menu-based scope-code filter
+│   ├── KpiStrip.tsx                   # 4 KPI tiles, derives from datasets
+│   ├── EmptyState.tsx                 # default / info / error variants
+│   ├── CompetitorCurves.tsx           # tab 1 — scatter + sheet + table (slice 2)
+│   ├── OpportunityGaps.tsx            # tab 2 — bars + top-10 list (slice 3)
+│   └── BidCalibration.tsx             # tab 3 — composed dual-axis + table (slice 4)
+└── __tests__/
+    ├── CompetitorCurves.test.tsx      # 6 tests — empty/loading/error/populated × sort × drilldown
+    ├── OpportunityGaps.test.tsx       # 7 tests — four states × ranking × navigation × scope filter
+    └── BidCalibration.test.tsx        # 8 tests — four states × annotation × highlight × win-rate math
 ```
 
 ## Adding a new tab
@@ -110,24 +119,18 @@ shared `lib/api.ts` interceptor.
 
 ## Known follow-ups
 
-- **`/api/market-intel/summary` endpoint.** KPI tile 1 (`Bid events
-  tracked`) currently displays `sum(bid_count)` from competitor
-  curves, labelled "bid lines" — honest but approximate. A proper
-  network-wide event count belongs in a backend `summary` route. The
-  Backend Worker brief at
-  `backend/app/services/market_intel/README.md` should add this when
-  analytics SQL lands.
 - **Detail routes — Lead ask, see `PROPOSED_CHANGES_routes.md`**.
   Both the Competitor curves drilldown ("View bid history") and the
   Opportunity gaps top-10 list (row click) `navigate()` to detail
   paths that aren't yet wired in `routes.tsx`:
-  - `/market-intel/contractor/:slug` (slice 2)
-  - `/market-intel/gap/:state/:county` (slice 3)
+  - `/market-intel/contractor/:slug` (slice 2 ask)
+  - `/market-intel/gap/:state/:county` (slice 3 ask)
 
-  The PROPOSED_CHANGES file has the slug derivation, URL contract,
-  encoding rules, edge cases (state-only rows), and the suggested
-  routes.tsx wiring snippet. Until wired, the buttons navigate to
-  paths that hit the catch-all 404 — known and acceptable for v1.5.
+  Slice 4 ships placeholder pages at `ContractorDetailPage.tsx` and
+  `GapDetailPage.tsx`, so wiring is purely a `routes.tsx` edit. The
+  PROPOSED_CHANGES file has the slug derivation, URL encoding rules,
+  edge cases, and the copy-pasteable wiring snippet. Until wired,
+  the buttons navigate to paths that hit the catch-all 404.
 - **`/api/market-intel/summary` endpoint.** KPI tile 1 (`Bid events
   tracked`) currently displays `sum(bid_count)` from competitor
   curves, labelled "bid lines" — honest but approximate. A proper
@@ -135,3 +138,9 @@ shared `lib/api.ts` interceptor.
   Backend Worker brief at
   `backend/app/services/market_intel/README.md` should add this when
   analytics SQL lands.
+- **Field-mode contrast for `--color-good` / `--color-watch`.**
+  `field-mode.css` (Frontend Polish's lane) re-points the existing
+  semantic tokens for outdoor glare; the two Market Intel duotones
+  aren't yet covered. Worth adding when the module ships into a
+  field-deployed scenario; not blocking v1.5/v2 since Bid intelligence
+  is an office workflow.
