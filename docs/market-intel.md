@@ -28,12 +28,15 @@ they've stopped investing in.
 
 ## Strategic phasing
 
+**2026-04-29 strategic pivot — NAPC paused, State DOT primary.** See
+"Data source pivot" below for the full rationale. Phasing updated:
+
 | Phase | Scope | When | Branch state |
 |---|---|---|---|
-| **v1.5a** | Schema, scraper service, n8n cron, dark accumulation | Now → 2 weeks | This branch |
-| **v1.5b** | Backfill 90 days UT/ID/NV; parser fixtures from real HTML; data validation | +2 weeks | This branch |
-| **v2** | Frontend UI in `frontend/src/modules/market-intel/`: Competitor Curves, Opportunity Gaps, Bid Calibration | After 4–6 weeks of accumulation | Merge to main when v1 is locked |
-| **v3** | Per-tenant overlays, multi-tenant marketing surface, predictive RFP scoring | Post-v2, when 2–3 paying tenants exist | post-merge |
+| **v1.5a** | Schema + ITD (Idaho Transportation Department) bid-tab parser + dark accumulation. NAPC scrapers paused at the registry-probe layer. | Now → 2 weeks | This branch |
+| **v1.5b** | Add UDOT + NDOT bid-tab parsers (UT, NV); 90-day backfill from each DOT's published archives; data validation against Vista vendor master | +2 weeks | This branch |
+| **v2** | Frontend UI in `frontend/src/modules/market-intel/`: Competitor Curves, Opportunity Gaps, Bid Calibration (already in flight; doesn't depend on data source) | After 4–6 weeks of accumulation | Merge to main when v1 is locked |
+| **v3** | Per-tenant overlays, multi-tenant marketing surface, predictive RFP scoring. Possible NAPC partnership integration if outreach succeeds. | Post-v2, when 2–3 paying tenants exist | post-merge |
 
 ## Architecture
 
@@ -52,7 +55,14 @@ backend/
 │   │       └── service.py       # query layer
 │   └── services/
 │       └── market_intel/        # SCRAPER + INGEST PIPELINE
-│           ├── scrapers/napc_network/{registry,fetcher,parsers/}
+│           ├── scrapers/
+│           │   ├── napc_network/   # PAUSED — see _napc_paused.md
+│           │   │   ├── registry.py, state_portal_registry.json   # kept (intelligence asset)
+│           │   │   └── _napc_paused.md  # robots block, pivot rationale
+│           │   └── state_dot/       # ACTIVE — v1.5 primary source
+│           │       ├── itd.py       # Idaho DOT — first parser
+│           │       ├── udot.py      # v1.5b
+│           │       └── ndot.py      # v1.5b
 │           ├── normalizers/{csi_inference,contractor_resolver,geo_resolver}.py
 │           ├── analytics/*.sql
 │           └── pipeline.py
@@ -115,30 +125,95 @@ neither has a moat), regroup routes under `/intelligence/{market-intel,predictiv
 That's a `routes.tsx` edit + 301 redirect rules, not a refactor.
 **This is a known future move, NOT a surprise.**
 
+## Data source pivot — 2026-04-29
+
+**TL;DR**: NAPC's robots.txt deny-by-default is load-bearing. We
+pause NAPC scraping at the registry-probe layer, pivot v1.5
+primary source to State DOT bid tabulations (ITD first, UDOT/NDOT
+in v1.5b), and pursue NAPC partnership in parallel as a separate
+Lead/Operator workstream.
+
+### What we found
+
+`https://www.idahobids.com/robots.txt` (and presumably the same
+across NAPC's portfolio of `{state}bids.{com,net}` portals):
+
+```
+User-agent: *
+Disallow: /
+```
+
+…with an explicit allowlist of ~21 named search engines (Google,
+Bing, Apple, Baidu, etc.). `FieldBridge-Research/1.0` is not on
+that list. `urllib.robotparser.can_fetch()` returns False for
+every URL on the host.
+
+NAPC's policy is deliberate: named-allowlist of search engines = "we
+want to be findable on Google but not scraped." Bypassing it is
+inconsistent with the explicit risk-flag commitment in the original
+design doc ("Do not relax these settings without a real reason").
+
+### Decision (Lead + Operator, 2026-04-29)
+
+| Option | Decision | Rationale |
+|---|---|---|
+| **A. Pivot v1.5 primary source to State DOT bid tabs** | ✅ Accepted | Government-published-as-public-record. Heavy-civil precision target (the actual subset VanCon competes for). Schema, read API, tenant scoping, frontend all unchanged. PDF parsing (pdfplumber) instead of HTML, but pdfplumber against tabular DOT data is well-trodden. |
+| **B. One-time fixture-capture override for NAPC** | ❌ Rejected | "We want fixtures" isn't a real reason. Sets a bad precedent. Legal exposure (CFAA arguments are weak but expensive). Doesn't unblock the production fetcher anyway. |
+| **C. NAPC partnership outreach** | ✅ Pursued in parallel | Lead/Operator-driven, not a worker dependency. Best case: API access. Realistic: "no, here's our paid product." Worst: silence. Worth pursuing because a successful outcome compounds the moat — but slice 2/3/4 do not wait on it. |
+
+### What we kept
+
+- `scrapers/napc_network/registry.py` and the committed
+  `state_portal_registry.json` (50 states, schema_version 1) —
+  intelligence asset. If outreach succeeds we have the URL map ready.
+- The schema (`bid_events`, `bid_results`, `contractors`) — source-
+  agnostic; ITD-sourced rows have the same shape as NAPC-sourced
+  rows would have.
+- The read API, frontend module, tenant scoping pattern — all
+  unaffected.
+
+### What we paused
+
+- Live NAPC fetching at any layer. Marked at
+  `scrapers/napc_network/_napc_paused.md` (worker drops this in
+  slice 2-revised).
+- The "1,000 bid posts × 50 states" storage estimate; State DOT
+  data volume is meaningfully smaller per state (one DOT per
+  state vs. dozens of municipal solicitations). New storage
+  estimate locked in v1.5b after first 30 days of ITD ingest.
+
 ## Risk flags
 
-- **NAPC ToS**. Public bid results are public record, but NAPC's
-  contractor directory is plausibly protected. Restrict scrape to
-  bid event pages; skip `/directory/*` profile crawls. Use directory
-  links only as identifiers for `contractor_resolver`.
-- **Robots.txt**. NAPC is already 403-ing aggressive crawlers. The
-  fetcher is robots-aware (`urllib.robotparser`), self-identifying
-  (`FieldBridge-Research/1.0 (+https://fieldbridge.io/bot)`), and
-  rate-limited to 1 request per 3–6 seconds per host. Do not relax
-  these settings without a real reason.
-- **PII**. Directory pages may contain contact emails/phones. Store
-  only canonical names + bid amounts in `bid_results`. Do not
-  ingest contact info from these scrapes.
-- **Storage growth**. ~1,000 bid posts per state per year × 50 states
-  × 5–10 bidders per post = ~250k–500k rows/year. Manageable on
-  basic-256mb Postgres for v1.5. Plan a `bid_events` partition by
-  `bid_open_date` quarter when row count crosses 5M.
+- **State DOT publication ToS**. State DOTs publish bid tabulations
+  under transparency mandates (e.g. ITAR Title 39 / state public-
+  records statutes). Scraping is generally explicitly permitted.
+  Verify each DOT's robots.txt + publications page ToS at parser-
+  add time and document in the parser's module docstring.
+- **PDF text-layer reliability**. Most modern DOT bid tabs are
+  generated reports with clean text layers. Pre-2015 archives
+  may be scans; OCR via `pytesseract` (already in requirements)
+  is the fallback. Flag scan-detected PDFs in the fixture
+  manifest's `template_version` field.
+- **NAPC robots block (paused, not solved)**. The decision above
+  pauses NAPC indefinitely. If anyone — current worker, future
+  worker, Lead, or Operator — proposes resuming NAPC scraping,
+  read this section first. The robots block does not become less
+  load-bearing because the dataset would be useful.
+- **PII**. State DOT bid tabs sometimes list public-employee
+  contact info (project engineer, contracting officer). Public-
+  record context, but apply the same strip-then-verify regex pass
+  as the original NAPC plan. Names of public employees stay (they
+  ARE the public record); emails and phones are stripped.
+- **Storage growth (revised)**. ~50–200 bid tabs per DOT per year
+  × 5 DOTs at v1.5b × 4–8 bidders per tab = ~5k–8k rows/year for
+  v1.5. Trivial on basic-256mb Postgres. Revisit when v3
+  multi-tenant is live.
 
 ## Worker streams
 
 | Stream | Owns | Status |
 |---|---|---|
-| **Market Intel Backend Worker** | `app/services/market_intel/*`, `app/modules/market_intel/service.py` SQL fill-in, `workers/n8n_flows/market_intel_daily.json`, fixtures + tests for parsers | New stream — first task: `registry.py` probe across 50 states + parse 50 captured Idaho posts as fixtures. See brief in `app/services/market_intel/README.md`. |
+| **Market Intel Backend Worker** | `app/services/market_intel/*`, `app/modules/market_intel/service.py` SQL fill-in, `workers/n8n_flows/market_intel_daily.json`, fixtures + tests for parsers | Active. Slices landed: NAPC registry probe (50/50 states, paused — see Data source pivot), schema_version + agent-assert follow-ups. **Current task**: ITD bid-tab fixtures + pdfplumber parser (slice 2-revised after NAPC pivot). |
 | **Market Intel Frontend Worker** | `frontend/src/modules/market-intel/*` | New stream — first task: full UI per the brief in `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`. Runs against `VITE_USE_MOCK_DATA=true` until backend SQL lands. |
 | **Lead** | `app/main.py` route mount, `app/models/{bid_event,bid_result,contractor}`, `app/core/seed.py` shared-network bootstrap, `app/models/tenant.py` `kind` column, this doc, `docs/agent_board.md` | Scaffold landed. Reviews + merges. |
 

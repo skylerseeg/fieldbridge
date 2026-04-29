@@ -607,6 +607,53 @@ and the open contract surface.
   merges into the feature branch. Final feature-branch → main merge
   is a single Lead operation gated on v1 lock.
 
+- **2026-04-29 — Backend Worker first slices landed**:
+  * PR #6 (`90e2046`): NAPC state portal registry probe — 50/50
+    states resolved, ProbeStatus 11-value enum, parking detection,
+    www-fallback, MA `mass` stem override, run_napc_probe.py
+    operator tool, 54 shape-assertion tests.
+  * PR #8 (`561ba6b`): registry follow-ups — `schema_version: "1"`
+    on JSON via `write_registry()`, drift-proof test asserts
+    (`agent == registry_module.USER_AGENT`,
+    `schema_version == REGISTRY_SCHEMA_VERSION`),
+    `beautifulsoup4>=4.12.0` and `lxml>=5.2.0` in requirements.txt.
+
+- **2026-04-29 — Frontend Worker first slices landed**:
+  * PR #5 (`0f637e1`): slice 1 — module skeleton, hooks, KPI strip.
+    15 files, 17 vitest tests, four lazy chunks split. CSS +1.83 kB
+    raw / +7.82 kB gzip.
+  * PR #7 (`0037c85`): slice 2 — Competitor curves tab.
+    Recharts ScatterChart + sortable Table + side Sheet drilldown.
+    Cross-lane semantic tokens (`--color-good` teal, `--color-watch`
+    coral) added to `index.css` + `tailwind.config.ts` per Lead's
+    PR-#5 ask. Win-rate ramp keeps hue/saturation locked, varies
+    only lightness. 6 new vitest tests = 23/23 total.
+
+- **2026-04-29 — STRATEGIC PIVOT: NAPC paused, State DOT primary**.
+  Backend Worker hit `idahobids.com/robots.txt`'s explicit
+  `User-agent: * Disallow: /` with a named-allowlist of ~21 search
+  engines. FieldBridge's UA isn't on the list. Bypassing would
+  violate the design doc's load-bearing robots commitment. Lead +
+  Operator decision:
+
+  * **A. Pivot v1.5 primary source to State DOT bid tabulations
+    (ITD first, UDOT/NDOT in v1.5b).** Government-published-as-
+    public-record. Heavy-civil precision target. PDF parsing via
+    pdfplumber. Schema/API/frontend unchanged.
+  * **B. One-time fixture-capture override for NAPC.** REJECTED.
+    "We want fixtures" isn't a real reason. Sets a bad precedent.
+  * **C. NAPC partnership outreach.** PURSUED IN PARALLEL.
+    Lead/Operator-driven, not a worker dependency. If outreach
+    succeeds the moat compounds; if it doesn't, no one's blocked.
+
+  Full rationale + the rejected-options analysis live in
+  `docs/market-intel.md` -> "Data source pivot" + "Risk flags"
+  (revised). Backend Worker's next PR pivots slice 2 to ITD and
+  drops `_napc_paused.md` documenting the pause at the
+  `napc_network/scrapers/` boundary. Registry + JSON stay
+  committed — they're an intelligence asset for the partnership
+  outreach.
+
 ## Recent Merges
 
 | Date       | Module                | Commit    | Notes                                   |
