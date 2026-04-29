@@ -34,6 +34,5 @@ azure-storage-blob>=12.20.0
 python-docx>=1.1.0
 anthropic[bedrock]>=0.26.0
 PyJWT>=2.8.0
-passlib[bcrypt]>=1.7.4
-bcrypt>=4.0.1,<4.1            # passlib 1.7.4's startup probe (detect_wrap_bug) feeds a >72-byte test string to bcrypt.hashpw; bcrypt 4.1+ and 5.x reject it strictly and crash passlib init. 4.0.x is the last compatible range until we drop passlib.
+bcrypt>=4.0.0                 # used directly in app/core/auth.py — no passlib wrapper. Any 4.x or 5.x is fine.
 email-validator>=2.1.0

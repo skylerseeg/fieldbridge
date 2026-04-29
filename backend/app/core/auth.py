@@ -5,14 +5,13 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+import bcrypt
 import jwt
-from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.config import settings
 from app.core.database import get_db
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer()
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 8   # 8 hours
@@ -20,13 +19,24 @@ REFRESH_TOKEN_EXPIRE_DAYS = 30
 
 
 # ── Password ──────────────────────────────────────────────────────────────────
+#
+# Direct bcrypt — no passlib wrapper. passlib 1.7.4 (last release 2020) runs a
+# startup probe that feeds a >72-byte test string to bcrypt.hashpw; bcrypt 4+
+# enforces the 72-byte limit strictly and crashes passlib's init. passlib has
+# been in maintenance-only mode since 2020 with no fix on the horizon, so we
+# call bcrypt directly. Hash format on disk is unchanged ($2b$...) so any
+# prior passlib-hashed values still verify against bcrypt.checkpw.
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except ValueError:
+        # Malformed hash on disk — treat as auth failure rather than 500.
+        return False
 
 
 # ── JWT ───────────────────────────────────────────────────────────────────────
