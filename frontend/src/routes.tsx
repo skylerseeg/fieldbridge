@@ -25,6 +25,8 @@ import { PredictiveMaintenancePage } from "@/modules/predictive-maintenance/Pred
 import { RecommendationsPage } from "@/modules/recommendations/RecommendationsPage";
 import { BidsPage } from "@/modules/bids/BidsPage";
 import { MarketIntelPage } from "@/modules/market-intel/MarketIntelPage";
+import { ContractorDetailPage } from "@/modules/market-intel/ContractorDetailPage";
+import { GapDetailPage } from "@/modules/market-intel/GapDetailPage";
 import { ProposalsPage } from "@/modules/proposals/ProposalsPage";
 
 // Knowledge
@@ -87,6 +89,13 @@ export const router = createBrowserRouter([
           { path: "recommendations", element: <RecommendationsPage /> },
           { path: "bids", element: <BidsPage /> },
           { path: "market-intel", element: <MarketIntelPage /> },
+          // Detail pages reached from drilldowns inside MarketIntelPage.
+          // Ship as v1.5 placeholders; full content lands v2.1+ when the
+          // backend exposes /api/market-intel/contractor/:slug and
+          // /api/market-intel/gap/:state/:county. Slug + URL contracts
+          // documented in modules/market-intel/PROPOSED_CHANGES_routes.md.
+          { path: "market-intel/contractor/:slug", element: <ContractorDetailPage /> },
+          { path: "market-intel/gap/:state/:county", element: <GapDetailPage /> },
           { path: "proposals", element: <ProposalsPage /> },
 
           // Knowledge
