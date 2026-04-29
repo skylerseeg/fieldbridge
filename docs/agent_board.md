@@ -654,6 +654,39 @@ and the open contract surface.
   committed — they're an intelligence asset for the partnership
   outreach.
 
+- **2026-04-29 — Frontend Worker (Agent #2) stood down — brief
+  closed end-to-end**. Four slices, four PRs, zero cross-lane edits.
+
+  | Slice | PR  | Commit    | Scope                                              |
+  |-------|-----|-----------|----------------------------------------------------|
+  | 1     | #5  | `0f637e1` | Module skeleton, hooks, KPI strip, four lazy chunks |
+  | 2     | #7  | `0037c85` | Competitor curves tab — Scatter + Sheet + Table; teal/coral semantic tokens added cross-lane per Lead ask |
+  | 3     | #9  | `257bc67` | Opportunity gaps tab — BarChart + top-10 + scope filter; first coral use, ramp HSL channel-locked |
+  | 4     | #10 | `d899237` | Bid calibration tab (brief-closer) — dual-axis ComposedChart + highlighted-row table; ContractorDetail + GapDetail placeholder pages shipped |
+  | wire  | -   | `b1830c0` | Lead-direct: routes.tsx wired for /market-intel/{contractor,gap} detail pages |
+
+  Final test count: 38/38 vitest passing. Cumulative CSS delta:
+  +3.09 kB raw (35.78 kB → 38.87 kB) for the entire Market Intel
+  static UI. Total deferred Recharts cost across three tabs:
+  ~58 kB raw / ~20 kB gzip — all in lazy chunks, none in the
+  main bundle.
+
+  **Lane-discipline highlights**: two harness branch-switch
+  incidents detected and recovered non-destructively via the
+  two-second pre-stage gate (`git rev-parse --abbrev-ref HEAD`
+  + `git status --short`). PROPOSED_CHANGES_routes.md is the
+  canonical worker→Lead route-handoff template — slugify
+  function verbatim, URL encoding rules, edge cases (null county),
+  copy-pasteable wiring snippet. Holding it up as the pattern
+  for any future Lead-owned-file ask from any worker.
+
+  **Open Frontend follow-ups (queued, NOT urgent)**:
+  - Real-a11y audit pass (axe-core + SR walkthrough) — Frontend
+    Worker, triggered before v2 lands after pipeline accumulates
+  - v2.1 export-to-CSV — parked, post-v2
+  - Field-mode contrast for `--color-good` / `--color-watch` —
+    routed to Frontend Polish Worker (their lane: `field-mode.css`)
+
 ## Recent Merges
 
 | Date       | Module                | Commit    | Notes                                   |
