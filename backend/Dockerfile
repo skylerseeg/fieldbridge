@@ -57,6 +57,13 @@ RUN pip install --no-cache-dir --upgrade pip \
 COPY backend /app/backend
 COPY agents  /app/agents
 
+# Excel mart source-of-truth files (28 .xlsx, ~13 MB) — used by
+# `python -m app.core.ingest --tenant vancon --all` to populate the
+# `mart_*` tables until live Vista SQL/REST is wired. The parents[3]
+# math in app/core/ingest.py and app/services/project_memory/ resolves
+# to /app/data here, matching the repo-root layout.
+COPY data /app/data
+
 # `app/*` resolves under /app/backend (cwd-relative once WORKDIR shifts);
 # `agents/*` resolves under /app. Both must be on sys.path.
 ENV PYTHONPATH=/app:/app/backend
