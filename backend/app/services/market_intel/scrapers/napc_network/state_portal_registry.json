@@ -1,4 +1,5 @@
 {
+  "schema_version": "1",
   "probe_run_id": "91c730db-5a5e-48dd-b628-925df6cd6fb3",
   "probed_at": "2026-04-29T19:12:15+00:00",
   "agent": "FieldBridge-Research/1.0 (+https://fieldbridge.io/bot)",

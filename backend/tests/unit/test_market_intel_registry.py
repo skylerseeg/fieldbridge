@@ -28,8 +28,10 @@ from urllib.parse import urlparse
 
 import pytest
 
+from app.services.market_intel.scrapers.napc_network import registry as registry_module
 from app.services.market_intel.scrapers.napc_network.registry import (
     REGISTRY_JSON_PATH,
+    REGISTRY_SCHEMA_VERSION,
     US_STATES,
     ProbeStatus,
     load_registry,
@@ -56,10 +58,19 @@ def _is_https_url(value: str) -> bool:
 
 def test_top_level_keys(registry: dict) -> None:
     assert set(registry.keys()) >= {
-        "probe_run_id", "probed_at", "agent", "states",
+        "schema_version", "probe_run_id", "probed_at", "agent", "states",
     }
     assert isinstance(registry["probe_run_id"], str) and registry["probe_run_id"]
-    assert isinstance(registry["agent"], str) and "FieldBridge-Research" in registry["agent"]
+    # Couple the agent assertion to the source-of-truth constant; if
+    # someone changes the UA in registry.py without re-running the probe,
+    # this fails and prompts a re-probe rather than letting the JSON drift.
+    assert registry["agent"] == registry_module.USER_AGENT
+
+
+def test_schema_version_matches_module(registry: dict) -> None:
+    """Lock the committed JSON's schema_version to the module constant.
+    Bump-then-reprobe is the only flow that should change either side."""
+    assert registry["schema_version"] == REGISTRY_SCHEMA_VERSION
 
 
 def test_probed_at_is_iso_8601(registry: dict) -> None:

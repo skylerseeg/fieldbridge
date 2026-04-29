@@ -99,6 +99,12 @@ _STATE_NAME_STEM: dict[str, str] = {
 
 USER_AGENT = "FieldBridge-Research/1.0 (+https://fieldbridge.io/bot)"
 REQUEST_TIMEOUT_S = 15.0
+
+# Schema version of the committed ``state_portal_registry.json``. Bump
+# when the JSON shape changes (e.g. add a new per-variant field, drop
+# a top-level key) so consumers can refuse to read formats they don't
+# understand. Current shape locked-in 2026-04-29.
+REGISTRY_SCHEMA_VERSION = "1"
 # Per-host delay range. The probe serializes the two variants (.com,
 # then .net) for a given state, so the smaller of these two values
 # governs the per-host pace.
@@ -383,6 +389,7 @@ async def probe_all_states(
                 await asyncio.sleep(random.uniform(RATE_LIMIT_MIN_S, RATE_LIMIT_MAX_S))
 
     return {
+        "schema_version": REGISTRY_SCHEMA_VERSION,
         "probe_run_id": probe_run_id,
         "probed_at": probed_at,
         "agent": USER_AGENT,
