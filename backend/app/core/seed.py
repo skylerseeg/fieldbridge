@@ -12,6 +12,13 @@ from app.core.config import settings
 from app.models.tenant import Tenant, SubscriptionTier, TenantStatus
 from app.models.user import User, UserRole
 
+# Importing excel_marts triggers each mart's schema.py registration against
+# Base.metadata via the `mart()` helper in services/excel_marts/_base.py. Without
+# this import, Base.metadata.create_all() below misses every mart_* table and
+# downstream module endpoints (Equipment, Work Orders, Bids, etc.) 500 because
+# they query tables that don't exist. Must run BEFORE create_all().
+import app.services.excel_marts  # noqa: F401, E402
+
 log = logging.getLogger("fieldbridge.seed")
 
 
