@@ -59,3 +59,12 @@ alongside main for weeks; auto-deploy on Render only fires from main.
    and remove the stub returns in `app/modules/market_intel/service.py`.
 5. Drop the n8n cron flow at
    `workers/n8n_flows/market_intel_daily.json`.
+
+### Registry validation (post-probe smoke check)
+
+Nine NAPC portals were manually verified during architecture discovery
+on 2026-04-29: see `docs/market-intel.md` -> "Registry validation". If
+the probe disagrees with that list, investigate the probe (network
+egress, header rejection, NAPC change) before trusting the new
+registry. The list is documented in the design doc, not in the test —
+CI must not depend on a manual list.

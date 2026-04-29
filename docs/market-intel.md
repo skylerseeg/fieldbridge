@@ -142,6 +142,65 @@ That's a `routes.tsx` edit + 301 redirect rules, not a refactor.
 | **Market Intel Frontend Worker** | `frontend/src/modules/market-intel/*` | New stream — first task: full UI per the brief in `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`. Runs against `VITE_USE_MOCK_DATA=true` until backend SQL lands. |
 | **Lead** | `app/main.py` route mount, `app/models/{bid_event,bid_result,contractor}`, `app/core/seed.py` shared-network bootstrap, `app/models/tenant.py` `kind` column, this doc, `docs/agent_board.md` | Scaffold landed. Reviews + merges. |
 
+## Registry validation
+
+The committed `state_portal_registry.json` is built offline by
+`backend/scripts/run_napc_probe.py`. The shape of that file is locked
+in by `backend/tests/unit/test_market_intel_registry.py`, but the
+shape test cannot tell whether the probe's network reality is
+honest — only whether the JSON is well-formed. Use this list as a
+post-probe smoke check.
+
+Nine NAPC portals were manually verified during architecture discovery
+on 2026-04-29 against a fresh browser:
+
+| State | Hostname            | Variant |
+|-------|---------------------|---------|
+| CA    | californiabids.com  | com     |
+| ID    | idahobids.com       | com     |
+| UT    | utahbids.net        | net     |
+| TX    | texasbids.net       | net     |
+| FL    | floridabids.net     | net     |
+| NV    | nevadabids.com      | com     |
+| NY    | newyorkbids.net     | net     |
+| NC    | northcarolinabids.com | com   |
+| GA    | georgiabids.net     | net     |
+
+After running the probe: each of these states' matching variant in
+`states[XX][variant].status` MUST be one of `200`, `3xx_resolved`, or
+`403_blocked`. Anything else (`404`, `dns_fail`, `ssl_error`,
+`timeout`, `200_parked`, etc.) means the probe disagrees with reality
+and you should investigate the probe — egress, header rejection, NAPC
+change, or a regression in `registry.py` — before committing the new
+registry. **Do not relax the smoke check by editing this list to match
+a broken probe.**
+
+Known apex quirks the probe has to handle (caught during the first
+real run on 2026-04-29):
+
+* `utahbids.com` returns HTTP 200 with a 114-byte JS redirect to
+  `/lander` — a domain-parking page. The probe classifies that as
+  `200_parked` and demotes it out of primary-variant selection;
+  `utahbids.net` is the real portal.
+* `idahobids.com` ships a TLS cert valid only for `www.idahobids.com`.
+  The probe falls back to the `www.` host and records `via_www: true`
+  on the variant entry.
+* `alaskabids.com` redirects through `akbids.com` to
+  `greatnorthauction.com`. The probe follows redirects and lands on
+  `3xx_resolved` with the resolved final URL.
+* **Massachusetts** uses `massbids.net` (43 KB live portal). The
+  algorithmic stem `massachusettsbids.{com,net}` DNS-fails;
+  `mabids.com` is parked. Captured as a one-off entry in
+  `_STATE_STEM_OVERRIDES` inside `registry.py`. New stem exceptions
+  go in that map with a date + verification note alongside the MA
+  entry — not in the JSON.
+
+Adding a new known quirk: append it here. Generic behaviors (parking
+detection, redirect handling, www-fallback) belong in `registry.py`;
+state-specific stem exceptions go in `_STATE_STEM_OVERRIDES` in the
+same file. The committed JSON is purely the probe output and never
+holds overrides.
+
 ## Out of scope (this branch)
 
 - Multi-tenant onboarding for non-VanCon contractors — v3.

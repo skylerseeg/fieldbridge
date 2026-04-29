@@ -1,0 +1,857 @@
+{
+  "probe_run_id": "91c730db-5a5e-48dd-b628-925df6cd6fb3",
+  "probed_at": "2026-04-29T19:12:15+00:00",
+  "agent": "FieldBridge-Research/1.0 (+https://fieldbridge.io/bot)",
+  "states": {
+    "AK": {
+      "com": {
+        "url": "https://alaskabids.com",
+        "status": "3xx_resolved",
+        "final_url": "https://www.greatnorthauction.com/",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://alaskabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.greatnorthauction.com/",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "AL": {
+      "com": {
+        "url": "https://alabamabids.com",
+        "status": "200",
+        "final_url": "https://alabamabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://alabamabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://alabamabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "AR": {
+      "com": {
+        "url": "https://arkansasbids.com",
+        "status": "200",
+        "final_url": "https://arkansasbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://arkansasbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://arkansasbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "AZ": {
+      "com": {
+        "url": "https://arizonabids.com",
+        "status": "200_parked",
+        "final_url": "https://arizonabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://arizonabids.net",
+        "status": "200",
+        "final_url": "https://www.arizonabids.net",
+        "via_www": true
+      },
+      "primary_url": "https://www.arizonabids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "CA": {
+      "com": {
+        "url": "https://californiabids.com",
+        "status": "200",
+        "final_url": "https://californiabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://californiabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://californiabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "CO": {
+      "com": {
+        "url": "https://coloradobids.com",
+        "status": "ssl_error",
+        "final_url": null,
+        "via_www": false
+      },
+      "net": {
+        "url": "https://coloradobids.net",
+        "status": "200",
+        "final_url": "https://www.coloradobids.net",
+        "via_www": true
+      },
+      "primary_url": "https://www.coloradobids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "CT": {
+      "com": {
+        "url": "https://connecticutbids.com",
+        "status": "200",
+        "final_url": "https://www.connecticutbids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://connecticutbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.connecticutbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "DE": {
+      "com": {
+        "url": "https://delawarebids.com",
+        "status": "200",
+        "final_url": "https://delawarebids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://delawarebids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://delawarebids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "FL": {
+      "com": {
+        "url": "https://floridabids.com",
+        "status": "3xx_resolved",
+        "final_url": "https://www.floridabids.com/",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://floridabids.net",
+        "status": "200",
+        "final_url": "https://www.floridabids.net",
+        "via_www": true
+      },
+      "primary_url": "https://www.floridabids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "GA": {
+      "com": {
+        "url": "https://georgiabids.com",
+        "status": "timeout",
+        "final_url": null,
+        "via_www": false
+      },
+      "net": {
+        "url": "https://georgiabids.net",
+        "status": "200",
+        "final_url": "https://www.georgiabids.net",
+        "via_www": true
+      },
+      "primary_url": "https://www.georgiabids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "HI": {
+      "com": {
+        "url": "https://hawaiibids.com",
+        "status": "3xx_resolved",
+        "final_url": "https://www.hugedomains.com/domain_profile.cfm?d=hawaiibids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://hawaiibids.net",
+        "status": "200",
+        "final_url": "https://www.hawaiibids.net",
+        "via_www": true
+      },
+      "primary_url": "https://www.hawaiibids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "IA": {
+      "com": {
+        "url": "https://iowabids.com",
+        "status": "200",
+        "final_url": "https://www.iowabids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://iowabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.iowabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "ID": {
+      "com": {
+        "url": "https://idahobids.com",
+        "status": "200",
+        "final_url": "https://www.idahobids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://idahobids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.idahobids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "IL": {
+      "com": {
+        "url": "https://illinoisbids.com",
+        "status": "200",
+        "final_url": "https://www.illinoisbids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://illinoisbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.illinoisbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "IN": {
+      "com": {
+        "url": "https://indianabids.com",
+        "status": "200",
+        "final_url": "https://www.indianabids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://indianabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.indianabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "KS": {
+      "com": {
+        "url": "https://kansasbids.com",
+        "status": "200",
+        "final_url": "https://www.kansasbids.com",
+        "via_www": true
+      },
+      "net": {
+        "url": "https://kansasbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://www.kansasbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "KY": {
+      "com": {
+        "url": "https://kentuckybids.com",
+        "status": "200",
+        "final_url": "https://kentuckybids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://kentuckybids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://kentuckybids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "LA": {
+      "com": {
+        "url": "https://louisianabids.com",
+        "status": "200",
+        "final_url": "https://louisianabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://louisianabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://louisianabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MA": {
+      "com": {
+        "url": "https://massbids.com",
+        "status": "200_parked",
+        "final_url": "https://massbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://massbids.net",
+        "status": "200",
+        "final_url": "https://massbids.net",
+        "via_www": false
+      },
+      "primary_url": "https://massbids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "91c730db-5a5e-48dd-b628-925df6cd6fb3"
+    },
+    "MD": {
+      "com": {
+        "url": "https://marylandbids.com",
+        "status": "200",
+        "final_url": "https://marylandbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://marylandbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://marylandbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "ME": {
+      "com": {
+        "url": "https://mainebids.com",
+        "status": "200",
+        "final_url": "https://mainebids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://mainebids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://mainebids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MI": {
+      "com": {
+        "url": "https://michiganbids.com",
+        "status": "3xx_resolved",
+        "final_url": "https://www.hugedomains.com/domain_profile.cfm?d=michiganbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://michiganbids.net",
+        "status": "200",
+        "final_url": "https://michiganbids.net",
+        "via_www": false
+      },
+      "primary_url": "https://michiganbids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MN": {
+      "com": {
+        "url": "https://minnesotabids.com",
+        "status": "200",
+        "final_url": "https://minnesotabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://minnesotabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://minnesotabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MO": {
+      "com": {
+        "url": "https://missouribids.com",
+        "status": "200",
+        "final_url": "https://missouribids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://missouribids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://missouribids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MS": {
+      "com": {
+        "url": "https://mississippibids.com",
+        "status": "200",
+        "final_url": "https://mississippibids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://mississippibids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://mississippibids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "MT": {
+      "com": {
+        "url": "https://montanabids.com",
+        "status": "200",
+        "final_url": "https://montanabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://montanabids.net",
+        "status": "3xx_resolved",
+        "final_url": "https://www.montanabid.com",
+        "via_www": false
+      },
+      "primary_url": "https://montanabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NC": {
+      "com": {
+        "url": "https://northcarolinabids.com",
+        "status": "200",
+        "final_url": "https://northcarolinabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://northcarolinabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://northcarolinabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "ND": {
+      "com": {
+        "url": "https://northdakotabids.com",
+        "status": "200",
+        "final_url": "https://northdakotabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://northdakotabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://northdakotabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NE": {
+      "com": {
+        "url": "https://nebraskabids.com",
+        "status": "200",
+        "final_url": "https://nebraskabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://nebraskabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://nebraskabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NH": {
+      "com": {
+        "url": "https://newhampshirebids.com",
+        "status": "200",
+        "final_url": "https://newhampshirebids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://newhampshirebids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://newhampshirebids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NJ": {
+      "com": {
+        "url": "https://newjerseybids.com",
+        "status": "200",
+        "final_url": "https://newjerseybids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://newjerseybids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://newjerseybids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NM": {
+      "com": {
+        "url": "https://newmexicobids.com",
+        "status": "200",
+        "final_url": "https://newmexicobids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://newmexicobids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://newmexicobids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NV": {
+      "com": {
+        "url": "https://nevadabids.com",
+        "status": "200",
+        "final_url": "https://nevadabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://nevadabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://nevadabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "NY": {
+      "com": {
+        "url": "https://newyorkbids.com",
+        "status": "200_parked",
+        "final_url": "https://newyorkbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://newyorkbids.net",
+        "status": "200",
+        "final_url": "https://newyorkbids.net",
+        "via_www": false
+      },
+      "primary_url": "https://newyorkbids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "OH": {
+      "com": {
+        "url": "https://ohiobids.com",
+        "status": "200",
+        "final_url": "https://ohiobids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://ohiobids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://ohiobids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "OK": {
+      "com": {
+        "url": "https://oklahomabids.com",
+        "status": "200",
+        "final_url": "https://oklahomabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://oklahomabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://oklahomabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "OR": {
+      "com": {
+        "url": "https://oregonbids.com",
+        "status": "200",
+        "final_url": "https://oregonbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://oregonbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://oregonbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "PA": {
+      "com": {
+        "url": "https://pennsylvaniabids.com",
+        "status": "200",
+        "final_url": "https://pennsylvaniabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://pennsylvaniabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://pennsylvaniabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "RI": {
+      "com": {
+        "url": "https://rhodeislandbids.com",
+        "status": "200",
+        "final_url": "https://rhodeislandbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://rhodeislandbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://rhodeislandbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "SC": {
+      "com": {
+        "url": "https://southcarolinabids.com",
+        "status": "200",
+        "final_url": "https://southcarolinabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://southcarolinabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://southcarolinabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "SD": {
+      "com": {
+        "url": "https://southdakotabids.com",
+        "status": "200",
+        "final_url": "https://southdakotabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://southdakotabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://southdakotabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "TN": {
+      "com": {
+        "url": "https://tennesseebids.com",
+        "status": "200",
+        "final_url": "https://tennesseebids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://tennesseebids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://tennesseebids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "TX": {
+      "com": {
+        "url": "https://texasbids.com",
+        "status": "200_parked",
+        "final_url": "https://texasbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://texasbids.net",
+        "status": "200",
+        "final_url": "https://texasbids.net",
+        "via_www": false
+      },
+      "primary_url": "https://texasbids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "UT": {
+      "com": {
+        "url": "https://utahbids.com",
+        "status": "200_parked",
+        "final_url": "https://utahbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://utahbids.net",
+        "status": "200",
+        "final_url": "https://utahbids.net",
+        "via_www": false
+      },
+      "primary_url": "https://utahbids.net",
+      "primary_variant": "net",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "VA": {
+      "com": {
+        "url": "https://virginiabids.com",
+        "status": "200",
+        "final_url": "https://virginiabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://virginiabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://virginiabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "VT": {
+      "com": {
+        "url": "https://vermontbids.com",
+        "status": "200",
+        "final_url": "https://vermontbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://vermontbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://vermontbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "WA": {
+      "com": {
+        "url": "https://washingtonbids.com",
+        "status": "200",
+        "final_url": "https://washingtonbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://washingtonbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://washingtonbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "WI": {
+      "com": {
+        "url": "https://wisconsinbids.com",
+        "status": "200",
+        "final_url": "https://wisconsinbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://wisconsinbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://wisconsinbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "WV": {
+      "com": {
+        "url": "https://westvirginiabids.com",
+        "status": "200",
+        "final_url": "https://westvirginiabids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://westvirginiabids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://westvirginiabids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    },
+    "WY": {
+      "com": {
+        "url": "https://wyomingbids.com",
+        "status": "200",
+        "final_url": "https://wyomingbids.com",
+        "via_www": false
+      },
+      "net": {
+        "url": "https://wyomingbids.net",
+        "status": "dns_fail",
+        "final_url": null,
+        "via_www": false
+      },
+      "primary_url": "https://wyomingbids.com",
+      "primary_variant": "com",
+      "last_changed_run_id": "5600b315-96f2-4c8f-abbc-f605cec4a3ed"
+    }
+  }
+}
