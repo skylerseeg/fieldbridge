@@ -318,11 +318,24 @@ def _add_row_hash(df: pd.DataFrame, job: IngestJob) -> pd.DataFrame:
 def _drop_null_dedupe(
     df: pd.DataFrame, keys: list[str]
 ) -> tuple[pd.DataFrame, int]:
+    """Drop rows that can't be upserted: nulls in dedupe keys + intra-batch
+    duplicates on those same keys.
+
+    Postgres's `INSERT ... ON CONFLICT DO UPDATE` raises CardinalityViolation
+    when the same batch carries two rows with identical constraint columns —
+    it can't pick which one to apply. Source Excel exports routinely contain
+    such duplicates (manual data entry, repeated barcodes, paired bid lines,
+    etc.), so we collapse them to last-wins here. `skipped` reports the total
+    of both null-drop and dedupe-drop, since both are "not written".
+    """
     present = [k for k in keys if k in df.columns]
     if not present:
         return df, 0
-    mask = df[present].isna().any(axis=1)
-    return df.loc[~mask].copy(), int(mask.sum())
+    null_mask = df[present].isna().any(axis=1)
+    no_nulls = df.loc[~null_mask].copy()
+    deduped = no_nulls.drop_duplicates(subset=present, keep="last")
+    skipped = int(null_mask.sum()) + (len(no_nulls) - len(deduped))
+    return deduped, skipped
 
 
 # Driver-level parameter caps. We chunk rows so (rows × cols) stays under
