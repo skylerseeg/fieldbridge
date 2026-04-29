@@ -7,20 +7,19 @@ brief lives in `PROPOSED_CHANGES.md` next to this file. Design doc:
 
 ## Status (2026-04-29)
 
-**Slice 1 of 4 landed.** Module skeleton + plumbing + KPIs.
+**Slices 1–2 of 4 landed.** Module skeleton + plumbing + KPIs +
+Competitor curves tab.
 
 | Slice | Scope                                                                | State |
 |------:|----------------------------------------------------------------------|-------|
 |     1 | Types, client, mock fixtures, hooks, page shell, KPI strip, tab stubs | done  |
-|     2 | Tab 1 — Competitor curves: scatter chart, side-sheet drilldown, table | next  |
-|     3 | Tab 2 — Opportunity gaps: bars + top-10 list + scope filter          | after |
-|     4 | Tab 3 — Bid calibration: dual-axis chart + table; `--color-good` /<br> `--color-watch` token add; CSS bundle delta in PR description | after |
+|     2 | Tab 1 — Competitor curves: scatter chart, side-sheet drilldown, table; `--color-good` / `--color-watch` token add; first per-tab vitest | done |
+|     3 | Tab 2 — Opportunity gaps: bars + top-10 list + scope filter          | next  |
+|     4 | Tab 3 — Bid calibration: dual-axis ComposedChart + highlighted-row table; CSS bundle delta in PR description | after |
 
-The three tabs already render against real data fetches (or mocks);
-they currently show "lands in slice N" placeholders inside the
-populated branch while the empty / loading / error branches are
-final. Swapping the placeholder for the real chart in subsequent
-slices is purely additive.
+Tabs 2 and 3 still render the slice-1 "lands in slice N" placeholder
+inside the populated branch; their empty / loading / error branches
+are final. Swapping placeholder → real chart remains additive.
 
 ## API contract
 
@@ -107,7 +106,7 @@ caller's `tenant_id` with the shared-network sentinel
 a tenant id; the JWT carries it. Auth refresh is handled by the
 shared `lib/api.ts` interceptor.
 
-## Known follow-ups (out of slice 1)
+## Known follow-ups
 
 - **`/api/market-intel/summary` endpoint.** KPI tile 1 (`Bid events
   tracked`) currently displays `sum(bid_count)` from competitor
@@ -116,12 +115,31 @@ shared `lib/api.ts` interceptor.
   Backend Worker brief at
   `backend/app/services/market_intel/README.md` should add this when
   analytics SQL lands.
-- **Detail routes.** Slice 2/3 will `navigate()` to
-  `/market-intel/contractor/${slug}` and
-  `/market-intel/gap/${state}/${county}`. Those routes aren't wired
-  in `routes.tsx` (Lead-owned). A `PROPOSED_CHANGES.md` ask will
-  ship with the relevant slice.
-- **Token additions.** Slice 4 adds `--color-good` and
-  `--color-watch` to `index.css` + `tailwind.config.ts` per the
-  brief, mirroring the Frontend Polish worker's `field-mode.css`
-  pattern. Out of slice 1 scope.
+- **Contractor detail route — Lead ask.** The Competitor curves
+  drilldown's "View bid history" button calls
+  `navigate("/market-intel/contractor/${slug}")` where `slug` is
+  derived from `contractor_name` via `slugifyContractor()` (lower-
+  cased, `&` → "and", non-alphanumerics → hyphens, trimmed). That
+  route is **not yet wired in `routes.tsx`**. Suggested wiring,
+  paralleling the existing `/market-intel` lazy import:
+
+  ```tsx
+  import { ContractorDetailPage } from "@/modules/market-intel/ContractorDetailPage";
+  // …
+  { path: "market-intel/contractor/:slug", element: <ContractorDetailPage /> },
+  ```
+
+  A placeholder page can ship with this module when the slice that
+  builds the detail view lands (likely v2.1 or later — out of the
+  v1.5 scope). Until then the button navigates to a path that hits
+  the catch-all 404, which is a known and acceptable interim.
+- **Gap detail route — Lead ask, slice 3.** Slice 3 will
+  `navigate("/market-intel/gap/${state}/${county}")` from the top-10
+  opportunity-gap list. Same handoff pattern.
+- **`/api/market-intel/summary` endpoint.** KPI tile 1 (`Bid events
+  tracked`) currently displays `sum(bid_count)` from competitor
+  curves, labelled "bid lines" — honest but approximate. A proper
+  network-wide event count belongs in a backend `summary` route. The
+  Backend Worker brief at
+  `backend/app/services/market_intel/README.md` should add this when
+  analytics SQL lands.

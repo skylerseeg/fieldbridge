@@ -63,6 +63,29 @@
     --input: 214 32% 91%;
     --ring: 160 84% 39%;                      /* matches primary              */
 
+    /*
+     * Market Intel duotone — `good` (teal) for active/healthy signals,
+     * `watch` (coral) for alert-this signals. Two ramps max per the
+     * Market Intel UI brief. Distinct hues from `primary` (emerald)
+     * and `warning` (orange) so the bid-intel ramps don't collide
+     * with the operations dashboards' severity palette.
+     *
+     * Tailwind exposes these as `good` / `watch` color names (see
+     * tailwind.config.ts). The win-rate-colored scatter dots in
+     * `modules/market-intel/components/CompetitorCurves.tsx` keep
+     * the same hue/saturation and vary only lightness — see the
+     * `TEAL_RAMP` constant there for the derivation.
+     *
+     * Field-mode overrides for these tokens are intentionally NOT in
+     * `field-mode.css` yet — that file is owned by the Frontend
+     * Polish worker, and Market Intel isn't a field-deployed module
+     * today. Add overrides there when that changes.
+     */
+    --color-good: 173 80% 36%;                /* #14B8A6  teal                */
+    --color-good-foreground: 0 0% 100%;
+    --color-watch: 4 92% 64%;                 /* #F87171  coral               */
+    --color-watch-foreground: 0 0% 100%;
+
     --radius: 0.5rem;
   }
 }
