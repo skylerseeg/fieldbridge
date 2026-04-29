@@ -7,19 +7,20 @@ brief lives in `PROPOSED_CHANGES.md` next to this file. Design doc:
 
 ## Status (2026-04-29)
 
-**Slices 1–2 of 4 landed.** Module skeleton + plumbing + KPIs +
-Competitor curves tab.
+**Slices 1–3 of 4 landed.** Module skeleton + plumbing + KPIs +
+Competitor curves tab + Opportunity gaps tab.
 
 | Slice | Scope                                                                | State |
 |------:|----------------------------------------------------------------------|-------|
 |     1 | Types, client, mock fixtures, hooks, page shell, KPI strip, tab stubs | done  |
 |     2 | Tab 1 — Competitor curves: scatter chart, side-sheet drilldown, table; `--color-good` / `--color-watch` token add; first per-tab vitest | done |
-|     3 | Tab 2 — Opportunity gaps: bars + top-10 list + scope filter          | next  |
-|     4 | Tab 3 — Bid calibration: dual-axis ComposedChart + highlighted-row table; CSS bundle delta in PR description | after |
+|     3 | Tab 2 — Opportunity gaps: grouped BarChart + top-10 list + scope-code multi-select; coral-ramp first use; per-tab vitest; route asks filed in `PROPOSED_CHANGES_routes.md` | done |
+|     4 | Tab 3 — Bid calibration: dual-axis ComposedChart + highlighted-row table; CSS bundle delta in PR description | next  |
 
-Tabs 2 and 3 still render the slice-1 "lands in slice N" placeholder
-inside the populated branch; their empty / loading / error branches
-are final. Swapping placeholder → real chart remains additive.
+Only the Bid calibration tab still renders a slice-1 "lands in
+slice N" placeholder inside its populated branch; empty / loading /
+error branches are final. Swapping placeholder → real chart remains
+additive.
 
 ## API contract
 
@@ -69,12 +70,13 @@ frontend/src/modules/market-intel/
 │   └── useBidCalibration.ts
 └── components/
     ├── ModuleHeader.tsx               # H1 + subtitle + filter bar
-    ├── StateMultiSelect.tsx           # dropdown-menu-based multi-select
+    ├── StateMultiSelect.tsx           # dropdown-menu-based state filter
+    ├── ScopeMultiSelect.tsx           # dropdown-menu-based scope-code filter
     ├── KpiStrip.tsx                   # 4 KPI tiles, derives from datasets
     ├── EmptyState.tsx                 # default / info / error variants
-    ├── CompetitorCurves.tsx           # tab — slice 2 will land the chart
-    ├── OpportunityGaps.tsx            # tab — slice 3 will land the chart
-    └── BidCalibration.tsx             # tab — slice 4 will land the chart
+    ├── CompetitorCurves.tsx           # tab 1 — scatter + sheet + table (slice 2)
+    ├── OpportunityGaps.tsx            # tab 2 — bars + top-10 list (slice 3)
+    └── BidCalibration.tsx             # tab 3 — slice 4 will land the chart
 ```
 
 ## Adding a new tab
@@ -115,27 +117,17 @@ shared `lib/api.ts` interceptor.
   Backend Worker brief at
   `backend/app/services/market_intel/README.md` should add this when
   analytics SQL lands.
-- **Contractor detail route — Lead ask.** The Competitor curves
-  drilldown's "View bid history" button calls
-  `navigate("/market-intel/contractor/${slug}")` where `slug` is
-  derived from `contractor_name` via `slugifyContractor()` (lower-
-  cased, `&` → "and", non-alphanumerics → hyphens, trimmed). That
-  route is **not yet wired in `routes.tsx`**. Suggested wiring,
-  paralleling the existing `/market-intel` lazy import:
+- **Detail routes — Lead ask, see `PROPOSED_CHANGES_routes.md`**.
+  Both the Competitor curves drilldown ("View bid history") and the
+  Opportunity gaps top-10 list (row click) `navigate()` to detail
+  paths that aren't yet wired in `routes.tsx`:
+  - `/market-intel/contractor/:slug` (slice 2)
+  - `/market-intel/gap/:state/:county` (slice 3)
 
-  ```tsx
-  import { ContractorDetailPage } from "@/modules/market-intel/ContractorDetailPage";
-  // …
-  { path: "market-intel/contractor/:slug", element: <ContractorDetailPage /> },
-  ```
-
-  A placeholder page can ship with this module when the slice that
-  builds the detail view lands (likely v2.1 or later — out of the
-  v1.5 scope). Until then the button navigates to a path that hits
-  the catch-all 404, which is a known and acceptable interim.
-- **Gap detail route — Lead ask, slice 3.** Slice 3 will
-  `navigate("/market-intel/gap/${state}/${county}")` from the top-10
-  opportunity-gap list. Same handoff pattern.
+  The PROPOSED_CHANGES file has the slug derivation, URL contract,
+  encoding rules, edge cases (state-only rows), and the suggested
+  routes.tsx wiring snippet. Until wired, the buttons navigate to
+  paths that hit the catch-all 404 — known and acceptable for v1.5.
 - **`/api/market-intel/summary` endpoint.** KPI tile 1 (`Bid events
   tracked`) currently displays `sum(bid_count)` from competitor
   curves, labelled "bid lines" — honest but approximate. A proper
