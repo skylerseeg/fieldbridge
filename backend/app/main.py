@@ -26,6 +26,7 @@ from app.modules.executive_dashboard import (
 )
 from app.modules.fleet_pnl import router as fleet_pnl_module_router
 from app.modules.jobs import router as jobs_module_router
+from app.modules.market_intel import router as market_intel_module_router
 from app.modules.predictive_maintenance import (
     router as predictive_maintenance_module_router,
 )
@@ -118,6 +119,15 @@ app.include_router(
     predictive_maintenance_module_router,
     prefix="/api/predictive-maintenance",
     tags=["Predictive Maintenance (Marts)"],
+)
+# Market Intel (v1.5) — public bid network analytics. Reads return []
+# until the scraper pipeline accumulates data; UI works against mocks
+# in the meantime via VITE_USE_MOCK_DATA=true. Full design:
+# docs/market-intel.md.
+app.include_router(
+    market_intel_module_router,
+    prefix="/api/market-intel",
+    tags=["Market Intel (Bid Network)"],
 )
 
 

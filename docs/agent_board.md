@@ -45,6 +45,8 @@ and the open contract surface.
 | Cost Coding        | `app/modules/cost_coding`          | `src/modules/cost-coding`      | `mart_cost_coding`                  | Live + LLM     |
 | Frontend Polish    | (none)                             | `routes.tsx`, `layouts/`       | —                                   | Lead-owned     |
 | Tests/CI           | `backend/tests/`, `.github/`       | (vitest later)                 | —                                   | Healthy        |
+| Market Intel BE    | `app/services/market_intel/`, `app/modules/market_intel/{service,router}` SQL fill-in | (none) | `bid_events`, `bid_results`, `contractors` (NEW, not mart_*) | **v1.5 — branch only, see below** |
+| Market Intel FE    | (none)                             | `src/modules/market-intel`     | —                                   | **v1.5 — branch only, see below** |
 
 ### Adjacent modules already shipped (not in the 10 but tracked)
 
@@ -541,6 +543,69 @@ and the open contract surface.
   gzip. CI build time will increase ~5-10s from the chunk-graph
   resolution but that's nothing against the runtime UX win. Awaiting
   Lead's pick.
+
+## Market Intel (v1.5 — branch-only)
+
+- **2026-04-29 — Lead** scaffolded `feature/market-intel-v15` off
+  `main`. **Do NOT merge to main until v1 deploy is locked.** The
+  branch holds the schema + module skeleton + worker briefs; auto-deploy
+  on Render only fires from main, so this branch is safe to develop in
+  parallel for weeks.
+
+  Strategic context: state-by-state public bid network scraping
+  (NAPC's `{state}bids.{com,net}` portals + state DOT bid tabs) →
+  unified dataset → Bid Intelligence layer. Full design in
+  `docs/market-intel.md`. The "Bid Intelligence" UI is a peer route
+  at `/market-intel`, sidebar entry under Intelligence between
+  Bids and Proposals. Future regrouping under `/intelligence/*`
+  parent in v3 documented as a known future move.
+
+  Scaffold landed:
+  * `app/models/{bid_event,bid_result,contractor}.py` — three new
+    tenant-scoped tables. `tenant_id` on every row; shared-network
+    sentinel for cross-tenant data.
+  * `app/models/tenant.py` extended with `kind` enum column
+    (`customer | shared_dataset | internal_test`). Defaulted to
+    `customer` so existing rows are unaffected.
+  * `app/core/seed.py` extended: deterministic UUIDv5 sentinel
+    `7744601c-1f54-5ea4-988e-63c5e2740ee3` from
+    `uuid5(NAMESPACE_DNS, "shared.fieldbridge.network")`. New
+    `_seed_shared_network_tenant` step is idempotent.
+  * `backend/scripts/migrate_tenants_add_kind.py` — one-shot
+    `ALTER TABLE tenants ADD COLUMN IF NOT EXISTS kind ...` for
+    prod environments seeded before this column existed. Run from
+    Render Shell when this branch eventually merges.
+  * `app/modules/market_intel/{router,schema,service}.py` — read API
+    mounted at `/api/market-intel/{competitor-curves,opportunity-gaps,bid-calibration}`.
+    Routes return 200 with `[]` (NOT 501) until the Backend Worker
+    fills in SQL — matches production state during dark accumulation.
+  * `app/services/market_intel/` — service folder with README +
+    worker brief. Scrapers, normalizers, analytics SQL templates,
+    pipeline orchestrator: all to be filled in by Market Intel
+    Backend Worker.
+  * `frontend/src/modules/market-intel/MarketIntelPage.tsx` —
+    placeholder shell so the route resolves. Full UI brief in
+    `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`.
+  * `frontend/src/routes.tsx` + `components/shell/nav-config.tsx`
+    wired.
+  * `docs/market-intel.md` — full design doc, locks navigation
+    contract + tenant scoping pattern + risk flags (NAPC ToS,
+    robots.txt, PII).
+
+  **Worker stream spinup (2 streams)**:
+  * **Market Intel Backend Worker** — first task: `registry.py`
+    probe across 50 NAPC state portals → commit
+    `state_portal_registry.json`. Then 50 captured Idaho post
+    fixtures + `parse_bid_post` validation. Brief at
+    `app/services/market_intel/README.md`.
+  * **Market Intel Frontend Worker** — first task: full UI per
+    brief at `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`.
+    Runs against `VITE_USE_MOCK_DATA=true` until backend SQL lands.
+
+  Lane discipline: branch-isolated. Workers' PRs target
+  `feature/market-intel-v15` for review, NOT main. Lead reviews +
+  merges into the feature branch. Final feature-branch → main merge
+  is a single Lead operation gated on v1 lock.
 
 ## Recent Merges
 

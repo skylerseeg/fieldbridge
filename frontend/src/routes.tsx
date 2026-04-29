@@ -24,6 +24,7 @@ import { CostCodingPage } from "@/modules/cost-coding/CostCodingPage";
 import { PredictiveMaintenancePage } from "@/modules/predictive-maintenance/PredictiveMaintenancePage";
 import { RecommendationsPage } from "@/modules/recommendations/RecommendationsPage";
 import { BidsPage } from "@/modules/bids/BidsPage";
+import { MarketIntelPage } from "@/modules/market-intel/MarketIntelPage";
 import { ProposalsPage } from "@/modules/proposals/ProposalsPage";
 
 // Knowledge
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
           { path: "predictive-maintenance", element: <PredictiveMaintenancePage /> },
           { path: "recommendations", element: <RecommendationsPage /> },
           { path: "bids", element: <BidsPage /> },
+          { path: "market-intel", element: <MarketIntelPage /> },
           { path: "proposals", element: <ProposalsPage /> },
 
           // Knowledge
