@@ -1,37 +1,128 @@
-"""Abstract base classes for bid-network scrapers.
+"""Abstract base classes + canonical output dataclasses for bid-network
+scrapers.
 
-These are signatures, not implementations. The first concrete
-implementation lands in the next slice — this module exists so the
-``scrapers/`` package has its contract documented before the NAPC
-fetcher and parsers are written.
+These are signatures + types, not concrete implementations. Each
+network's concrete parser (``napc_network``, ``state_dot/itd``, future
+``state_dot/udot``…) lives in its own subpackage and produces
+``ParsedBidPost`` instances, which the pipeline orchestrator (slice 4)
+maps onto ``BidEvent`` + ``BidResult`` ORM rows.
 
-Three contracts:
+Four contracts in this module:
 
-    Fetcher    — robots-aware, rate-limited HTTP. Wraps httpx.
-    PostParser — pure HTML → structured rows. No I/O.
-    Pipeline   — orchestrates Fetcher + PostParser + DB write for a
-                 single (network, state) tuple.
+    FetchedDocument — output of a fetch (HTML or PDF bytes).
+    ParsedBidder    — one bidder on a post. Pure data.
+    ParsedBidPost   — one bid event + its bidder list. Pure data.
+    Fetcher / PostParser / Pipeline — protocol ABCs the pipeline reads.
+
+ParsedBidPost is intentionally network-agnostic. The pipeline doesn't
+know whether a post came from NAPC's HTML portal, ITD's PDF abstract,
+or UDOT's Excel bid tab — it sees the same dataclass either way.
 """
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import date
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 
+# ---------------------------------------------------------------------------
+# Fetch output
+
 @dataclass
-class FetchedPage:
-    """Output of a successful fetch. Inputs to a PostParser."""
+class FetchedDocument:
+    """Output of a successful fetch.
+
+    ``content`` is bytes — for HTML sources it's UTF-8-encoded markup;
+    for PDF sources it's the raw PDF binary. Parsers know which to
+    expect and decode accordingly.
+    """
 
     url: str
     final_url: str
     status: int
-    html: str
+    content: bytes
     fetched_at: str  # ISO-8601 UTC
+    content_type: str | None = None  # e.g. "text/html", "application/pdf"
 
+
+# Backward-compat alias for the slice-1 NAPC scaffold which referenced
+# FetchedPage (HTML-only). Slice 3's concrete fetcher will produce
+# FetchedDocument; the alias keeps imports stable until then.
+FetchedPage = FetchedDocument
+
+
+# ---------------------------------------------------------------------------
+# Parser output (canonical, source-agnostic)
+
+@dataclass(frozen=True)
+class ParsedBidder:
+    """One bidder's submission on a single bid post.
+
+    Maps onto ``app.models.bid_result.BidResult`` columns one-for-one.
+    The pipeline orchestrator does the conversion; parsers never touch
+    the ORM. Frozen so accidental mutation can't smuggle bad data into
+    a DB write.
+    """
+
+    contractor_name: str
+    bid_amount: float | None
+    rank: int | None
+    is_low_bidder: bool
+    is_awarded: bool
+    contractor_url: str | None = None
+    # Source-network-specific contractor identifier (e.g. AASHTOWare
+    # "Vendor ID" on ITD abstracts: "C0029"). Useful for canonical
+    # contractor resolution downstream; ignored if missing.
+    vendor_id: str | None = None
+    # Free-text annotations the source flagged on this bid (e.g.
+    # "Irregular Bid" on ITD). Surfaced for human review; not
+    # propagated into BidResult columns.
+    notes: str | None = None
+
+
+@dataclass(frozen=True)
+class ParsedBidPost:
+    """One bid event plus its full bidder list.
+
+    Maps onto ``app.models.bid_event.BidEvent`` (top-level) + a list of
+    ``app.models.bid_result.BidResult`` rows (the ``bidders`` tuple).
+    Frozen + tuple-typed bidders so accidental mutation can't slip
+    through to DB write paths.
+    """
+
+    # Provenance — set by the parser from caller-supplied context
+    source_url: str
+    source_network: str        # 'napc' | 'state_dot_itd' | 'state_dot_udot' …
+    source_state: str          # 2-letter USPS
+
+    # Project
+    project_title: str
+    project_owner: str | None = None
+    work_scope: str | None = None
+    solicitation_id: str | None = None
+
+    # Timeline
+    bid_open_date: date | None = None
+    # Open-vs-closed-vs-awarded-vs-cancelled. ITD bid abstracts are
+    # always 'awarded' or 'closed' since they're post-bid. NAPC posts
+    # span the full lifecycle.
+    bid_status: str | None = None
+
+    # Geography
+    location_city: str | None = None
+    location_county: str | None = None
+    location_state: str | None = None  # 2-letter USPS, redundant with source_state but ORM-mapped
+
+    # Bidders
+    bidders: tuple[ParsedBidder, ...] = field(default_factory=tuple)
+
+
+# ---------------------------------------------------------------------------
+# Protocol ABCs
 
 class Fetcher(ABC):
     """Robots-aware, rate-limited HTTP wrapper.
@@ -43,23 +134,22 @@ class Fetcher(ABC):
     """
 
     @abstractmethod
-    async def fetch(self, url: str) -> FetchedPage | None:
-        """Return the fetched page, or ``None`` if blocked by robots,
-        rate-limited out, or non-2xx."""
+    async def fetch(self, url: str) -> FetchedDocument | None:
+        """Return the fetched document, or ``None`` if blocked by
+        robots, rate-limited out, or non-2xx."""
 
 
 class PostParser(ABC):
-    """Pure HTML -> structured rows. No network, no DB.
+    """Pure source-format → ``ParsedBidPost``. No network, no DB.
 
-    The output shape is intentionally permissive at this layer; the
-    pipeline maps it onto ``BidEvent`` + ``BidResult`` columns. Keeping
-    the parser model-agnostic means we can change ORM column names
-    without touching parser code."""
+    Subclasses pick one source format (HTML for NAPC, PDF for ITD).
+    Returns ``None`` when the input isn't a recognized post — never
+    raises on malformed input.
+    """
 
     @abstractmethod
-    def parse(self, page: FetchedPage) -> dict[str, Any] | None:
-        """Return a dict with at least ``bid_event`` and ``bid_results``
-        keys, or ``None`` if the page isn't a recognized post."""
+    def parse(self, doc: FetchedDocument) -> ParsedBidPost | None:
+        """Return the parsed post, or ``None`` if unparseable."""
 
 
 class Pipeline(ABC):
