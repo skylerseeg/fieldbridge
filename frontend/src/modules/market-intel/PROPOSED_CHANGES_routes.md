@@ -1,7 +1,7 @@
 # PROPOSED_CHANGES — Market Intel detail routes
 
 **Author**: Market Intel Frontend Worker
-**Branch**: `feat/market-intel-fe-slice-3` (raised in PR #8)
+**Branch**: `feat/market-intel-fe-slice-3` (raised in PR #9, follow-up clarifications carried in PR #10 alongside placeholder pages)
 **Audience**: Lead Agent (`frontend/src/routes.tsx` is Lead-owned)
 **Status**: ask — workers don't edit `routes.tsx` directly
 
@@ -101,11 +101,14 @@ Examples:
    Recommendation: filter for v1.5; add the state-only route in v2.1
    alongside the choropleth.
 
-2. **404 fallback.** Until these routes are wired, the buttons
-   navigate to a path that doesn't match any route → React Router
-   falls through to whatever your catch-all does today. If you want
-   user-visible "Coming soon" copy in the interim, I can drop two
-   placeholder pages and you wire them. Just say the word.
+2. **404 fallback — placeholder pages now ship in this module**
+   (slice 4). `frontend/src/modules/market-intel/ContractorDetailPage.tsx`
+   and `frontend/src/modules/market-intel/GapDetailPage.tsx` render
+   a "Coming soon — bid history not implemented yet" card with the
+   echoed slug or state/county, plus a Back link to `/market-intel`.
+   Wiring `routes.tsx` to point at them is the only remaining step;
+   until then the buttons hit the catch-all 404, which is the
+   documented v1.5 interim.
 
 ## Suggested wiring location
 
