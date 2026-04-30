@@ -41,6 +41,8 @@ from typing import Any
 
 import pdfplumber
 
+from urllib.parse import urljoin, urlparse
+
 from app.services.market_intel.scrapers._base import (
     FetchedDocument,
     ParsedBidder,
@@ -49,6 +51,25 @@ from app.services.market_intel.scrapers._base import (
 )
 
 log = logging.getLogger("fieldbridge.market_intel.itd")
+
+
+# ---------------------------------------------------------------------------
+# Pipeline-facing constants. Used by ``services.market_intel.pipeline``
+# to orchestrate ITD ingest. Centralized here so a future ITD URL
+# change is a one-file edit.
+
+INDEX_URL = "https://itd.idaho.gov/contractor-bidding/"
+SOURCE_NETWORK = "state_dot_itd"
+
+# Parse-result status codes returned by ``parse_bid_abstract_full``.
+# The pipeline maps these onto its counters dict for n8n logging.
+PARSE_OK = "ok"
+PARSE_LEGACY_TEMPLATE = "legacy_template"
+PARSE_UNKNOWN_TEMPLATE = "unknown_template"
+PARSE_CORRUPT_PDF = "corrupt_pdf"
+PARSE_MISSING_FIELDS = "missing_required_fields"
+PARSE_NO_VENDORS = "no_vendor_rows"
+PARSE_EMPTY_INPUT = "empty_input"
 
 
 # ---------------------------------------------------------------------------
@@ -122,39 +143,76 @@ def parse_bid_abstract(pdf_bytes: bytes, source_url: str) -> ParsedBidPost | Non
 
     Never raises on malformed input — the pipeline's fail-soft policy
     expects a clean None.
+
+    Convenience wrapper around ``parse_bid_abstract_full`` that drops
+    the status code. Pipeline consumers should call ``_full`` directly
+    so they can distinguish legacy-template skips from parse errors.
+    """
+    post, _ = parse_bid_abstract_full(pdf_bytes, source_url)
+    return post
+
+
+def parse_bid_abstract_full(
+    pdf_bytes: bytes,
+    source_url: str,
+) -> tuple[ParsedBidPost | None, str]:
+    """Parse a bid abstract PDF and return (post|None, status_code).
+
+    Status codes (module-level constants ``PARSE_*``):
+
+      * ``PARSE_OK``                 — successful parse
+      * ``PARSE_LEGACY_TEMPLATE``    — older "Official Bid Abstracts"
+                                       layout; v1.5b backfill target
+      * ``PARSE_UNKNOWN_TEMPLATE``   — recognized neither v1 nor legacy
+      * ``PARSE_CORRUPT_PDF``        — pdfplumber failed (bad bytes)
+      * ``PARSE_EMPTY_INPUT``        — empty/missing pdf_bytes
+      * ``PARSE_MISSING_FIELDS``     — v1 layout but required fields
+                                       absent (Contract ID etc.)
+      * ``PARSE_NO_VENDORS``         — v1 layout but vendor table empty
+
+    The pipeline's counters dict reads the status code to distinguish
+    ``skipped_legacy_template`` from ``skipped_parse_error`` for n8n
+    logging.
     """
     if not pdf_bytes:
-        return None
+        return None, PARSE_EMPTY_INPUT
 
     try:
         with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
             if not pdf.pages:
-                return None
+                return None, PARSE_CORRUPT_PDF
             page1_text = pdf.pages[0].extract_text() or ""
     except Exception as exc:
-        # pdfplumber raises a variety of internal exceptions on
-        # corrupt PDFs; pdfminer/pdf-syntax errors all funnel through
-        # here. Failing soft is intentional.
         log.warning("itd: pdfplumber failed on %s: %s", source_url, exc)
-        return None
+        return None, PARSE_CORRUPT_PDF
 
-    return _parse_v1_text(page1_text, source_url=source_url)
+    return _parse_v1_text_full(page1_text, source_url=source_url)
 
 
 def _parse_v1_text(text: str, *, source_url: str) -> ParsedBidPost | None:
-    """The text-only parser core. Public-ish for unit testing without
-    needing a real PDF — pass a string that imitates the page-1 text
-    of an aashtoware_v1 abstract."""
+    """Convenience wrapper around ``_parse_v1_text_full``."""
+    post, _ = _parse_v1_text_full(text, source_url=source_url)
+    return post
+
+
+def _parse_v1_text_full(
+    text: str, *, source_url: str,
+) -> tuple[ParsedBidPost | None, str]:
+    """The text-only parser core with status-code return.
+
+    Public-ish for unit testing without needing a real PDF — pass a
+    string that imitates the page-1 text of an aashtoware_v1 abstract.
+    """
     if not text:
-        return None
+        return None, PARSE_EMPTY_INPUT
 
     # Template gate. Both anchors required.
     if ANCHOR_AASHTOWARE not in text or ANCHOR_VENDOR_RANKING not in text:
         if ANCHOR_LEGACY in text:
             log.info("itd: legacy template at %s — skip-with-warn", source_url)
-        else:
-            log.warning("itd: unrecognized template at %s", source_url)
-        return None
+            return None, PARSE_LEGACY_TEMPLATE
+        log.warning("itd: unrecognized template at %s", source_url)
+        return None, PARSE_UNKNOWN_TEMPLATE
 
     # Required fields. If any of these are missing, the PDF is
     # structurally too damaged to trust — return None.
@@ -168,7 +226,7 @@ def _parse_v1_text(text: str, *, source_url: str) -> ParsedBidPost | None:
             "(contract_id=%r, desc=%r, letting=%r)",
             source_url, contract_id, contract_desc, letting_date_str,
         )
-        return None
+        return None, PARSE_MISSING_FIELDS
 
     bid_open_date = _parse_letting_date(letting_date_str)
     counties = _first_group(RE_COUNTIES, text) or None
@@ -176,11 +234,11 @@ def _parse_v1_text(text: str, *, source_url: str) -> ParsedBidPost | None:
     bidders = _parse_vendor_rows(text)
     if not bidders:
         log.warning("itd: no vendor rows parsed at %s", source_url)
-        return None
+        return None, PARSE_NO_VENDORS
 
-    return ParsedBidPost(
+    post = ParsedBidPost(
         source_url=source_url,
-        source_network="state_dot_itd",
+        source_network=SOURCE_NETWORK,
         source_state="ID",
         project_title=contract_desc.strip(),
         project_owner="Idaho Transportation Department",
@@ -193,6 +251,7 @@ def _parse_v1_text(text: str, *, source_url: str) -> ParsedBidPost | None:
         location_state="ID",
         bidders=tuple(bidders),
     )
+    return post, PARSE_OK
 
 
 def _first_group(pattern: re.Pattern[str], text: str) -> str | None:
@@ -265,6 +324,70 @@ def _parse_vendor_rows(text: str) -> list[ParsedBidder]:
                 notes=irregular,
             )
         )
+    return out
+
+
+# ---------------------------------------------------------------------------
+# URL discovery (index page → list of abstract PDF URLs)
+
+# Match an ITD abstract PDF URL: ``.../abst{key}.pdf``. The key is
+# alphanumeric (digits for typical projects, letters for proposals
+# like B200526). Trailing path before the filename varies; we don't
+# anchor on the host so the same regex works against any captured
+# index-page HTML.
+RE_ABSTRACT_HREF = re.compile(r"/abst[^/]+?\.pdf\b", re.IGNORECASE)
+
+# Anything matching these suffixes is a known non-bid-abstract document
+# inadvertently named ``abst*.pdf``. Empty for now; populate as known
+# false-positives are discovered.
+ABSTRACT_URL_BLOCKLIST: tuple[str, ...] = ()
+
+
+def discover_idaho_abstract_urls(
+    index_html: str,
+    *,
+    base_url: str = INDEX_URL,
+    limit: int | None = None,
+) -> list[str]:
+    """Pure function: extract bid-abstract PDF URLs from index-page HTML.
+
+    Returns absolute https:// URLs in DOM order (presumed
+    newest-first by ITD's listing convention). Used by both the
+    pipeline and the capture script.
+
+    Filters:
+
+      * URL ends with ``.pdf``
+      * Filename starts with ``abst`` (case-insensitive)
+      * URL not present in ``ABSTRACT_URL_BLOCKLIST``
+      * scheme is ``https`` (relative hrefs get joined against
+        ``base_url`` to absolutize)
+
+    Duplicates are deduplicated in DOM order. ``limit`` caps the return
+    list size; ``None`` means no cap.
+    """
+    # Local import to keep test surface tight — bs4 is heavy.
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(index_html, "lxml")
+    seen: set[str] = set()
+    out: list[str] = []
+    for a in soup.find_all("a", href=True):
+        href = a["href"]
+        if not RE_ABSTRACT_HREF.search(href):
+            continue
+        absolute = urljoin(base_url, href)
+        parsed = urlparse(absolute)
+        if parsed.scheme != "https":
+            continue
+        if absolute in ABSTRACT_URL_BLOCKLIST:
+            continue
+        if absolute in seen:
+            continue
+        seen.add(absolute)
+        out.append(absolute)
+        if limit is not None and len(out) >= limit:
+            break
     return out
 
 

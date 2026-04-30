@@ -238,6 +238,14 @@ class HttpFetcher(Fetcher):
         if self._owns_client:
             await self._client.aclose()
 
+    async def can_fetch(self, url: str) -> bool:
+        """Public wrapper around the robots cache. Useful for orchestrators
+        that need to count robots-denials separately from other failure
+        modes; lets them ``continue`` before issuing a request."""
+        if not url.startswith(("http://", "https://")):
+            return False
+        return await self._robots.can_fetch(url, user_agent=self._user_agent)
+
     async def fetch(self, url: str) -> FetchedDocument | None:
         if not url.startswith(("http://", "https://")):
             log.warning("fetch: %s — non-http(s) scheme rejected", url)
