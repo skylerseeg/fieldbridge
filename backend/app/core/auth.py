@@ -25,15 +25,24 @@ REFRESH_TOKEN_EXPIRE_DAYS = 30
 # enforces the 72-byte limit strictly and crashes passlib's init. passlib has
 # been in maintenance-only mode since 2020 with no fix on the horizon, so we
 # call bcrypt directly. Hash format on disk is unchanged ($2b$...) so any
-# prior passlib-hashed values still verify against bcrypt.checkpw.
+# prior passlib-hashed values still verify against bcrypt.checkpw. bcrypt only
+# uses the first 72 bytes of a password; passlib preserved that legacy behavior
+# by truncating silently, so we do the same to avoid locking out existing users
+# with long password-manager generated credentials.
+
+BCRYPT_MAX_PASSWORD_BYTES = 72
+
+
+def _bcrypt_password_bytes(password: str) -> bytes:
+    return password.encode("utf-8")[:BCRYPT_MAX_PASSWORD_BYTES]
 
 def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    return bcrypt.hashpw(_bcrypt_password_bytes(password), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     try:
-        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+        return bcrypt.checkpw(_bcrypt_password_bytes(plain), hashed.encode("utf-8"))
     except ValueError:
         # Malformed hash on disk — treat as auth failure rather than 500.
         return False
