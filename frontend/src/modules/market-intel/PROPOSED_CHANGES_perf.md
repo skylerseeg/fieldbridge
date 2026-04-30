@@ -1,7 +1,7 @@
 # PROPOSED_CHANGES — Topbar INP attribution
 
 **Author**: Market Intel Frontend Worker
-**Branch**: `feat/market-intel-fe-slice-5-perf` (raised in PR #11)
+**Branch**: `feat/market-intel-fe-slice-5-perf` (raised in PR #17)
 **Audience**: Frontend Polish Worker (`components/shell/*` is their lane)
 **Status**: ask — workers don't edit each other's lanes
 
@@ -89,7 +89,7 @@ To confirm shell-wide vs market-intel-specific:
    given the error-state capture provenance, but worth ruling
    out.
 
-## What I've already done in my lane (PR #11)
+## What I've already done in my lane (PR #17)
 
 I applied a memoization pass inside `frontend/src/modules/market-intel/*`
 that's safe and correct regardless of whether the topbar work is
@@ -139,4 +139,4 @@ confirms `/equipment` is also slow, my recommendation order:
 
 If I can help (provide a profiler-trace screenshot, do a code
 walk on `useAuth.ts`, or rerun captures), ping. Otherwise standing
-down on the perf ask after PR #11 lands.
+down on the perf ask after PR #17 lands.

@@ -98,6 +98,23 @@ and the open contract surface.
   a thin root forwarder. **Until then**, "Healthy" status on the Tests/CI
   row is local-only — the suite is genuinely green on dev WSL but is
   not enforced at push time.
+- **Frontend Polish Worker — paired escalation** (filed 2026-04-30,
+  branch `feature/market-intel-v15`):
+  1. **Topbar INP / span.truncate audit** — Market Intel Frontend
+     Worker captured a 207.5ms INP / 170.1ms render attribution to
+     `span.truncate` on the Vercel preview. After in-lane memo
+     pass (PR #17), the residual cost lives in shell components
+     (TenantSwitcher's text-lg truncate is the strongest signal —
+     only one in `components/shell/*`; lineage from density patch
+     `6e342db`). Full evidence + 3 profiler questions + cross-
+     baseline ask in
+     `frontend/src/modules/market-intel/PROPOSED_CHANGES_perf.md`.
+  2. **Field-mode contrast for `--color-good` / `--color-watch`**
+     tokens added in slice 2 (`0037c85`). Field-mode override
+     missing because `field-mode.css` is FPW's lane, not Market
+     Intel's. Frontend Worker correctly flagged without claiming.
+  Batch (1) and (2) into a single FPW spinup — both are shell
+  /token concerns, both share lane context.
 
 ## LLM Prompts
 
@@ -773,6 +790,94 @@ and the open contract surface.
   merge gated on v1 deploy lock (Equipment ingest verification
   + Vista mart pipeline stability). The brief is closed; the
   branch sits.
+
+- **2026-04-30 (afternoon) — Backend Worker n8n cron piece + dual-
+  trigger pattern**. Operator picked option-C (keep BOTH cron paths,
+  document the split). Final state: Render Cron Job
+  (`fieldbridge-itd-pipeline`) is the production primary;
+  `workers/n8n_flows/market_intel_daily.json` ships INACTIVE as an
+  optional observability overlay (IF-on-anomaly → Webhook alert
+  branch + Set log-OK branch).
+
+  | Item | Commit / PR |
+  |---|---|
+  | Render Cron service + wrapper script | `92ccfb3` (Lead-direct) |
+  | n8n flow JSON + admin POST endpoint + 4 endpoint tests | PR #16 (`b53113c`) |
+  | Lead-direct dual-cron docs fold + PROPOSED_CHANGES.md cleanup | `9e22311` |
+
+  Idempotency at the DB unique constraint
+  `(tenant_id, source_url, raw_html_hash)` means dual triggers
+  can't double-write — redundant invocations report
+  `skipped_already_ingested = N` and exit cleanly. Documented in
+  `docs/market-intel.md` -> "Operations / Nightly cron — dual
+  triggers" so the next worker doesn't try to dedupe paths that
+  look redundant on first glance.
+
+  Backend Worker stood down for real after this slice — six PRs
+  across the v1.5 brief (#6, #8, #11, #13, #14, #15, #16). Six
+  patterns in the agent_board catalog (back-compat refactor,
+  pre-check/enforcement, idempotency pre-check, anchor constants
+  tied to fixtures, cross-dialect SQL, doc-header bind-param
+  discipline).
+
+- **2026-04-30 (afternoon) — Frontend Worker slice 5 perf audit**.
+  Operator captured 207.5ms INP / 170.1ms `span.truncate` render
+  on the Vercel preview. Frontend Worker re-spun, executed the
+  brief's dual-outcome flow:
+
+  * **In-lane** (PR #17 / `fe16cc6`): 9 React.memo wraps
+    (ScatterPanel, BarPanel, ChartPanel, CompetitorTable,
+    CalibrationTable, DrilldownSheet, KpiCard, RampLegend,
+    Annotation) + 3 useCallback handlers in CompetitorCurves.
+    Surgical, not blanket. 38/38 vitest pass; bundle delta
+    documented in PR.
+  * **Escalated** to Frontend Polish Worker:
+    `frontend/src/modules/market-intel/PROPOSED_CHANGES_perf.md`
+    identifies TenantSwitcher's `text-lg` `span.truncate` as
+    the strongest single signal (only such element in
+    `components/shell/*`, density-patch lineage `6e342db`).
+    Three concrete profiler questions + cross-baseline ask
+    against `/equipment` to confirm shell-wide vs Market
+    Intel-specific.
+
+  Frontend Worker stood down for real after this slice. Five
+  Frontend PRs total across the v1.5 brief (#5, #7, #9, #10, #17).
+  Two PROPOSED_CHANGES templates established by this worker now
+  in the catalog: routes.md (worker → Lead) and perf.md
+  (worker → worker).
+
+### Patterns catalog — additions from this run
+
+(Cross-cutting; usable by any worker on any module.)
+
+- **Discipline-gate-as-pair**: before staging any commit, run
+
+      git rev-parse --abbrev-ref HEAD   # confirm branch
+      git status --short                # confirm cross-lane work
+                                        # didn't sweep in
+
+  Caught wrong-branch incidents three times this session
+  (Frontend Worker slices 2 and 3, Backend Worker cron piece;
+  Lead also caught one of their own). Two-second cost,
+  prevents 100% of branch-confusion bugs that have hit this
+  branch. Worth the universal pre-stage check across all worker
+  lanes.
+
+- **PROPOSED_CHANGES.md template variants**:
+  * `PROPOSED_CHANGES_<topic>.md` (worker → Lead): URL
+    contracts, slug derivations, edge cases, copy-pasteable
+    wiring snippet. Anchor: routes.md from Frontend slice 3.
+  * `PROPOSED_CHANGES_<topic>.md` (worker → worker): cross-lane
+    perf/correctness ask with profiler-grade evidence,
+    identifying signals, severity gating, cross-baseline ask.
+    Anchor: perf.md from Frontend slice 5.
+  * `PROPOSED_CHANGES.md` (no suffix; service-folder location):
+    request to Lead to mirror a section into a Lead-owned doc.
+    Lead folds, deletes the proposal file. Anchor: dual-cron
+    fold from Backend Worker.
+  Shared spine across all three: anchor in user-visible
+  behavior, include the worked example, call out severity /
+  scheduling explicitly.
 
 ## Recent Merges
 
