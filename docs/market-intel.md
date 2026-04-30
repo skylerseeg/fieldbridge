@@ -182,6 +182,57 @@ design doc ("Do not relax these settings without a real reason").
   state vs. dozens of municipal solicitations). New storage
   estimate locked in v1.5b after first 30 days of ITD ingest.
 
+## Operations
+
+### Nightly cron — dual triggers
+
+The ITD ingest pipeline (`ITDPipeline.run_state("ID", db)`) is wired
+to fire from **two** schedulers, by design. This is the option-C
+decision recorded in PRs #16 (n8n piece) and the Lead-direct commit
+`92ccfb3` (Render piece).
+
+| Trigger | Path | Role | Owner |
+|---|---|---|---|
+| **Render Cron Job** (primary) | `backend/scripts/run_itd_pipeline.py` against the prod DB via `DATABASE_URL` | Production primary — runs nightly, no HTTP hop, ~$1/mo on starter | `fieldbridge-itd-pipeline` cron entry in `render.yaml` |
+| **n8n HTTP cron** (optional, ships inactive) | `POST /api/v1/market-intel/admin/run-itd-pipeline` (gated by `require_admin`) | Ad-hoc admin runs, replay after fixture-format changes, alerting branch on anomaly counters via the IF node | `workers/n8n_flows/market_intel_daily.json` |
+
+Both call the same `ITDPipeline` class, so DB writes are idempotent
+across either trigger — the `(tenant_id, source_url, raw_html_hash)`
+unique constraint dedups. In steady state Render is the primary;
+n8n is intentionally inactive (`"active": false`) on import and
+only flipped on if/when the Operator wants UI-driven runs +
+Slack-style alerting via the IF→Webhook branch.
+
+When deduplication is desired (e.g. one of the two paths starts
+running consistently first), keep both wired — the redundant call
+just reports `skipped_already_ingested = N` and exits cleanly.
+
+#### Why both, not just one
+
+- **Render cron is simpler, fewer moving parts, prod-primary fit.**
+  No new infrastructure, no separate workflow database, env-var
+  plumbing identical to the API service.
+- **n8n adds observability and ad-hoc trigger UX** — IF-on-anomaly
+  branch (`skipped_parse_error > 0` or `skipped_fetch_error >= 5`),
+  Webhook node for Slack-style alerting, manual trigger from the
+  n8n UI for replay after fixture-format changes.
+- **Idempotency at the DB layer means dual triggers can't
+  double-write** — the unique constraint on `bid_events` is the
+  source of truth, not the schedule.
+
+#### Activating the n8n side (post v1 lock)
+
+The flow JSON ships with `"active": false`. To activate:
+
+1. Import `workers/n8n_flows/market_intel_daily.json` into a
+   running n8n instance (n8n.cloud or self-hosted).
+2. Set the per-flow env vars (admin JWT for `Authorization`
+   header, alert webhook URL — see `workers/n8n_flows/README.md`).
+3. Flip the activation toggle in the n8n UI.
+
+Until then, only the Render cron fires. The n8n flow lives in the
+repo as documentation of intent + ready-to-import fallback.
+
 ## Risk flags
 
 - **State DOT publication ToS**. State DOTs publish bid tabulations
