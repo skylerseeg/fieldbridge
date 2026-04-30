@@ -115,10 +115,53 @@ KEY_TABLES: tuple[str, ...] = (
 
 
 # ---------------------------------------------------------------------------
-# Tenant fetch — produces a Tenant object with Vista creds populated
-# (either from the DB row, or as a fallback, from settings env vars).
+# Tenant fetch.
+#
+# Two paths:
+#
+#   FAST  — VISTA_SQL_HOST env var is set. Build a synthetic Tenant
+#           directly from settings without touching the FieldBridge
+#           Postgres. This is the normal path for local exploration
+#           (no local Postgres running) and also works in prod where
+#           env vars and Tenant.vista_sql_* are kept in lockstep.
+#
+#   SLOW  — env var unset. Query the FieldBridge Postgres for the
+#           VanCon tenant row. Used only when env-var-driven config
+#           isn't an option (e.g. multi-tenant prod where each tenant
+#           has distinct Vista creds — v3 territory).
+#
+# Either way, a Tenant object with vista_sql_* populated is returned;
+# the rest of the script doesn't care which path got us there.
+
+def _synthetic_tenant_from_env() -> Tenant | None:
+    if not settings.vista_sql_host:
+        return None
+    return Tenant(
+        id="env-fallback",
+        slug=settings.vancon_tenant_slug or "vancon",
+        company_name="env-fallback",
+        contact_email="local@example",
+        vista_sql_host=settings.vista_sql_host,
+        vista_sql_port=settings.vista_sql_port or 1433,
+        vista_sql_db=settings.vista_sql_db,
+        vista_sql_user=settings.vista_sql_user,
+        vista_sql_password=settings.vista_sql_password,
+    )
+
 
 async def _get_vancon_tenant() -> Tenant:
+    # FAST path.
+    synthetic = _synthetic_tenant_from_env()
+    if synthetic:
+        log.info(
+            "Using Vista creds from env (VISTA_SQL_HOST=%s) — skipping "
+            "FieldBridge Postgres tenant lookup.",
+            synthetic.vista_sql_host,
+        )
+        return synthetic
+
+    # SLOW path: query FieldBridge Postgres.
+    log.info("VISTA_SQL_HOST env var unset — falling back to FieldBridge tenant lookup.")
     async with AsyncSessionLocal() as db:
         result = await db.execute(
             select(Tenant).where(Tenant.slug == settings.vancon_tenant_slug)
@@ -127,27 +170,15 @@ async def _get_vancon_tenant() -> Tenant:
         if not tenant:
             raise RuntimeError(
                 f"VanCon tenant not found (slug={settings.vancon_tenant_slug}). "
-                "Run `python -m app.core.seed` first."
+                "Run `python -m app.core.seed` first, OR set VISTA_SQL_HOST in "
+                "your .env to use the env-var fast path."
             )
-
-    # Detach from the session so we can mutate the field shadows below
-    # without SQLAlchemy thinking we're trying to write back.
-    if not tenant.vista_sql_host:
-        log.info(
-            "Tenant.vista_sql_host is empty — falling back to env var defaults "
-            "from settings (Settings reads VISTA_SQL_* directly)."
-        )
-        tenant.vista_sql_host = settings.vista_sql_host
-        tenant.vista_sql_port = settings.vista_sql_port or 1433
-        tenant.vista_sql_db = settings.vista_sql_db
-        tenant.vista_sql_user = settings.vista_sql_user
-        tenant.vista_sql_password = settings.vista_sql_password
 
     if not tenant.vista_sql_host:
         raise RuntimeError(
-            "Vista SQL host not configured on the VanCon tenant row OR in "
-            "settings env vars (VISTA_SQL_HOST). Configure via the "
-            "onboarding wizard or set the env var on the Render service."
+            "Vista SQL host not configured on the VanCon tenant row AND no "
+            "VISTA_SQL_HOST env var. Configure via the onboarding wizard or "
+            "set VISTA_SQL_HOST in your .env."
         )
     return tenant
 
