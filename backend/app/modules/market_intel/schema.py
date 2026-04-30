@@ -48,3 +48,24 @@ class CalibrationPoint(BaseModel):
     wins: int
     avg_rank: float
     pct_above_low: float | None = None
+
+
+class ITDPipelineRunResponse(BaseModel):
+    """Counters returned by ``POST /admin/run-itd-pipeline``.
+
+    Mirrors the dict shape from ``ITDPipeline.run_state``. n8n's daily
+    cron flow (``workers/n8n_flows/market_intel_daily.json``) reads
+    these into its log line and alerts on non-zero
+    ``skipped_parse_error`` / ``skipped_fetch_error`` (out-of-band
+    indicators that something is going sideways at the source).
+    """
+
+    fetched: int
+    parsed: int
+    written: int
+    skipped_robots: int
+    skipped_fetch_error: int
+    skipped_legacy_template: int
+    skipped_parse_error: int
+    skipped_already_ingested: int
+    duration_ms: int
