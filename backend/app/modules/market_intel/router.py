@@ -1,17 +1,16 @@
-"""FastAPI router for Market Intel reads.
+"""FastAPI router for Market Intel.
 
-Endpoints (mounted at ``/api/market-intel`` in ``app.main``):
-    GET /competitor-curves
-    GET /opportunity-gaps
-    GET /bid-calibration
+Read endpoints (mounted at ``/api/market-intel`` in ``app.main``):
+    GET  /competitor-curves
+    GET  /opportunity-gaps
+    GET  /bid-calibration
 
-All three are tenant-scoped reads. The caller's tenant_id comes from
-``get_current_tenant`` (JWT-derived); queries union it with the
-shared-network sentinel so the cross-tenant NAPC dataset is visible.
+Admin endpoint (gated by ``require_admin`` — fieldbridge_admin role):
+    POST /admin/run-itd-pipeline    invoked nightly by n8n cron
 
-Implementation is a STUB at v1.5 scaffold — routes return 200 with []
-until the Backend Worker fills in the SQL templates in
-``app/services/market_intel/analytics/``.
+All read endpoints are tenant-scoped: the caller's tenant_id comes
+from ``get_current_tenant`` (JWT-derived); queries union it with the
+shared-network sentinel so the cross-tenant ITD dataset is visible.
 """
 from __future__ import annotations
 
@@ -21,15 +20,17 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import get_current_tenant
+from app.core.auth import get_current_tenant, require_admin
 from app.core.database import get_db
 from app.models.tenant import Tenant
 from app.modules.market_intel import service
 from app.modules.market_intel.schema import (
     CalibrationPoint,
     CompetitorCurveRow,
+    ITDPipelineRunResponse,
     OpportunityRow,
 )
+from app.services.market_intel.pipeline import ITDPipeline
 
 router = APIRouter()
 log = logging.getLogger("fieldbridge.market_intel.router")
@@ -105,3 +106,32 @@ async def bid_calibration(
         contractor_name_match=contractor_name_match,
         tenant_id=tenant.id,
     )
+
+
+# ---------------------------------------------------------------------------
+# Admin: ingest trigger (n8n cron-driven)
+
+@router.post(
+    "/admin/run-itd-pipeline",
+    response_model=ITDPipelineRunResponse,
+    summary="Run the ITD ingest pipeline once (admin-only, n8n cron)",
+)
+async def run_itd_pipeline_endpoint(
+    db: AsyncSession = Depends(get_db),
+    _admin=Depends(require_admin()),
+) -> ITDPipelineRunResponse:
+    """Execute one ``ITDPipeline.run_state("ID", db)`` against the
+    request's DB session and return the counters dict.
+
+    Invoked by ``workers/n8n_flows/market_intel_daily.json`` once
+    per night. Idempotent — re-running on the same data writes zero
+    new rows (see ``skipped_already_ingested``). Hard failures
+    (5xx upstream, robots-deny on the index page, network) return
+    a counters dict with zeros, not an HTTP error — n8n's logging
+    + alerting branch on the dict, not on the HTTP status.
+    """
+    log.info("admin: starting ITD pipeline run for state=ID")
+    async with ITDPipeline() as pipeline:
+        counters = await pipeline.run_state("ID", db)
+    log.info("admin: ITD pipeline run complete %s", counters)
+    return ITDPipelineRunResponse(**counters)
