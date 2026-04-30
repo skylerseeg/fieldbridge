@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   AlertTriangle,
   Hash,
@@ -209,7 +209,14 @@ const accentStyles: Record<
   },
 };
 
-function KpiCard({ title, value, sub, Icon, accent, loading }: KpiCardProps) {
+const KpiCard = memo(function KpiCard({
+  title,
+  value,
+  sub,
+  Icon,
+  accent,
+  loading,
+}: KpiCardProps) {
   const s = accentStyles[accent];
   return (
     <Card
@@ -257,7 +264,7 @@ function KpiCard({ title, value, sub, Icon, accent, loading }: KpiCardProps) {
       </CardContent>
     </Card>
   );
-}
+});
 
 // ── Helpers ────────────────────────────────────────────────────────
 

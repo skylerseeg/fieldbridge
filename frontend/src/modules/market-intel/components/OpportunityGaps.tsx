@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, MapPin } from "lucide-react";
 import {
@@ -276,7 +276,11 @@ interface ChartPoint extends OpportunityRow {
   ramp: number;
 }
 
-function BarPanel({ points }: { points: ChartPoint[] }) {
+const BarPanel = memo(function BarPanel({
+  points,
+}: {
+  points: ChartPoint[];
+}) {
   return (
     <figure
       className="space-y-2"
@@ -347,7 +351,7 @@ function BarPanel({ points }: { points: ChartPoint[] }) {
       </figcaption>
     </figure>
   );
-}
+});
 
 interface TooltipPayloadEntry {
   payload?: ChartPoint;
@@ -402,7 +406,11 @@ function BarTooltip({
 
 // ── Top-10 list ─────────────────────────────────────────────────────
 
-function TopList({ rows }: { rows: OpportunityRow[] }) {
+const TopList = memo(function TopList({
+  rows,
+}: {
+  rows: OpportunityRow[];
+}) {
   const navigate = useNavigate();
   return (
     <section
@@ -481,11 +489,11 @@ function TopList({ rows }: { rows: OpportunityRow[] }) {
       </ol>
     </section>
   );
-}
+});
 
 // ── Legend ──────────────────────────────────────────────────────────
 
-function CoralLegend() {
+const CoralLegend = memo(function CoralLegend() {
   return (
     <div
       className="flex items-center gap-2 text-[11px] text-muted-foreground"
@@ -505,7 +513,7 @@ function CoralLegend() {
       <span className="hidden sm:inline">low → high</span>
     </div>
   );
-}
+});
 
 // ── Skeleton ────────────────────────────────────────────────────────
 
