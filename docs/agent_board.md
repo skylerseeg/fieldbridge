@@ -687,6 +687,93 @@ and the open contract surface.
   - Field-mode contrast for `--color-good` / `--color-watch` —
     routed to Frontend Polish Worker (their lane: `field-mode.css`)
 
+- **2026-04-30 — Backend Worker (Agent #1) brief closed
+  end-to-end**. v1.5 backend pipeline shipped through five PRs;
+  ITD-sourced bid network data flowing schema → fetcher →
+  pipeline → analytics → read API.
+
+  | Slice | PR  | Commit    | Scope                                                    |
+  |-------|-----|-----------|----------------------------------------------------------|
+  | 1     | #6  | `90e2046` | NAPC state portal registry probe (50 states)             |
+  | 1.1   | #8  | `561ba6b` | schema_version + drift-proof asserts + bs4/lxml          |
+  | 2     | #11 | `b9de064` | ITD bid-abstract parser + 30 fixtures + napc_paused.md   |
+  | 3     | #13 | `6e0adb9` | HttpFetcher — robots-aware, rate-limited, 25 tests       |
+  | 4a    | #14 | `91b8b89` | ITDPipeline orchestrator + idempotency + 7 e2e tests     |
+  | 4b    | #15 | `3e2f0f5` | Analytics SQL (3 templates) + service.py fill-in + 23 tests |
+
+  Total backend test footprint: 148 tests across the
+  market_intel suite (registry 55 + parser 38 + fetcher 25 +
+  pipeline 7 + service queries 23). All deterministic,
+  SQLite-only, no live network in CI.
+
+  **Live smoke (2026-04-30)** against captured fixtures:
+  - 44 unique contractors surfaced from 22 v1 fixtures
+  - Top bidders: KNIFE RIVER (10), STAKER & PARSON (8),
+    Moreno & Nelson (7) — the named regional cast from the
+    original strategy session, visible at this dataset scale
+  - LaRIVIERE INC: 75% win rate / 4 bids = precision shop signal
+  - H-K CONTRACTORS: 0% wins / 5 bids / 21.4% premium =
+    always-also-ran signal. Pricing-personality moat thesis
+    validated even at v1.5a scale.
+  - Live ITD attempt caught a 503 on robots.txt; slice 3's
+    fail-closed handling worked as designed (empty counters,
+    no exception). Resilience verified in production conditions.
+
+  **Lane-discipline patterns catalog'd this run**:
+  - **Back-compat refactor of public functions** (PR #14):
+    original signature stays as wrapper, additive `_full`
+    variant returns richer types. Slice-2's 38 tests untouched
+    across the parse_bid_abstract → parse_bid_abstract_full
+    migration.
+  - **Pre-check / enforcement separation** (PR #14):
+    `HttpFetcher.can_fetch` called pre-fetch ONLY for the
+    counter; the actual robots deny enforcement still happens
+    inside `fetch()`. Two-step pattern needed because fetcher
+    returns None for both robots-deny AND network errors.
+  - **Idempotency pre-check before insert** (PR #14):
+    SELECT-then-INSERT pattern, with comment justifying it
+    over IntegrityError-on-commit (which would abort sibling
+    writes in the same transaction).
+  - **Module-level anchor constants tied to exemplar fixtures**
+    (PR #11): when parsing breaks against new ITD output, the
+    canonical debug step is `diff <new pdf page 1 text>
+    <fixture>` against the named fixture filename. Convention
+    sticking across both lanes.
+  - **Cross-dialect SQL portability** (PR #15): correlated
+    subquery instead of CTE; Python-side aggregation
+    (statistics.median) instead of PERCENTILE_CONT — works on
+    both Postgres and SQLite without dialect branching.
+  - **SQL bind-parameter doc-header discipline** (PR #15 war
+    story): SQLAlchemy `text()`'s `:name` regex finds bind
+    references inside line comments, so doc-header
+    bind-parameter docs must use `caller_tenant` (no colon
+    prefix). Catalog'd so the next worker doesn't re-discover.
+
+  **Backend follow-ups (NOT brief-closing, can ship any time)**:
+  - `workers/n8n_flows/market_intel_daily.json` — n8n cron
+    config to fire ITDPipeline.run_state("ID") nightly.
+    Tractable after the feature branch lands main.
+  - UDOT + NDOT parsers (v1.5b) — sibling
+    `state_dot/{udot,ndot}.py` files following the ITD pattern.
+    The ITDPipeline state guard documents the "Add a sibling
+    Pipeline class" expectation.
+
+  **What v1 → main merge unblocks**:
+  - Bid Intelligence page in production stops returning
+    "Couldn't load competitor curves" errors and starts
+    showing real ITD-sourced VanCon-region data.
+  - All three tabs (Curves / Gaps / Calibration) light up
+    against `/api/market-intel/{competitor-curves,
+    opportunity-gaps, bid-calibration}` returning real
+    payloads.
+  - Operator can demo the moat dataset with real competitor
+    names and pricing curves.
+
+  Branch contract still holds: feature/market-intel-v15 → main
+  merge gated on v1 deploy lock (Equipment ingest verification
+  + Vista mart pipeline stability). The brief is closed; the
+  branch sits.
+
 ## Recent Merges
 
 | Date       | Module                | Commit    | Notes                                   |
