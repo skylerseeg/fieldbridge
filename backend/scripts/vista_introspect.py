@@ -76,6 +76,7 @@ VISTA_MODULE_PREFIXES: dict[str, str] = {
     "GL": "General Ledger",
     "CM": "Cash Management",
     "IN": "Inventory",
+    "IM": "Imaging / Attachments",
     "MS": "Material Sales",
     "PM": "Project Management",
     "PO": "Purchase Order",
@@ -86,31 +87,49 @@ VISTA_MODULE_PREFIXES: dict[str, str] = {
     "VA": "VendorPay / ACH",
     "DM": "Document Management",
     "RP": "Reporting",
-    "vp": "Viewpoint Internal",  # lowercase prefix
+    "RB": "Report Builder / Forms",
+    "DB": "Database / Sysadmin",
+    "UD": "User-Defined (custom — bud* / vud*)",
 }
 
 
-# Canonical "key" tables. Curated list = anchors per Vista module; deep
-# introspection runs against these for the column-inventory + freshness
-# pass. Pass --extra-key-tables to add more on a per-run basis.
+# Canonical "key" tables, named with the actual Vista b/v prefix
+# observed in the live SQL Server schema (b = base table, v = view-like
+# table). The data/vista_schemas/*.md docs use abbreviated names
+# (apvend, emem, emwo) — those are conceptual; the literal SQL names
+# carry the b/v prefix. Pass --extra-key-tables to extend on a per-run
+# basis.
 KEY_TABLES: tuple[str, ...] = (
-    # Per CLAUDE.md / data/vista_schemas/ documented set
-    "apvend", "emem", "emwo",
-    # Job Cost backbone — these are what FieldBridge marts mostly land
-    # against in the long-arc Vista REST migration
-    "jcco", "jcjm", "jcci", "jcjt", "jcjp", "jcjs",
-    # AP transactions
-    "aphd", "apld", "apph", "appl",
-    # PO / receiving
-    "pohd", "pold", "porg",
-    # Equipment activity
-    "emct", "emrc", "emcd", "emcl",
+    # Job Cost backbone — universal-join entity
+    "bJCJM",   # Job master
+    "bJCCD",   # Cost detail (millions of rows in mature Vista)
+    "bJCCO",   # Job cost company
+    # Accounts Payable
+    "bAPVM",   # Vendor master (== "apvend" in the conceptual docs)
+    "bAPTD",   # Transaction detail
+    "bAPTL",   # Transaction line
+    # Equipment
+    "bEMEM",   # Equipment master (== "emem")
+    "bEMWO",   # Work orders (== "emwo")
+    "bEMRB",   # Revenue / billing
+    "bEMRC",   # Receipts / costs
+    "bEMCO",   # Equipment company
     # Payroll
-    "premp", "prtt", "prte", "prdt",
-    # GL
-    "glco", "glmt", "glca",
-    # Headquarter / lookup
-    "hqco", "hqys",
+    "bPRTH",   # Timesheet header
+    "bPRTL",   # Timesheet line
+    "bPRDT",   # Distribution detail
+    "bPRJC",   # Payroll-to-Job-Cost crossover
+    # General Ledger
+    "bGLAC",   # Chart of accounts (most-referenced FK target)
+    "bGLDT",   # GL detail
+    # Headquarters / global
+    "bHQCO",   # Company master
+    "bHQMA",   # Master audit
+    # Project Management (master)
+    "bPMPM",   # Project master
+    # Custom — VanCon's bud* extensions. The GPS table is the
+    # most interesting custom asset (~10M rows, fleet-tracking).
+    "budEMGPS",
 )
 
 
@@ -319,11 +338,38 @@ def _date_freshness(cursor, table: str, columns: list[dict[str, Any]]) -> dict[s
 # ---------------------------------------------------------------------------
 # Reporting
 
+def _vista_module_prefix(table_name: str) -> str:
+    """Extract the Vista module prefix from a table name.
+
+    Vista names tables with a leading ``b`` (base table) or ``v``
+    (view-like / generated) and a 2-letter module code. So the
+    real module is at chars 1-3, not 0-2:
+
+        bJCJM         -> JC  (Job Cost)
+        vSMAgreement  -> SM  (Service Management)
+
+    User-defined custom tables use the ``bud*`` / ``vud*`` prefix
+    (Vista's "User-Defined" tables — VanCon's bud* extensions are
+    where the moat data lives, e.g. budEMGPS for fleet GPS).
+
+    Tables that don't follow either convention (system schemas,
+    archived `_BAD_*` suffixes that share a module with a live
+    table, etc.) get bucketed under their literal first two
+    characters with the original meaning intact.
+    """
+    if not table_name:
+        return "??"
+    if table_name.startswith(("bud", "vud")):
+        return "UD"  # User-Defined custom
+    if table_name[0] in ("b", "v") and len(table_name) >= 3:
+        return table_name[1:3].upper()
+    return table_name[:2].upper()
+
+
 def _group_by_module(inventory: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     by_prefix: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in inventory:
-        t = row["table"]
-        prefix = t[:2].upper() if len(t) >= 2 else "??"
+        prefix = _vista_module_prefix(row["table"])
         by_prefix[prefix].append(row)
     return {
         prefix: {
