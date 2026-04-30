@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from "lucide-react";
 import {
@@ -181,7 +181,10 @@ export default function CompetitorCurves({
     [sorted],
   );
 
-  function toggleSort(field: SortField) {
+  // Stabilize callbacks so the memoized ScatterPanel / CompetitorTable
+  // / DrilldownSheet only re-render when their data props actually move.
+  // toggleSort uses functional setState only — empty deps are correct.
+  const toggleSort = useCallback((field: SortField) => {
     setSort((prev) =>
       prev.field === field
         ? { field, dir: prev.dir === "asc" ? "desc" : "asc" }
@@ -191,7 +194,22 @@ export default function CompetitorCurves({
             dir: field === "contractor_name" ? "asc" : "desc",
           },
     );
-  }
+  }, []);
+
+  // Re-creates only when `sorted` does (which is the same window the
+  // chart re-renders anyway, so memoization still pays off elsewhere).
+  const handleScatterSelect = useCallback(
+    (name: string) => {
+      setSelected(
+        sorted.find((r) => r.contractor_name === name) ?? null,
+      );
+    },
+    [sorted],
+  );
+
+  const handleSheetOpenChange = useCallback((open: boolean) => {
+    if (!open) setSelected(null);
+  }, []);
 
   return (
     <Card>
@@ -244,9 +262,7 @@ export default function CompetitorCurves({
           <>
             <ScatterPanel
               points={chartPoints}
-              onSelect={(name) =>
-                setSelected(sorted.find((r) => r.contractor_name === name) ?? null)
-              }
+              onSelect={handleScatterSelect}
             />
             <CompetitorTable
               rows={sorted}
@@ -258,12 +274,7 @@ export default function CompetitorCurves({
         )}
       </CardContent>
 
-      <DrilldownSheet
-        row={selected}
-        onOpenChange={(open) => {
-          if (!open) setSelected(null);
-        }}
-      />
+      <DrilldownSheet row={selected} onOpenChange={handleSheetOpenChange} />
     </Card>
   );
 }
@@ -275,7 +286,7 @@ interface ChartPoint extends CompetitorCurveRow {
   ramp: number;
 }
 
-function ScatterPanel({
+const ScatterPanel = memo(function ScatterPanel({
   points,
   onSelect,
 }: {
@@ -378,7 +389,7 @@ function ScatterPanel({
       </figcaption>
     </figure>
   );
-}
+});
 
 interface RechartsPayloadEntry {
   payload?: ChartPoint;
@@ -428,7 +439,7 @@ interface CompetitorTableProps {
   onSelect: (row: CompetitorCurveRow) => void;
 }
 
-function CompetitorTable({
+const CompetitorTable = memo(function CompetitorTable({
   rows,
   sort,
   onToggleSort,
@@ -525,7 +536,7 @@ function CompetitorTable({
       </Table>
     </div>
   );
-}
+});
 
 function SortableHead({
   label,
@@ -570,7 +581,7 @@ function SortableHead({
 
 // ── Drilldown Sheet ─────────────────────────────────────────────────
 
-function DrilldownSheet({
+const DrilldownSheet = memo(function DrilldownSheet({
   row,
   onOpenChange,
 }: {
@@ -623,7 +634,7 @@ function DrilldownSheet({
       </SheetContent>
     </Sheet>
   );
-}
+});
 
 function DetailGrid({ row }: { row: CompetitorCurveRow }) {
   return (
@@ -688,7 +699,7 @@ function RampReadout({ winRate }: { winRate: number }) {
 
 // ── Legend ──────────────────────────────────────────────────────────
 
-function RampLegend() {
+const RampLegend = memo(function RampLegend() {
   return (
     <div
       className="flex items-center gap-2 text-[11px] text-muted-foreground"
@@ -708,7 +719,7 @@ function RampLegend() {
       <span className="hidden sm:inline">low → high</span>
     </div>
   );
-}
+});
 
 // ── Skeleton ────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { Info } from "lucide-react";
 import {
   Bar,
@@ -141,7 +141,7 @@ export default function BidCalibration() {
 
 // ── Annotation ──────────────────────────────────────────────────────
 
-function Annotation() {
+const Annotation = memo(function Annotation() {
   // Brief copy locked verbatim — including the period after the
   // first sentence, the period after the second, and the lack of an
   // Oxford-style joiner. The vitest assertion in slice 4 checks this
@@ -159,7 +159,7 @@ function Annotation() {
       </p>
     </div>
   );
-}
+});
 
 // ── Chart ───────────────────────────────────────────────────────────
 
@@ -168,7 +168,11 @@ interface ChartPoint extends CalibrationPoint {
   label: string;
 }
 
-function ChartPanel({ points }: { points: ChartPoint[] }) {
+const ChartPanel = memo(function ChartPanel({
+  points,
+}: {
+  points: ChartPoint[];
+}) {
   return (
     <figure
       className="space-y-2"
@@ -284,7 +288,7 @@ function ChartPanel({ points }: { points: ChartPoint[] }) {
       </figcaption>
     </figure>
   );
-}
+});
 
 interface TooltipPayloadEntry {
   payload?: ChartPoint;
@@ -334,7 +338,7 @@ function ComposedTooltip({
 
 // ── Table ───────────────────────────────────────────────────────────
 
-function CalibrationTable({
+const CalibrationTable = memo(function CalibrationTable({
   rows,
   currentQuarter,
 }: {
@@ -402,7 +406,7 @@ function CalibrationTable({
       </Table>
     </div>
   );
-}
+});
 
 // ── Skeleton ────────────────────────────────────────────────────────
 
