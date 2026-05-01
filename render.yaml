@@ -4,12 +4,13 @@
 # After first apply, Render reads any future edits to this file and
 # proposes them as a PR-style review in the dashboard.
 #
-# Three services + one database:
-#   * fieldbridge-api            — FastAPI web service (Dockerfile-based)
-#   * fieldbridge-itd-pipeline   — nightly Render Cron firing the ITD
-#                                  bid-tab pipeline (Market Intel v1.5)
-#   * fieldbridge-db             — managed Postgres (auto-injects
-#                                  DATABASE_URL into both services)
+# Services + one database:
+#   * fieldbridge-api                   — FastAPI web service (Dockerfile-based)
+#   * fieldbridge-itd-pipeline          — nightly ITD bid-tab cron (Market Intel v1.5)
+#   * fieldbridge-pm-overdue            — daily deterministic PM-overdue writer
+#   * fieldbridge-failure-predict       — weekly AI failure-prediction writer
+#   * fieldbridge-db                    — managed Postgres (auto-injects
+#                                          DATABASE_URL into all services)
 #
 # Secret values (SECRET_KEY, ANTHROPIC_API_KEY, anything Vista/Azure)
 # are NOT committed here. They're set in the Render dashboard after the
@@ -138,6 +139,113 @@ services:
       # Anthropic, but the env var must be present to import the app
       # successfully.
       - key: ANTHROPIC_API_KEY
+        sync: false
+
+  # ──────────────────────────────────────────────────────────────────
+  # Predictive Maintenance — deterministic PM-overdue writer.
+  #
+  # Daily at 10:00 UTC = 04:00 MDT / 03:00 MST. Reads each tenant's
+  # Vista emem (HourMeter, NextPMHours), buckets equipment into
+  # OVERDUE / DUE_SOON, and upserts rows into mart_predictive_maintenance
+  # with source='pm_overdue'. No Claude calls — pennies of compute.
+  #
+  # Prereq: per-tenant Vista creds set on the Tenant row (or env-level
+  # VISTA_SQL_*). Until Vista is wired up the script logs a clear
+  # "no equipment master rows available" warning and exits 1; the
+  # Render dashboard will show the run as failed, which is the honest
+  # signal that the upstream connection is missing.
+  - type: cron
+    name: fieldbridge-pm-overdue
+    runtime: docker
+    schedule: "0 10 * * *"    # 10:00 UTC daily
+    plan: starter
+    region: oregon
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    dockerCommand: "python -m scripts.run_pm_overdue"
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+      # Required by app.core.config import-side validation. Sync from
+      # the API service to keep the value lockstep.
+      - key: SECRET_KEY
+        sync: false
+      # Not used by this cron (no Claude calls), but the config module
+      # validates it on import.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      # Per-tenant Vista creds live on the Tenant row, but env-level
+      # fallbacks are still read by app.services.vista_sync._get_conn
+      # when no tenant is supplied. Leave unset until Vista is connected.
+      - key: VISTA_SQL_HOST
+        sync: false
+      - key: VISTA_SQL_PORT
+        sync: false
+      - key: VISTA_SQL_DB
+        sync: false
+      - key: VISTA_SQL_USER
+        sync: false
+      - key: VISTA_SQL_PASSWORD
+        sync: false
+
+  # ──────────────────────────────────────────────────────────────────
+  # Predictive Maintenance — AI failure-prediction writer.
+  #
+  # Weekly on Sunday at 10:30 UTC = 04:30 MDT / 03:30 MST. Pulls the
+  # tenant's emem + emwo, calls the predictive_maintenance Claude
+  # agent per equipment with >=2 trailing work orders, and upserts
+  # rows into mart_predictive_maintenance with
+  # source='failure_prediction'. Records every Claude call into
+  # usage_events (agent='predictive_maintenance') for cost attribution.
+  #
+  # Cadence is deliberate: trailing 2yr work-order history doesn't
+  # change daily, and per-tenant cost is meaningful (~$25–100/run on
+  # a 50–100-piece fleet). Promote to twice-weekly only after a
+  # tenant's mart shows churn that would benefit from it.
+  #
+  # Per-tenant invocation. Multi-tenant ship plan: one cron entry per
+  # active tenant, slot 30min apart, until a Tenant.flags column lands.
+  - type: cron
+    name: fieldbridge-failure-predict
+    runtime: docker
+    schedule: "30 10 * * 0"   # 10:30 UTC every Sunday
+    plan: starter
+    region: oregon
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    dockerCommand: "python -m scripts.run_failure_predict --tenant vancon"
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+      - key: SECRET_KEY
+        sync: false
+      # This cron DOES call Claude — ANTHROPIC_API_KEY must be a
+      # real key, not a placeholder.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: VISTA_SQL_HOST
+        sync: false
+      - key: VISTA_SQL_PORT
+        sync: false
+      - key: VISTA_SQL_DB
+        sync: false
+      - key: VISTA_SQL_USER
+        sync: false
+      - key: VISTA_SQL_PASSWORD
         sync: false
 
 databases:

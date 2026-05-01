@@ -1,0 +1,150 @@
+# Render Blueprint — FieldBridge backend.
+#
+# Apply via Render dashboard:  New → Blueprint → connect this repo.
+# After first apply, Render reads any future edits to this file and
+# proposes them as a PR-style review in the dashboard.
+#
+# Three services + one database:
+#   * fieldbridge-api            — FastAPI web service (Dockerfile-based)
+#   * fieldbridge-itd-pipeline   — nightly Render Cron firing the ITD
+#                                  bid-tab pipeline (Market Intel v1.5)
+#   * fieldbridge-db             — managed Postgres (auto-injects
+#                                  DATABASE_URL into both services)
+#
+# Secret values (SECRET_KEY, ANTHROPIC_API_KEY, anything Vista/Azure)
+# are NOT committed here. They're set in the Render dashboard after the
+# Blueprint applies — see docs/deploy-render.md for the full list.
+#
+# v1 scope: API + DB.
+# v1.5 scope (added 2026-04-30): + ITD pipeline cron (Market Intel
+# data accumulation). Render's first-class Cron Job product is used
+# in preference to standing up an n8n service — single Python entry
+# point, no transformations or branching, doesn't need a workflow
+# orchestrator. n8n flow JSON committed at workers/n8n_flows/ as
+# documentation in case future workers want to lift to n8n.
+
+services:
+  - type: web
+    name: fieldbridge-api
+    runtime: docker
+    plan: standard           # $25/mo, 2GB RAM. Bumped from starter (512MB) on 2026-04-30 — starter OOM'd on the dep tree (anthropic + langchain + chromadb + pandas + pyodbc + asyncpg) before serving a single request. Don't drop back without trimming deps first.
+    region: oregon           # closest US-West datacenter; fine for VanCon (Utah).
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .         # repo root — Dockerfile copies backend/ AND agents/, since FastAPI endpoints import from agents.* at module load time.
+    healthCheckPath: /health
+    autoDeploy: true         # push-to-tracked-branch ⇒ deploy
+    envVars:
+      # Auto-injected by Render from the database below.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+
+      # Non-secret defaults — safe to commit and visible in the dashboard.
+      - key: ENVIRONMENT
+        value: production
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+
+      # Production CORS allowlist. Update this list when adding new
+      # frontend origins (preview deploys, custom domains, etc.) — it
+      # accepts comma-separated values via the validator in
+      # app/core/config.py::Settings.cors_allowed_origins.
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://fieldbridge.vercel.app,http://localhost:3000
+
+      # Secrets — values entered manually in the Render dashboard,
+      # never committed. `sync: false` tells Render not to sync the
+      # placeholder back to this file.
+      - key: SECRET_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: FIELDBRIDGE_ADMIN_EMAIL
+        sync: false
+      - key: FIELDBRIDGE_ADMIN_PASSWORD
+        sync: false
+
+      # Vista creds — leave unset until the Trimble Data Xchange
+      # contract is signed. Setting them blank is fine; the Vista
+      # endpoints will simply 503 when called.
+      - key: VISTA_SQL_HOST
+        sync: false
+      - key: VISTA_SQL_PORT
+        sync: false
+      - key: VISTA_SQL_DB
+        sync: false
+      - key: VISTA_SQL_USER
+        sync: false
+      - key: VISTA_SQL_PASSWORD
+        sync: false
+      - key: VISTA_API_BASE_URL
+        sync: false
+      - key: VISTA_API_KEY
+        sync: false
+
+      # Azure / M365 OAuth creds — leave unset for v1 password-only auth.
+      - key: AZURE_TENANT_ID
+        sync: false
+      - key: AZURE_CLIENT_ID
+        sync: false
+      - key: AZURE_CLIENT_SECRET
+        sync: false
+
+  # ──────────────────────────────────────────────────────────────────
+  # Market Intel — ITD bid-tab pipeline cron.
+  #
+  # Fires nightly. Reuses the API service's Docker image (same
+  # Dockerfile, same dependencies, same /app/backend WORKDIR) but
+  # overrides the CMD via dockerCommand so instead of starting
+  # uvicorn it runs the one-shot pipeline script.
+  #
+  # Schedule is UTC. 09:00 UTC = 03:00 MDT (summer) / 02:00 MST
+  # (winter) — middle-of-night for VanCon, off-peak for ITD.
+  # Adjust seasonally if morning-fresh-data timing matters.
+  #
+  # Cost: ~$1/mo on starter for ~30s of compute per run.
+  - type: cron
+    name: fieldbridge-itd-pipeline
+    runtime: docker
+    schedule: "0 9 * * *"     # 09:00 UTC daily
+    plan: starter
+    region: oregon
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    dockerCommand: "python scripts/run_itd_pipeline.py --state ID"
+    autoDeploy: true
+    envVars:
+      # Same DATABASE_URL plumbing as the API service — the cron
+      # writes BidEvent + BidResult rows under the shared-network
+      # tenant via the same Postgres instance.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+      # SECRET_KEY is required by app.core.config import-side validation
+      # even though the cron never mints JWTs. Sync from the API
+      # service's secret to keep them in lockstep.
+      - key: SECRET_KEY
+        sync: false
+      # ANTHROPIC_API_KEY is required by app.core.config too (the
+      # config module loads on every import). Cron path doesn't call
+      # Anthropic, but the env var must be present to import the app
+      # successfully.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+databases:
+  - name: fieldbridge-db
+    plan: basic-256mb        # cheapest current paid tier. Upgrade path: basic-1gb, basic-4gb, pro-*.
+    region: oregon           # MUST match the service region for low latency.
+    databaseName: fieldbridge
+    user: fieldbridge
+    # No `ipAllowList` — keep DB private to Render's network. The
+    # api service reaches it via the auto-injected DATABASE_URL above.

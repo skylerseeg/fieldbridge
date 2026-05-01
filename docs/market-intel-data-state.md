@@ -303,3 +303,69 @@ Refresh this doc when any of the following happens:
 - Phase 2-5 ships (annotate § 6 with what landed and what evolved).
 
 Last updated: 2026-05-01 by Lead Agent. Next planned refresh: after KWMF-sql access opens or after `feature/market-intel-v15` merges to main, whichever comes first.
+
+---
+
+## 9. Mockup-vs-built gap analysis (2026-05-01 evening)
+
+The operator shared two HTML mockup screenshots of the Bid Intelligence v1 UI after `feature/market-intel-v15` merged to main. This section maps each mockup element against what's already shipping vs. what needs schema additions vs. what's a future phase. **Goal:** give the operator a precise read on which mockup elements work today, which need Phase 1's PR, and which are deferred.
+
+### 9a. Already built and works against the merged schema
+
+| Mockup element | Code reference |
+|---|---|
+| Page shell + sidebar nav with "Bid Intelligence (NEW)" badge | `frontend/src/modules/market-intel/MarketIntelPage.tsx`; `frontend/src/components/shell/nav-config.tsx` line w/ `BarChart3` icon |
+| State chip filter (UT, ID, NV, WY, CO, AZ) | `ModuleHeader.STATE_OPTIONS`, default in `MarketIntelPage.DEFAULT_STATES` |
+| "Last 36 months" window dropdown | `ModuleHeader` `MonthsBack` type |
+| 4-tile KPI strip (events tracked / active competitors / win rate / median premium) | `KpiStrip` component (states + monthsBack props) |
+| Competitor curves scatter plot (X = median rank, Y = avg premium over low, dot size = bid count, color = win rate) | `components/CompetitorCurves.tsx` lazy-loaded behind tab; `GET /api/market-intel/competitor-curves` → `CompetitorCurveRow` schema |
+| Opportunity gaps tab | `components/OpportunityGaps.tsx`; `GET /api/market-intel/opportunity-gaps` → `OpportunityRow` schema |
+| Bid calibration tab | `components/BidCalibration.tsx`; `GET /api/market-intel/bid-calibration` → `CalibrationPoint` schema |
+| `ContractorDetailPage` and `GapDetailPage` routes | Already wired in `routes.tsx` lines 196-203, but they're full pages, not right-rail panels (see § 9d open question) |
+
+**Key observation:** the three tabs from the mockup (Competitor curves, Opportunity gaps, Bid calibration) all map 1:1 to the analytics SQL files (`competitor_curves.sql`, `opportunity_gaps.sql`, `bid_calibration.sql`). The Pydantic response schemas mirror what each tab needs to render. **The first three tabs work against the existing schema with zero additions.**
+
+### 9b. Mockup elements that need Phase 1 schema additions (the in-flight PR)
+
+| Mockup element | Phase 1 dependency |
+|---|---|
+| **"Job type — All scopes" dropdown** in the filter bar | `bid_events.job_type` column. Filter values populate from DISTINCT `job_type` once the Phase 3 taxonomy classifier runs. |
+| **"Most-bid scope: Paving" badge** in the right-rail | Same — `bid_events.job_type`, aggregated per contractor. |
+| **"How this surface stays current" 5-card pipeline row** at the bottom | `pipeline_runs` table. Each card reads from `pipeline_runs` filtered by `pipeline_name`. The "▲ 142 events / night" / "refreshed 2h ago" stats are `MAX(started_at)` and `SUM(counters->>'written')` queries. |
+| **"Pipeline live · last refresh 2h ago" pill** in the top bar | Same `pipeline_runs` table. Reads `MAX(finished_at)` for the ITD pipeline. |
+
+**Operator note:** none of these are blockers for the v1 launch. They're additive surfaces that light up once the Phase 1 PR merges and the cron runs a few times.
+
+### 9c. Mockup elements that need Phase 2+ work (deferred)
+
+| Mockup element | What it needs |
+|---|---|
+| **Right-rail "Selected Contractor"** detail panel with head-to-head history (Sunroc Corporation example: Bids in window, Median rank, Win rate, Avg premium over low, Most-bid scope, Co-bid frequency w/ VanCon, Last 5 head-to-head with deltas) | New endpoint `GET /api/market-intel/contractor/{slug}` returning a richer aggregate. Math is doable today on existing schema (joins `bid_events` × `bid_results` × `contractors`), but the `Last 5 head-to-head` deltas require Phase 1's `pct_above_low` to render the "Lost by 4.2%" / "Won by 1.1%" line items efficiently. The frontend component scaffold exists (`ContractorDetailPage.tsx`) but is currently a separate route, not a right-rail panel. |
+| **"Top competitors by rank" table** below the right-rail | Same data as competitor-curves endpoint, just sorted descending by `bid_count` and limited. Could ship as a sort variant of the existing endpoint. |
+| **"Pattern detected" callout** ("VanCon's median rank dropped from 3.1 → 2.4 over the last 12 months. Pricing is tightening on paving and utility scopes against Staker Parson and Geneva Rock. Three counties show open whitespace where neither competitor has bid in the last 6 months.") | Phase 3 LLM narrative. Reads bid_events × bid_results × contractors, runs Claude with a structured prompt summarizing trends, caches per tenant. Same pattern as `/recommendations` does for other modules. |
+| **"Supplier intel · v3" tab** | Layer B. Needs `bid_results.listed_subs` and `listed_suppliers` (Phase 1 ships the columns, but population comes from extending the ITD parser to capture sub-listing tables on bid abstracts — Phase 2 backfill task). Also needs at least 6 months of accumulated data. |
+| **"Tightening — moving left" annotation** on the scatter plot | A trend annotation. Needs the calibration endpoint to emit a sliding-window comparison (current 12mo vs. prior 12mo). Existing `bid_calibration.sql` returns per-quarter rows; the trend math is a frontend rollup. **No schema change needed**, just a frontend follow-up. |
+
+### 9d. UI design questions surfaced by the mockup (not blocking)
+
+1. **Contractor detail: right-rail vs. dedicated route?** The mockup shows the Sunroc detail as a right-rail panel that stays visible while the user explores the chart. The current `routes.tsx` has `/market-intel/contractor/:slug` as a full page route. Decision needed: refactor to inline panel, OR keep the dedicated route and remove the right-rail design. Inline panel is closer to the mockup's "click any contractor to drill in" UX intent.
+
+2. **Tenant labels in user-facing text.** The mockup uses `"VanCon Inc."` and `"VanCon (you)"` as literal strings. For multi-tenant productization, these should swap to `tenant.company_name` and `"<tenant.company_name> (you)"` dynamically. Cheap fix; flag for the next frontend slice.
+
+3. **"Active competitors: 218 (≥10 bids in window)"** — the threshold (10) should probably be configurable per-tenant or per-window. Today it's hardcoded as `min_bids: int = 10` default in the `competitor-curves` endpoint. Consider exposing as a UI tweak in the filter bar, or making it window-relative (e.g. `≥ window_months / 4`).
+
+4. **"50 state portals"** in the SOURCE pipeline card. Current scope: ITD only (one state). The card text is aspirational — needs to either be honest about coverage today ("1 state portal — Idaho") or get a footnote indicating future coverage. Cosmetic, not technical.
+
+5. **"Bid intelligence" vs. "Market intel" naming.** Sidebar reads "Bid Intelligence" (mockup-aligned), URL is `/market-intel`, backend mounts at `/api/market-intel`, design doc is `docs/market-intel.md`. Inconsistent but each is internally consistent; user-facing label ("Bid Intelligence") is correct; the URLs/code being `market_intel` is fine because they're internal namespaces. Not a blocker; flag if it gets confusing in support tickets.
+
+### 9e. What the operator should do post-Phase 1 PR
+
+Once the Phase 1 schema PR merges and the cron has run a few nights:
+
+1. Verify the v1 page renders against real ITD data: navigate to `/market-intel` in the deployed app, confirm KPI tiles populate (non-zero), confirm the scatter plot has Idaho contractors visible.
+2. Decide on § 9d question 1 (right-rail vs. route) — that decision drives the next frontend slice.
+3. Spin up the "Pattern detected" Phase 3 endpoint as a paired ask for the next worker stream — schema-wise it's free; cost-wise it's one Claude call per tenant per refresh window.
+4. Begin the UT scraper (next state DOT) — schema-wise it's free; the value is geographic coverage breadth for the regional supplier-network analytics.
+
+**The Phase 1 PR is genuinely the only blocker that needs to land before the v1 mockup can fully populate against real data.** Everything else above is either deferred (Phase 2-3) or design-decision-pending (§ 9d).
+

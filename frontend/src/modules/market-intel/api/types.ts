@@ -15,6 +15,9 @@
  *   GET /opportunity-gaps
  *     ?bid_min=250000&bid_max=5000000&months_back=24 → OpportunityRow[]
  *
+ *   GET /gap/{state}/{county}
+ *     ?bid_min=250000&bid_max=5000000&months_back=24 → CountyGapEvent[]
+ *
  *   GET /bid-calibration
  *     ?contractor_name_match=van%20con           → CalibrationPoint[]
  *
@@ -47,6 +50,35 @@ export interface OpportunityRow {
   top_scope_codes: string[];
 }
 
+/** One bid event in an opportunity-gap county where VanCon never bid.
+ *  Returned by `GET /gap/{state}/{county}` — drill-in from the
+ *  Opportunity gaps top-N list. */
+export interface CountyGapEvent {
+  bid_event_id: string;
+  project_title: string;
+  /** Owning agency (e.g. "ITD", "City of Boise"). May be null. */
+  project_owner: string | null;
+  /** Vendor-published bid number; may be null. */
+  solicitation_id: string | null;
+  /** Source URL (DOT bid abstract PDF, NAPC posting, etc.). */
+  source_url: string;
+  /** 2-letter state of the SCRAPER (always uppercase). */
+  source_state: string;
+  /** Network identifier — `state_dot_id` | `napc` | etc. */
+  source_network: string;
+  /** ISO date — YYYY-MM-DD. */
+  bid_open_date: string;
+  /** 2-letter state of the PROJECT (always uppercase). */
+  location_state: string;
+  /** County name; null when the row is state-level only. */
+  location_county: string | null;
+  csi_codes: string[];
+  /** Winning low bidder name. */
+  low_bidder_name: string;
+  /** Winning bid in USD. */
+  low_bid_amount: number;
+}
+
 /** One quarter of the contractor's own bid calibration. */
 export interface CalibrationPoint {
   /** ISO date — first day of the quarter (YYYY-MM-DD). */
@@ -73,6 +105,19 @@ export interface OpportunityGapsParams {
   bidMin: number;
   bidMax: number;
   monthsBack: number;
+}
+
+export interface CountyGapDetailParams {
+  /** 2-letter state code, uppercase. */
+  state: string;
+  /** County name; the URL component the page reads from `useParams`. */
+  county: string;
+  bidMin: number;
+  bidMax: number;
+  monthsBack: number;
+  /** Optional ILIKE substring; events where ANY bidder matches are
+   *  filtered out. Defaults to backend's "van con" if omitted. */
+  contractorNameMatch?: string;
 }
 
 export interface BidCalibrationParams {

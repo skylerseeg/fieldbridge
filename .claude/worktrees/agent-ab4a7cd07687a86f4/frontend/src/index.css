@@ -1,0 +1,106 @@
+/*
+ * Field-mode overrides — scoped to [data-field="true"]. Vite resolves
+ * this @import at build time and inlines the contents. The attribute
+ * selector outranks :root via cascade specificity, so the overrides
+ * win without !important whenever AppShell sets the data attribute.
+ *
+ * @import must precede @tailwind directives per CSS spec (Vite enforces
+ * this with a build warning). The actual cascade order doesn't matter
+ * for our use because the [data-field] selector specificity beats the
+ * :root token defaults regardless of source order.
+ */
+@import "./styles/field-mode.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * FieldBridge theme tokens (HSL triples, consumed by tailwind.config.ts
+ * via hsl(var(--token))). Shared shadcn/ui convention. The literal hex
+ * reference next to each triple is for human eyes only.
+ *
+ * Mockup-derived palette — see docs/mockup.png.
+ */
+@layer base {
+  :root {
+    /* Surfaces */
+    --background: 40 33% 96%;                 /* #F5F3EE  main content cream  */
+    --foreground: 222 47% 11%;                /* #0F172A  near-black text     */
+    --card: 0 0% 100%;                        /* #FFFFFF                      */
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Sidebar */
+    --sidebar: 60 14% 98%;                    /* #FAFAF8                      */
+    --sidebar-foreground: 215 25% 27%;        /* #334155                      */
+    --sidebar-muted: 215 16% 47%;             /* #64748B  section headers     */
+    --sidebar-active: 217 91% 96%;            /* #EFF6FF  active nav bg       */
+
+    /* Semantic */
+    --primary: 160 84% 39%;                   /* #10B981  emerald             */
+    --primary-foreground: 0 0% 100%;
+    --info: 217 91% 60%;                      /* #3B82F6  blue                */
+    --info-foreground: 0 0% 100%;
+    --warning: 24 95% 53%;                    /* #F97316  orange              */
+    --warning-foreground: 0 0% 100%;
+    --critical: 0 84% 60%;                    /* #EF4444  red                 */
+    --critical-foreground: 0 0% 100%;
+    --monitor: 38 92% 50%;                    /* #F59E0B  amber               */
+    --monitor-foreground: 0 0% 100%;
+
+    /* Accent (highlighted tiles, black sign-out button, Apr bar) */
+    --accent: 222 47% 11%;                    /* #0F172A                      */
+    --accent-foreground: 0 0% 100%;
+
+    /* Muted (chips, secondary labels) */
+    --muted: 210 40% 96%;                     /* #F1F5F9                      */
+    --muted-foreground: 215 16% 47%;
+
+    /* Lines */
+    --border: 214 32% 91%;                    /* #E2E8F0                      */
+    --input: 214 32% 91%;
+    --ring: 160 84% 39%;                      /* matches primary              */
+
+    /*
+     * Market Intel duotone — `good` (teal) for active/healthy signals,
+     * `watch` (coral) for alert-this signals. Two ramps max per the
+     * Market Intel UI brief. Distinct hues from `primary` (emerald)
+     * and `warning` (orange) so the bid-intel ramps don't collide
+     * with the operations dashboards' severity palette.
+     *
+     * Tailwind exposes these as `good` / `watch` color names (see
+     * tailwind.config.ts). The win-rate-colored scatter dots in
+     * `modules/market-intel/components/CompetitorCurves.tsx` keep
+     * the same hue/saturation and vary only lightness — see the
+     * `TEAL_RAMP` constant there for the derivation.
+     *
+     * Field-mode overrides for these tokens are intentionally NOT in
+     * `field-mode.css` yet — that file is owned by the Frontend
+     * Polish worker, and Market Intel isn't a field-deployed module
+     * today. Add overrides there when that changes.
+     */
+    --color-good: 173 80% 36%;                /* #14B8A6  teal                */
+    --color-good-foreground: 0 0% 100%;
+    --color-watch: 4 92% 64%;                 /* #F87171  coral               */
+    --color-watch-foreground: 0 0% 100%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

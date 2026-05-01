@@ -1,0 +1,585 @@
+"""Vista SQL introspection — operator tool for mapping a Vista database.
+
+Connects via the shared ``app.core.tenant.get_vista_connection_for_tenant``
+helper (pyodbc + msodbcsql17, baked into the API service image). Runs
+read-only INFORMATION_SCHEMA + sys catalog queries, produces:
+
+  * Server identity (version, edition, current DB, current user)
+  * Full table inventory with row counts (sys.partitions)
+  * Tables grouped by Vista module prefix (JC = Job Cost, EM = Equipment,
+    AP = AP, AR = AR, PR = Payroll, HQ = Headquarters, GL = General
+    Ledger, IN = Inventory, SM = Service Management, PM = Project
+    Management, PO = Purchase Order, SL = Subcontract, BD = Bidding,
+    MS = Material Sales)
+  * Top 25 tables by row count (the data-rich surfaces)
+  * Column inventory for "key" tables (the canonical Vista entities
+    documented in data/vista_schemas/ + the most common analytics
+    targets)
+  * Foreign key relationships (for cross-module join paths)
+  * Date-column freshness checks on key tables
+
+Read-only by hard rule (CLAUDE.md): every query is SELECT-only.
+
+Usage:
+
+    cd backend
+    python scripts/vista_introspect.py                 # full, default
+    python scripts/vista_introspect.py --mode peek     # ~5s smoke check
+    python scripts/vista_introspect.py --output /tmp/vista_map.json
+    python scripts/vista_introspect.py --extra-key-tables jcjmd,phgr
+
+Why a wrapper script vs ``python -m``: same rationale as
+``run_napc_probe.py`` and ``run_itd_pipeline.py`` — running the module
+under -m makes it ``__main__`` and breaks downstream imports. Wrapper
+imports everything as normal modules so app.core.* works cleanly.
+"""
+from __future__ import annotations
+
+import argparse
+import asyncio
+import json
+import logging
+import sys
+from collections import defaultdict
+from datetime import date, datetime
+from pathlib import Path
+from typing import Any
+
+# sys.path bootstrap — same pattern as run_napc_probe.py.
+_BACKEND_ROOT = Path(__file__).resolve().parent.parent
+if str(_BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_ROOT))
+
+from sqlalchemy import select  # noqa: E402
+
+from app.core.config import settings  # noqa: E402
+from app.core.database import AsyncSessionLocal  # noqa: E402
+from app.core.tenant import get_vista_connection_for_tenant  # noqa: E402
+from app.models.tenant import Tenant  # noqa: E402
+
+log = logging.getLogger("fieldbridge.vista_introspect")
+
+
+# ---------------------------------------------------------------------------
+# Vista module prefix map. Two-letter prefix on table names is the
+# canonical Trimble Vista convention. Add to this map as new prefixes
+# surface in the inventory.
+
+VISTA_MODULE_PREFIXES: dict[str, str] = {
+    "JC": "Job Cost",
+    "EM": "Equipment",
+    "AP": "Accounts Payable",
+    "AR": "Accounts Receivable",
+    "PR": "Payroll",
+    "HQ": "Headquarter / Global",
+    "HR": "Human Resources",
+    "GL": "General Ledger",
+    "CM": "Cash Management",
+    "IN": "Inventory",
+    "IM": "Imaging / Attachments",
+    "MS": "Material Sales",
+    "PM": "Project Management",
+    "PO": "Purchase Order",
+    "SL": "Subcontract",
+    "SM": "Service Management",
+    "BD": "Bidding",
+    "FA": "Fixed Assets",
+    "VA": "VendorPay / ACH",
+    "DM": "Document Management",
+    "RP": "Reporting",
+    "RB": "Report Builder / Forms",
+    "DB": "Database / Sysadmin",
+    "UD": "User-Defined (custom — bud* / vud*)",
+}
+
+
+# Canonical "key" tables, named with the actual Vista b/v prefix
+# observed in the live SQL Server schema (b = base table, v = view-like
+# table). The data/vista_schemas/*.md docs use abbreviated names
+# (apvend, emem, emwo) — those are conceptual; the literal SQL names
+# carry the b/v prefix. Pass --extra-key-tables to extend on a per-run
+# basis.
+KEY_TABLES: tuple[str, ...] = (
+    # Job Cost backbone — universal-join entity
+    "bJCJM",   # Job master
+    "bJCCD",   # Cost detail (millions of rows in mature Vista)
+    "bJCCO",   # Job cost company
+    # Accounts Payable
+    "bAPVM",   # Vendor master (== "apvend" in the conceptual docs)
+    "bAPTD",   # Transaction detail
+    "bAPTL",   # Transaction line
+    # Equipment
+    "bEMEM",   # Equipment master (== "emem")
+    "bEMWO",   # Work orders (== "emwo")
+    "bEMRB",   # Revenue / billing
+    "bEMRC",   # Receipts / costs
+    "bEMCO",   # Equipment company
+    # Payroll
+    "bPRTH",   # Timesheet header
+    "bPRTL",   # Timesheet line
+    "bPRDT",   # Distribution detail
+    "bPRJC",   # Payroll-to-Job-Cost crossover
+    # General Ledger
+    "bGLAC",   # Chart of accounts (most-referenced FK target)
+    "bGLDT",   # GL detail
+    # Headquarters / global
+    "bHQCO",   # Company master
+    "bHQMA",   # Master audit
+    # Project Management (master)
+    "bPMPM",   # Project master
+    # Custom — VanCon's bud* extensions. The GPS table is the
+    # most interesting custom asset (~10M rows, fleet-tracking).
+    "budEMGPS",
+)
+
+
+# ---------------------------------------------------------------------------
+# Tenant fetch.
+#
+# Two paths:
+#
+#   FAST  — VISTA_SQL_HOST env var is set. Build a synthetic Tenant
+#           directly from settings without touching the FieldBridge
+#           Postgres. This is the normal path for local exploration
+#           (no local Postgres running) and also works in prod where
+#           env vars and Tenant.vista_sql_* are kept in lockstep.
+#
+#   SLOW  — env var unset. Query the FieldBridge Postgres for the
+#           VanCon tenant row. Used only when env-var-driven config
+#           isn't an option (e.g. multi-tenant prod where each tenant
+#           has distinct Vista creds — v3 territory).
+#
+# Either way, a Tenant object with vista_sql_* populated is returned;
+# the rest of the script doesn't care which path got us there.
+
+def _synthetic_tenant_from_env() -> Tenant | None:
+    if not settings.vista_sql_host:
+        return None
+    return Tenant(
+        id="env-fallback",
+        slug=settings.vancon_tenant_slug or "vancon",
+        company_name="env-fallback",
+        contact_email="local@example",
+        vista_sql_host=settings.vista_sql_host,
+        vista_sql_port=settings.vista_sql_port or 1433,
+        vista_sql_db=settings.vista_sql_db,
+        vista_sql_user=settings.vista_sql_user,
+        vista_sql_password=settings.vista_sql_password,
+    )
+
+
+async def _get_vancon_tenant() -> Tenant:
+    # FAST path.
+    synthetic = _synthetic_tenant_from_env()
+    if synthetic:
+        log.info(
+            "Using Vista creds from env (VISTA_SQL_HOST=%s) — skipping "
+            "FieldBridge Postgres tenant lookup.",
+            synthetic.vista_sql_host,
+        )
+        return synthetic
+
+    # SLOW path: query FieldBridge Postgres.
+    log.info("VISTA_SQL_HOST env var unset — falling back to FieldBridge tenant lookup.")
+    async with AsyncSessionLocal() as db:
+        result = await db.execute(
+            select(Tenant).where(Tenant.slug == settings.vancon_tenant_slug)
+        )
+        tenant = result.scalar_one_or_none()
+        if not tenant:
+            raise RuntimeError(
+                f"VanCon tenant not found (slug={settings.vancon_tenant_slug}). "
+                "Run `python -m app.core.seed` first, OR set VISTA_SQL_HOST in "
+                "your .env to use the env-var fast path."
+            )
+
+    if not tenant.vista_sql_host:
+        raise RuntimeError(
+            "Vista SQL host not configured on the VanCon tenant row AND no "
+            "VISTA_SQL_HOST env var. Configure via the onboarding wizard or "
+            "set VISTA_SQL_HOST in your .env."
+        )
+    return tenant
+
+
+# ---------------------------------------------------------------------------
+# Introspection queries. All read-only. All use parameter substitution
+# where needed so identifier injection isn't a concern.
+
+def _server_identity(cursor) -> dict[str, Any]:
+    cursor.execute("SELECT @@VERSION, DB_NAME(), CURRENT_USER, SUSER_SNAME()")
+    row = cursor.fetchone()
+    version_full = row[0]
+    # First line of @@VERSION is the human-readable name; rest is build info.
+    version_short = version_full.split("\n")[0].strip()
+    return {
+        "server_version_short": version_short,
+        "server_version_full": version_full,
+        "current_database": row[1],
+        "current_user": row[2],
+        "login_name": row[3],
+    }
+
+
+def _table_inventory(cursor) -> list[dict[str, Any]]:
+    """All user tables with row counts. ``index_id IN (0,1)`` covers
+    heap (0) and clustered (1) so we count physical rows once per table."""
+    cursor.execute("""
+        SELECT s.name AS schema_name,
+               t.name AS table_name,
+               COALESCE(SUM(p.rows), 0) AS row_count
+          FROM sys.tables t
+          JOIN sys.schemas s ON s.schema_id = t.schema_id
+          LEFT JOIN sys.partitions p
+            ON p.object_id = t.object_id
+           AND p.index_id IN (0, 1)
+         GROUP BY s.name, t.name
+         ORDER BY COALESCE(SUM(p.rows), 0) DESC, s.name, t.name
+    """)
+    return [
+        {"schema": s, "table": t, "rows": int(rc)}
+        for s, t, rc in cursor.fetchall()
+    ]
+
+
+def _columns_for(cursor, table_name: str) -> list[dict[str, Any]]:
+    cursor.execute(
+        """
+        SELECT COLUMN_NAME,
+               DATA_TYPE,
+               IS_NULLABLE,
+               CHARACTER_MAXIMUM_LENGTH,
+               NUMERIC_PRECISION,
+               NUMERIC_SCALE
+          FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_NAME = ?
+         ORDER BY ORDINAL_POSITION
+        """,
+        table_name,
+    )
+    out: list[dict[str, Any]] = []
+    for col, dt, nul, ml, np, ns in cursor.fetchall():
+        col_info: dict[str, Any] = {
+            "col": col,
+            "type": dt,
+            "nullable": nul == "YES",
+        }
+        if ml is not None:
+            col_info["length"] = int(ml) if ml >= 0 else "max"
+        if np is not None:
+            col_info["precision"] = int(np)
+        if ns is not None:
+            col_info["scale"] = int(ns)
+        out.append(col_info)
+    return out
+
+
+def _foreign_keys(cursor) -> list[dict[str, Any]]:
+    cursor.execute("""
+        SELECT fk.name                              AS fk_name,
+               OBJECT_NAME(fk.parent_object_id)     AS source_table,
+               cs.name                              AS source_column,
+               OBJECT_NAME(fk.referenced_object_id) AS target_table,
+               ct.name                              AS target_column
+          FROM sys.foreign_keys fk
+          JOIN sys.foreign_key_columns fkc
+            ON fkc.constraint_object_id = fk.object_id
+          JOIN sys.columns cs
+            ON cs.object_id = fkc.parent_object_id
+           AND cs.column_id = fkc.parent_column_id
+          JOIN sys.columns ct
+            ON ct.object_id = fkc.referenced_object_id
+           AND ct.column_id = fkc.referenced_column_id
+         ORDER BY OBJECT_NAME(fk.parent_object_id), fk.name
+    """)
+    return [
+        {
+            "fk_name": fn,
+            "source_table": st,
+            "source_col": sc,
+            "target_table": tt,
+            "target_col": tc,
+        }
+        for fn, st, sc, tt, tc in cursor.fetchall()
+    ]
+
+
+_DATE_TYPES = ("date", "datetime", "datetime2", "smalldatetime", "datetimeoffset")
+
+
+def _date_freshness(cursor, table: str, columns: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """For tables with date-typed columns, get min/max per column.
+
+    Vista convention: the ``Mth`` column is the **fiscal-period-close
+    bucket**, not the transaction date. Once accounting closes a
+    fiscal month, transactions for that month get stamped with the
+    Mth value. Pre-close transactions may have NULL Mth or carry
+    the open-period flag. So the script's old "first date column"
+    heuristic was reading period-close cadence as if it were
+    transaction-date cadence — misleading when the close cycle
+    runs behind the actual operations.
+
+    Fix: scan ALL date-typed columns and run min/max + non-null
+    count on each. Caller / reader picks the column that actually
+    reflects operational recency for the table:
+
+      - ``EntryDate`` / ``Created`` / ``LastUpdated`` — ideal
+        recency signals (genuine system clock at row write).
+      - ``TransDate`` / ``ActualDate`` — domain-meaningful dates.
+      - ``Mth`` / ``CertDate`` / ``ClosedDate`` — period markers,
+        lag behind actual activity by close cycle.
+
+    Returns:
+      {"columns": {col_name: {"min": ..., "max": ..., "non_null_rows": N}, ...}}
+      or None if the table has no date columns.
+    """
+    date_cols = [c["col"] for c in columns if c["type"].lower() in _DATE_TYPES]
+    if not date_cols:
+        return None
+
+    out: dict[str, dict[str, Any]] = {}
+    for col in date_cols:
+        # Identifier-injection safe: col + table come from sys catalog.
+        try:
+            cursor.execute(
+                f"SELECT MIN([{col}]), MAX([{col}]), "
+                f"COUNT_BIG(CASE WHEN [{col}] IS NOT NULL THEN 1 END) "
+                f"FROM [{table}]"
+            )
+            row = cursor.fetchone()
+            out[col] = {
+                "min": row[0],
+                "max": row[1],
+                "non_null_rows": int(row[2] or 0),
+            }
+        except Exception as exc:  # pragma: no cover — defensive
+            log.warning("Freshness check failed for %s.%s: %s", table, col, exc)
+            out[col] = {"error": str(exc)}
+
+    return {"columns": out}
+
+
+# ---------------------------------------------------------------------------
+# Reporting
+
+def _vista_module_prefix(table_name: str) -> str:
+    """Extract the Vista module prefix from a table name.
+
+    Vista names tables with a leading ``b`` (base table) or ``v``
+    (view-like / generated) and a 2-letter module code. So the
+    real module is at chars 1-3, not 0-2:
+
+        bJCJM         -> JC  (Job Cost)
+        vSMAgreement  -> SM  (Service Management)
+
+    User-defined custom tables use the ``bud*`` / ``vud*`` prefix
+    (Vista's "User-Defined" tables — VanCon's bud* extensions are
+    where the moat data lives, e.g. budEMGPS for fleet GPS).
+
+    Tables that don't follow either convention (system schemas,
+    archived `_BAD_*` suffixes that share a module with a live
+    table, etc.) get bucketed under their literal first two
+    characters with the original meaning intact.
+    """
+    if not table_name:
+        return "??"
+    if table_name.startswith(("bud", "vud")):
+        return "UD"  # User-Defined custom
+    if table_name[0] in ("b", "v") and len(table_name) >= 3:
+        return table_name[1:3].upper()
+    return table_name[:2].upper()
+
+
+def _group_by_module(inventory: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    by_prefix: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in inventory:
+        prefix = _vista_module_prefix(row["table"])
+        by_prefix[prefix].append(row)
+    return {
+        prefix: {
+            "module": VISTA_MODULE_PREFIXES.get(prefix, "Unknown / non-Vista"),
+            "table_count": len(tables),
+            "total_rows": sum(t["rows"] for t in tables),
+        }
+        for prefix, tables in by_prefix.items()
+    }
+
+
+def _print_summary(report: dict[str, Any]) -> None:
+    s = report["server"]
+    print()
+    print("=" * 70)
+    print("Vista SQL Introspection Report")
+    print("=" * 70)
+    print(f"  Server   : {s['server_version_short']}")
+    print(f"  Database : {s['current_database']}")
+    print(f"  User     : {s['current_user']}  (login: {s['login_name']})")
+    print(f"  Captured : {report['captured_at']}")
+
+    if "table_count" in report:
+        print(f"\n  PEEK MODE — total user tables: {report['table_count']}")
+        return
+
+    inv = report.get("tables", [])
+    print(f"\n  Total user tables : {len(inv):,}")
+    print(f"  Total rows        : {sum(t['rows'] for t in inv):,}")
+
+    print("\n--- Modules (by Vista 2-letter prefix) ---")
+    mods = report["modules"]
+    for prefix in sorted(mods.keys(), key=lambda p: -mods[p]["total_rows"]):
+        m = mods[prefix]
+        print(f"  {prefix:>3} {m['module']:<28} {m['table_count']:>4} tables  {m['total_rows']:>14,} rows")
+
+    print("\n--- Top 25 tables by row count ---")
+    for r in report["top_25_by_rows"]:
+        print(f"  {r['schema']}.{r['table']:<24} {r['rows']:>14,}")
+
+    print("\n--- Key tables (column shape + per-date-column freshness) ---")
+    print("    Vista note: 'Mth' = fiscal-period-close bucket (lags real")
+    print("    activity by the close cycle). EntryDate / Created /")
+    print("    LastUpdated columns track actual transaction time.")
+    for tname, info in sorted(report["key_table_columns"].items()):
+        cc = len(info["columns"])
+        f = info.get("freshness")
+        if not f or not f.get("columns"):
+            print(f"\n  {tname:<10} {cc:>3} cols  (no date columns)")
+            continue
+        print(f"\n  {tname:<10} {cc:>3} cols")
+        # Sort by max date desc so the most-recent column shows first.
+        # None-safe: missing 'max' sorts last.
+        cols = f["columns"]
+        ordered = sorted(
+            cols.items(),
+            key=lambda kv: (kv[1].get("max") or datetime.min, kv[0]),
+            reverse=True,
+        )
+        for col_name, col_info in ordered:
+            if "error" in col_info:
+                print(f"    {col_name:<24} (error: {col_info['error'][:50]}...)")
+                continue
+            mn, mx, nn = col_info["min"], col_info["max"], col_info["non_null_rows"]
+            mn_s = str(mn)[:10] if mn else "—"
+            mx_s = str(mx)[:10] if mx else "—"
+            print(f"    {col_name:<24} {mn_s} → {mx_s}  ({nn:,} non-null)")
+    missing = sorted(report.get("key_tables_missing", []))
+    if missing:
+        print(f"\n  Key tables NOT FOUND in this DB: {', '.join(missing)}")
+
+    fks = report.get("foreign_keys", [])
+    print(f"\n--- Foreign keys ---")
+    print(f"  Total constraints: {len(fks)}")
+    if fks:
+        # Show top 10 most-referenced target tables
+        target_count: dict[str, int] = defaultdict(int)
+        for fk in fks:
+            target_count[fk["target_table"]] += 1
+        top_targets = sorted(target_count.items(), key=lambda x: -x[1])[:10]
+        print("  Top FK target tables (i.e. most-joined-into):")
+        for tt, cnt in top_targets:
+            print(f"    {tt:<28} {cnt} inbound FKs")
+
+
+def _json_default(obj: Any) -> Any:
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    return str(obj)
+
+
+# ---------------------------------------------------------------------------
+# Main
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Vista SQL introspection.")
+    parser.add_argument(
+        "--mode",
+        choices=["peek", "full"],
+        default="full",
+        help="`peek` = server identity + table count only (~5s). "
+             "`full` = full inventory + columns + FKs + freshness (~30-60s).",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="JSON report path. Default: /tmp/vista_introspection_<db>.json",
+    )
+    parser.add_argument(
+        "--extra-key-tables",
+        type=lambda s: [t.strip() for t in s.split(",") if t.strip()],
+        default=[],
+        help="Comma-separated table names to include in the column-inventory "
+             "+ freshness pass beyond the canonical KEY_TABLES set.",
+    )
+    args = parser.parse_args()
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)-5s %(name)s: %(message)s",
+    )
+
+    # Tenant + connection.
+    tenant = asyncio.run(_get_vancon_tenant())
+    log.info(
+        "Connecting to Vista: %s:%s/%s as %s",
+        tenant.vista_sql_host,
+        tenant.vista_sql_port,
+        tenant.vista_sql_db,
+        tenant.vista_sql_user,
+    )
+    conn = get_vista_connection_for_tenant(tenant)
+    cursor = conn.cursor()
+
+    report: dict[str, Any] = {
+        "tenant_slug": tenant.slug,
+        "captured_at": datetime.utcnow().isoformat() + "Z",
+        "mode": args.mode,
+        "server": _server_identity(cursor),
+    }
+
+    if args.mode == "peek":
+        cursor.execute("SELECT COUNT(*) FROM sys.tables")
+        report["table_count"] = int(cursor.fetchone()[0])
+    else:
+        log.info("Fetching full table inventory + row counts...")
+        inv = _table_inventory(cursor)
+        report["tables"] = inv
+        report["modules"] = _group_by_module(inv)
+        report["top_25_by_rows"] = inv[:25]
+
+        log.info("Introspecting key tables...")
+        all_keys = list(KEY_TABLES) + list(args.extra_key_tables)
+        existing_table_names = {t["table"].lower() for t in inv}
+
+        report["key_table_columns"] = {}
+        report["key_tables_missing"] = []
+        for kt in all_keys:
+            if kt.lower() not in existing_table_names:
+                report["key_tables_missing"].append(kt)
+                continue
+            cols = _columns_for(cursor, kt)
+            entry: dict[str, Any] = {"columns": cols}
+            fr = _date_freshness(cursor, kt, cols)
+            if fr:
+                entry["freshness"] = fr
+            report["key_table_columns"][kt] = entry
+
+        log.info("Fetching foreign key map...")
+        report["foreign_keys"] = _foreign_keys(cursor)
+
+    conn.close()
+
+    # Stdout summary.
+    _print_summary(report)
+
+    # JSON report.
+    out_path = args.output or Path(
+        f"/tmp/vista_introspection_{report['server']['current_database']}.json"
+    )
+    out_path.write_text(json.dumps(report, indent=2, default=_json_default))
+    print(f"\n  Full JSON report : {out_path}")
+    print()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

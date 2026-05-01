@@ -1,0 +1,80 @@
+[
+  {
+    "WorkOrder": "WO-50112",
+    "Equipment": "EX-101",
+    "Description": "Hydraulic pump replacement — boom dropped under load",
+    "Status": "C",
+    "Priority": "1",
+    "OpenDate": "2026-04-12",
+    "ClosedDate": "2026-04-19",
+    "LaborHours": 22.5,
+    "PartsCost": 8400,
+    "TotalCost": 11250,
+    "JobNumber": "1148"
+  },
+  {
+    "WorkOrder": "WO-50087",
+    "Equipment": "EX-101",
+    "Description": "Hydraulic line leak at swing motor",
+    "Status": "C",
+    "Priority": "2",
+    "OpenDate": "2026-02-01",
+    "ClosedDate": "2026-02-02",
+    "LaborHours": 6,
+    "PartsCost": 320,
+    "TotalCost": 1080,
+    "JobNumber": "1148"
+  },
+  {
+    "WorkOrder": "WO-49901",
+    "Equipment": "EX-101",
+    "Description": "Hydraulic pump weeping at output flange",
+    "Status": "C",
+    "Priority": "3",
+    "OpenDate": "2025-11-04",
+    "ClosedDate": "2025-11-04",
+    "LaborHours": 2,
+    "PartsCost": 0,
+    "TotalCost": 240,
+    "JobNumber": "1142"
+  },
+  {
+    "WorkOrder": "WO-50203",
+    "Equipment": "DZ-204",
+    "Description": "Final drive seal leak — passenger side",
+    "Status": "C",
+    "Priority": "2",
+    "OpenDate": "2026-03-02",
+    "ClosedDate": "2026-03-04",
+    "LaborHours": 14,
+    "PartsCost": 2200,
+    "TotalCost": 4150,
+    "JobNumber": "1148"
+  },
+  {
+    "WorkOrder": "WO-49850",
+    "Equipment": "DZ-204",
+    "Description": "Final drive seal leak — operator side",
+    "Status": "C",
+    "Priority": "3",
+    "OpenDate": "2025-09-15",
+    "ClosedDate": "2025-09-17",
+    "LaborHours": 12,
+    "PartsCost": 1800,
+    "TotalCost": 3550,
+    "JobNumber": "1142"
+  },
+  {
+    "WorkOrder": "WO-50300",
+    "Equipment": "TR-318",
+    "Description": "Brake pad replacement — annual service",
+    "Status": "C",
+    "Priority": "3",
+    "OpenDate": "2026-04-12",
+    "ClosedDate": "2026-04-12",
+    "LaborHours": 3,
+    "PartsCost": 280,
+    "TotalCost": 480,
+    "JobNumber": ""
+  }
+]

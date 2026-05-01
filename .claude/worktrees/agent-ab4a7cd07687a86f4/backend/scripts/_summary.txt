@@ -1,0 +1,551 @@
+
+### All Bid History.xlsx
+  sheet 'All Bid History'  (50 rows sampled, 89 cols)
+    - 'Was Bid'                                      bool      null=0.00
+    - 'Heavy Bid #'                                  int       null=0.00
+    - 'Job'                                          str       null=0.00
+    - 'Owner'                                        str       null=0.20
+    - 'Bid Type'                                     str       null=0.28
+    - 'County'                                       str       null=0.84 [sparse]
+    - 'Estimator'                                    str       null=0.46
+    - 'Bid Date'                                     datetime  null=0.00
+    - 'Completion Date'                              datetime  null=0.40
+    - 'Labor % Cost Factor'                          float     null=0.82 [sparse]
+    - 'Avg Mark Up %'                                float     null=0.82 [sparse]
+    - 'Mark Up'                                      float     null=0.82 [sparse]
+    - 'Overhead Add On'                              float     null=0.82 [sparse]
+    - 'Equip OP Exp'                                 float     null=0.82 [sparse]
+    - 'CO Equip'                                     float     null=0.82 [sparse]
+    - 'High'                                         float     null=0.72 [sparse]
+    - 'Low'                                          float     null=0.72 [sparse]
+    - 'VanCon'                                       float     null=0.72 [sparse]
+    - 'Rank'                                         float     null=0.72 [sparse]
+    - 'Won'                                          float     null=0.72 [sparse]
+    - 'Lost By'                                      float     null=0.72 [sparse]
+    - '% Over'                                       float     null=0.74 [sparse]
+    - 'Number Bidders'                               float     null=0.62
+    - 'Bids'                                         str       null=0.62
+    - 'PQ'                                           bool      null=0.00
+    - 'Plan Source'                                  str       null=0.22
+    - 'D.B. Wages'                                   bool      null=0.00
+    - 'Engineer Estimate'                            str       null=0.60
+    - 'Notice To Proceed Date'                       float     null=1.00 [ALL-NULL]
+    - 'Competitor Ids'                               str       null=0.78 [sparse]
+    - 'Deep'                                         float     null=1.00 [ALL-NULL]
+    - 'Traffic Control'                              float     null=1.00 [ALL-NULL]
+    - 'Dewatering'                                   float     null=1.00 [ALL-NULL]
+    - 'Bypass Pumping'                               float     null=1.00 [ALL-NULL]
+    - 'Tight Time Frame'                             float     null=1.00 [ALL-NULL]
+    - 'Tight Job Site'                               float     null=1.00 [ALL-NULL]
+    - 'Haul Off'                                     float     null=1.00 [ALL-NULL]
+    - 'Insurance Requirement'                        float     null=1.00 [ALL-NULL]
+    - 'Bid 1 Comp'                                   str       null=0.62
+    - 'Bid 1 Amt'                                    float     null=0.72 [sparse]
+    - 'Bid 1 Won'                                    float     null=0.62
+    - 'Bid 2 Comp'                                   str       null=0.62
+    - 'Bid 2 Amt'                                    float     null=0.72 [sparse]
+    - 'Bid 2 Won'                                    float     null=0.62
+    - 'Bid 3 Comp'                                   str       null=0.62
+    - 'Bid 3 Amt'                                    float     null=0.72 [sparse]
+    - 'Bid 3 Won'                                    float     null=0.62
+    - 'Bid 4 Comp'                                   str       null=0.64
+    - 'Bid 4 Amt'                                    float     null=0.74 [sparse]
+    - 'Bid 4 Won'                                    float     null=0.64
+    - 'Bid 5 Comp'                                   str       null=0.70 [sparse]
+    - 'Bid 5 Amt'                                    float     null=0.80 [sparse]
+    - 'Bid 5 Won'                                    float     null=0.70 [sparse]
+    - 'Bid 6 Comp'                                   str       null=0.76 [sparse]
+    - 'Bid 6 Amt'                                    float     null=0.82 [sparse]
+    - 'Bid 6 Won'                                    float     null=0.76 [sparse]
+    - 'Bid 7 Comp'                                   str       null=0.80 [sparse]
+    - 'Bid 7 Amt'                                    float     null=0.86 [sparse]
+    - 'Bid 7 Won'                                    float     null=0.80 [sparse]
+    - 'Bid 8 Comp'                                   str       null=0.88 [sparse]
+    - 'Bid 8 Amt'                                    float     null=0.92 [sparse]
+    - 'Bid 8 Won'                                    float     null=0.88 [sparse]
+    - 'Bid 9 Comp'                                   str       null=0.94 [sparse]
+    - 'Bid 9 Amt'                                    float     null=0.96 [sparse]
+    - 'Bid 9 Won'                                    float     null=0.94 [sparse]
+    - 'Bid 10 Comp'                                  str       null=0.98 [sparse]
+    - 'Bid 10 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 10 Won'                                   float     null=0.98 [sparse]
+    - 'Bid 11 Comp'                                  str       null=0.98 [sparse]
+    - 'Bid 11 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 11 Won'                                   float     null=0.98 [sparse]
+    - 'Bid 12 Comp'                                  str       null=0.98 [sparse]
+    - 'Bid 12 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 12 Won'                                   float     null=0.98 [sparse]
+    - 'Bid 13 Comp'                                  str       null=0.98 [sparse]
+    - 'Bid 13 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 13 Won'                                   float     null=0.98 [sparse]
+    - 'Bid 14 Comp'                                  str       null=0.98 [sparse]
+    - 'Bid 14 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 14 Won'                                   float     null=0.98 [sparse]
+    - 'Bid 15 Comp'                                  float     null=1.00 [ALL-NULL]
+    - 'Bid 15 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 15 Won'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 16 Comp'                                  float     null=1.00 [ALL-NULL]
+    - 'Bid 16 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 16 Won'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 17 Comp'                                  float     null=1.00 [ALL-NULL]
+    - 'Bid 17 Amt'                                   float     null=1.00 [ALL-NULL]
+    - 'Bid 17 Won'                                   float     null=1.00 [ALL-NULL]
+
+### Barcodes.xlsx
+  sheet 'Barcodes'  (50 rows sampled, 5 cols)
+    - 'Barcode'                                      int       null=0.00
+    - 'Manufacturer'                                 str       null=0.00
+    - 'Material'                                     str       null=0.00
+    - 'Model'                                        str       null=0.00
+    - 'Retired Date'                                 float     null=1.00 [ALL-NULL]
+
+### Bid History.xlsx
+  sheet 'Bid History'  (50 rows sampled, 39 cols)
+    - 'Was Bid'                                      bool      null=0.00
+    - 'Heavy Bid #'                                  int       null=0.00
+    - 'Job'                                          str       null=0.00
+    - 'Owner'                                        str       null=0.04
+    - 'Bid Type'                                     str       null=0.00
+    - 'County'                                       str       null=0.24
+    - 'Estimator'                                    str       null=0.00
+    - 'Bid Date'                                     datetime  null=0.00
+    - 'Completion Date'                              datetime  null=0.14
+    - 'Abstracts'                                    float     null=1.00 [ALL-NULL]
+    - 'Labor % Cost Factor'                          float     null=0.24
+    - 'Avg Mark Up %'                                float     null=0.24
+    - 'Mark Up'                                      float     null=0.24
+    - 'Overhead Add On'                              float     null=0.24
+    - 'Equip OP Exp'                                 float     null=0.24
+    - 'CO Equip'                                     float     null=0.24
+    - 'High'                                         float     null=0.20
+    - 'Low'                                          float     null=0.20
+    - 'Won'                                          float     null=0.28
+    - 'VanCon'                                       float     null=0.20
+    - 'Rank'                                         float     null=0.20
+    - 'Lost By'                                      float     null=0.20
+    - '% Over'                                       float     null=0.30
+    - 'Number Bidders'                               float     null=0.12
+    - 'Bids'                                         str       null=0.12
+    - 'PQ'                                           bool      null=0.00
+    - 'Plan Source'                                  str       null=0.12
+    - 'D.B. Wages'                                   bool      null=0.00
+    - 'Engineer Estimate'                            str       null=0.28
+    - 'Notice To Proceed Date'                       float     null=1.00 [ALL-NULL]
+    - 'Competitor Ids'                               str       null=0.62
+    - 'Deep'                                         float     null=1.00 [ALL-NULL]
+    - 'Traffic Control'                              float     null=1.00 [ALL-NULL]
+    - 'Dewatering'                                   float     null=1.00 [ALL-NULL]
+    - 'Bypass Pumping'                               float     null=1.00 [ALL-NULL]
+    - 'Tight Time Frame'                             float     null=1.00 [ALL-NULL]
+    - 'Tight Job Site'                               float     null=1.00 [ALL-NULL]
+    - 'Haul Off'                                     float     null=1.00 [ALL-NULL]
+    - 'Insurance Requirement'                        float     null=1.00 [ALL-NULL]
+
+### Bid Outlook.xlsx
+  sheet 'Bid Outlook'  (21 rows sampled, 27 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Need Plans'                                   bool      null=0.00
+    - 'Bid Bond'                                     str       null=0.86 [sparse]
+    - 'PQ'                                           bool      null=0.00
+    - 'SD'                                           bool      null=0.00
+    - 'CM GC'                                        bool      null=0.00
+    - 'Plan Source'                                  str       null=0.48
+    - 'Delivery Type'                                str       null=0.43
+    - 'Public Opening'                               bool      null=0.00
+    - 'Owner'                                        str       null=0.05
+    - 'Completion Date'                              datetime  null=0.62
+    - 'Engineer Estimate'                            str       null=0.62
+    - 'Ready For Review'                             bool      null=0.00
+    - 'Estimator Time Off'                           str       null=0.86 [sparse]
+    - 'Estimator Name'                               str       null=0.14
+    - 'Bid Date'                                     datetime  null=0.33
+    - 'Anticipated Bid Date'                         datetime  null=0.86 [sparse]
+    - 'Pre Bid Date'                                 datetime  null=0.62
+    - 'Pre-Bid Competitors'                          str       null=0.91 [sparse]
+    - 'Man-datory'                                   bool      null=0.00
+    - 'Person Going'                                 str       null=0.62
+    - 'Bid Type'                                     str       null=0.00
+    - 'Labor Fade/Gain'                              int       null=0.00
+    - 'Costs Fade/Gain'                              int       null=0.00
+    - 'D.B. Wages'                                   bool      null=0.00
+    - 'AIS'                                          bool      null=0.00
+    - 'Notes'                                        str       null=0.95 [sparse]
+
+### Competitor Bids.xlsx
+  sheet 'Competitor Bids'  (0 rows sampled, 12 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Bid Type'                                     str       null=0.00
+    - 'Heavy Bid #'                                  str       null=0.00
+    - 'Bid Date'                                     str       null=0.00
+    - 'Bid Amount'                                   str       null=0.00
+    - 'Rank'                                         str       null=0.00
+    - 'Won'                                          str       null=0.00
+    - '# Bidders'                                    str       null=0.00
+    - 'Low'                                          str       null=0.00
+    - 'High'                                         str       null=0.00
+    - 'VanCon'                                       str       null=0.00
+    - 'Lower Than VanCon'                            str       null=0.00
+
+### Employee Assets.xlsx
+  sheet 'Employee Assets'  (50 rows sampled, 13 cols)
+    - 'Asset'                                        str       null=0.00
+    - 'Description'                                  str       null=0.62
+    - 'Category'                                     str       null=0.52
+    - 'Device'                                       str       null=0.92 [sparse]
+    - 'Identifier'                                   str       null=0.72 [sparse]
+    - 'OS Install'                                   datetime  null=0.92 [sparse]
+    - 'Unassiged Location'                           float     null=1.00 [ALL-NULL]
+    - 'Employee'                                     str       null=0.18
+    - 'Employee Active'                              bool      null=0.00
+    - 'HrRef'                                        int       null=0.00
+    - 'On Truck'                                     str       null=0.48
+    - 'Date Out'                                     datetime  null=0.58
+    - 'Memo Out'                                     str       null=0.90 [sparse]
+
+### Equipment Utilization.xlsx
+  sheet 'Equipment Utilization'  (50 rows sampled, 20 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Images'                                       str       null=0.00
+    - 'Ticket Date'                                  datetime  null=0.00
+    - 'Ticket'                                       float     null=0.04
+    - 'Is Lessor'                                    bool      null=0.00
+    - 'Invoiced'                                     bool      null=0.00
+    - 'Invoice Number'                               float     null=1.00 [ALL-NULL]
+    - 'Invoice Date'                                 float     null=1.00 [ALL-NULL]
+    - 'Price'                                        float     null=0.08
+    - 'Extended Price'                               float     null=0.08
+    - 'Vendor'                                       str       null=0.00
+    - 'Pit'                                          str       null=0.00
+    - 'Material'                                     str       null=0.08
+    - 'Truck'                                        str       null=0.00
+    - 'Trailer 1'                                    str       null=0.84 [sparse]
+    - 'Trailer 2'                                    float     null=1.00 [ALL-NULL]
+    - 'Qty'                                          float     null=0.00
+    - 'Units'                                        str       null=0.00
+    - 'Driver'                                       str       null=0.00
+    - 'Notes'                                        str       null=0.08
+
+### Estimate Vs Actual.xlsx
+  sheet 'Estimate Vs Actual'  (50 rows sampled, 6 cols)
+    - 'Job / Grouping'                               str       null=0.02
+    - 'Close Month'                                  datetime  null=0.08
+    - 'Estimate'                                     float     null=0.06
+    - 'Actual'                                       float     null=0.06
+    - 'Variance'                                     float     null=0.06
+    - 'Percent'                                      float     null=0.06
+
+### Estimates.xlsx
+  sheet 'Estimates'  (50 rows sampled, 13 cols)
+    - 'Code'                                         str       null=0.00
+    - 'Name'                                         str       null=0.00
+    - 'Date Created'                                 datetime  null=0.00
+    - 'Estimate Total Cost'                          float     null=0.00
+    - 'Actual Bid Markup'                            float     null=0.00
+    - 'Actual Markup Takeoff'                        float     null=0.00
+    - 'Addon Bond Total'                             float     null=0.00
+    - 'Addon Cost'                                   float     null=0.00
+    - 'Bond Total'                                   float     null=0.00
+    - 'Addon Markup'                                 int       null=0.00
+    - 'Bid Date'                                     float     null=0.70 [sparse]
+    - 'Bid Total'                                    float     null=0.00
+    - 'Overhead %'                                   float     null=0.02
+
+### FabShopStockProducts.xlsx
+  sheet 'FabShopStockProducts'  (38 rows sampled, 2 cols)
+    - 'Description'                                  str       null=0.00
+    - 'Price'                                        int       null=0.00
+
+### Firm Contacts.xlsx
+  sheet 'Firm Contacts'  (50 rows sampled, 11 cols)
+    - 'Name'                                         str       null=0.46
+    - 'Firm Type'                                    str       null=0.46
+    - 'Contact'                                      str       null=0.40
+    - 'Title'                                        str       null=0.96 [sparse]
+    - 'Email'                                        str       null=0.82 [sparse]
+    - 'Phone'                                        str       null=0.34
+    - 'Code 1'                                       str       null=0.72 [sparse]
+    - 'Code 2'                                       str       null=0.92 [sparse]
+    - 'Code 3'                                       float     null=1.00 [ALL-NULL]
+    - 'Code 4'                                       float     null=1.00 [ALL-NULL]
+    - 'Code 5'                                       float     null=1.00 [ALL-NULL]
+
+### HCSS Activities.xlsx
+  sheet 'HCSS Activities'  (50 rows sampled, 12 cols)
+    - 'Estimate Code'                                str       null=0.00
+    - 'Estimate Name'                                str       null=0.00
+    - 'Activity Code'                                str       null=0.00
+    - 'Activity Description'                         str       null=0.00
+    - 'Date Created'                                 datetime  null=0.00
+    - 'Man Hours'                                    float     null=0.00
+    - 'Direct Total Cost'                            float     null=0.00
+    - 'Labor Cost'                                   float     null=0.40
+    - 'Permanent Material Cost'                      float     null=0.92 [sparse]
+    - 'Construction Material Cost'                   float     null=0.96 [sparse]
+    - 'Equipment Cost'                               float     null=0.16
+    - 'Subcontract Cost'                             float     null=1.00 [ALL-NULL]
+
+### Job Scheduling.xlsx
+  sheet 'Job Scheduling'  (44 rows sampled, 9 cols)
+    - 'Priority'                                     int       null=0.00
+    - 'Job'                                          str       null=0.00
+    - 'Start'                                        datetime  null=0.16
+    - 'Proj End'                                     float     null=0.20
+    - 'Milestone'                                    datetime  null=0.52
+    - 'Reason'                                       str       null=0.27
+    - 'Priority Department(s)'                       str       null=0.43
+    - 'Liquidated Damage'                            float     null=0.98 [sparse]
+    - 'Chad Wants'                                   float     null=1.00 [ALL-NULL]
+
+### Job class FTE Projections.xlsx
+  sheet 'FTE Projections'  (28 rows sampled, 45 cols)
+    - 'Class'                                        str       null=0.00
+    - 'Code'                                         str       null=0.04
+    - 'Craft/Class'                                  str       null=0.04
+    - 'Monthly Hours'                                float     null=0.04
+    - 'Last Month Actuals'                           float     null=0.04
+    - '12-Month Avg Totals'                          float     null=0.00
+    - 'Apr 26'                                       float     null=0.00
+    - 'May 26'                                       float     null=0.00
+    - 'Jun 26'                                       float     null=0.00
+    - 'Jul 26'                                       float     null=0.00
+    - 'Aug 26'                                       float     null=0.00
+    - 'Sep 26'                                       float     null=0.00
+    - 'Oct 26'                                       float     null=0.00
+    - 'Nov 26'                                       float     null=0.00
+    - 'Dec 26'                                       float     null=0.00
+    - 'Jan 27'                                       float     null=0.00
+    - 'Feb 27'                                       float     null=0.00
+    - 'Mar 27'                                       float     null=0.00
+    - '12-Month Avg Totals.1'                        float     null=0.00
+    - 'Apr 27'                                       int       null=0.00
+    - 'May 27'                                       float     null=0.00
+    - 'Jun 27'                                       float     null=0.00
+    - 'Jul 27'                                       int       null=0.00
+    - 'Aug 27'                                       int       null=0.00
+    - 'Sep 27'                                       int       null=0.00
+    - 'Oct 27'                                       int       null=0.00
+    - 'Nov 27'                                       int       null=0.00
+    - 'Dec 27'                                       int       null=0.00
+    - 'Jan 28'                                       int       null=0.00
+    - 'Feb 28'                                       int       null=0.00
+    - 'Mar 28'                                       int       null=0.00
+    - '24-Month Avg Totals'                          float     null=0.00
+    - 'Apr 28'                                       int       null=0.00
+    - 'May 28'                                       int       null=0.00
+    - 'Jun 28'                                       int       null=0.00
+    - 'Jul 28'                                       int       null=0.00
+    - 'Aug 28'                                       int       null=0.00
+    - 'Sep 28'                                       int       null=0.00
+    - 'Oct 28'                                       int       null=0.00
+    - 'Nov 28'                                       int       null=0.00
+    - 'Dec 28'                                       int       null=0.00
+    - 'Jan 29'                                       int       null=0.00
+    - 'Feb 29'                                       int       null=0.00
+    - 'Mar 29'                                       int       null=0.00
+    - '36-Month Avg Totals'                          int       null=0.00
+
+### Job class FTE actual projections.xlsx
+  sheet 'FTE Projections'  (28 rows sampled, 19 cols)
+    - 'Class'                                        str       null=0.00
+    - 'Code'                                         str       null=0.04
+    - 'Craft/Class'                                  str       null=0.04
+    - 'Monthly Hours'                                float     null=0.04
+    - 'Last Month Actuals'                           float     null=0.04
+    - '12-Month Avg Totals'                          float     null=0.00
+    - 'Feb 24'                                       float     null=0.00
+    - 'Mar 24'                                       float     null=0.00
+    - 'Apr 24'                                       float     null=0.00
+    - 'May 24'                                       float     null=0.00
+    - 'Jun 24'                                       float     null=0.00
+    - 'Jul 24'                                       float     null=0.00
+    - 'Aug 24'                                       float     null=0.00
+    - 'Sep 24'                                       float     null=0.00
+    - 'Oct 24'                                       float     null=0.00
+    - 'Nov 24'                                       float     null=0.00
+    - 'Dec 24'                                       float     null=0.00
+    - 'Jan 25'                                       float     null=0.00
+    - '12-Month Avg Totals.1'                        float     null=0.00
+
+### Job type FTE actual.xlsx
+  sheet 'FTE Projections'  (12 rows sampled, 19 cols)
+    - 'Job Type'                                     str       null=0.00
+    - 'Code'                                         str       null=0.08
+    - 'Craft/Class'                                  str       null=0.08
+    - 'Monthly Hours'                                float     null=0.08
+    - 'Last Month Actuals'                           float     null=0.08
+    - '12-Month Avg Totals'                          float     null=0.00
+    - 'Feb 24'                                       float     null=0.00
+    - 'Mar 24'                                       float     null=0.00
+    - 'Apr 24'                                       float     null=0.00
+    - 'May 24'                                       float     null=0.00
+    - 'Jun 24'                                       float     null=0.00
+    - 'Jul 24'                                       float     null=0.00
+    - 'Aug 24'                                       float     null=0.00
+    - 'Sep 24'                                       float     null=0.00
+    - 'Oct 24'                                       float     null=0.00
+    - 'Nov 24'                                       float     null=0.00
+    - 'Dec 24'                                       float     null=0.00
+    - 'Jan 25'                                       float     null=0.00
+    - '12-Month Avg Totals.1'                        float     null=0.00
+
+### Material analytics Fuel Totals.xlsx
+  sheet 'Fuel Totals'  (11 rows sampled, 5 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Job Type'                                     str       null=0.00
+    - 'Material (Tons)'                              float     null=0.00
+    - 'Concrete (Yards)'                             int       null=0.00
+    - 'Flowfill (Yards)'                             int       null=0.00
+
+### Overhead FTE Actuals.xlsx
+  sheet 'FTE Projections'  (10 rows sampled, 19 cols)
+    - 'Department'                                   str       null=0.00
+    - 'Code'                                         str       null=0.10
+    - 'Craft/Class'                                  str       null=0.10
+    - 'Monthly Hours'                                float     null=0.10
+    - 'Last Month Actuals'                           float     null=0.10
+    - '12-Month Avg Totals'                          float     null=0.00
+    - 'Feb 24'                                       float     null=0.00
+    - 'Mar 24'                                       float     null=0.00
+    - 'Apr 24'                                       float     null=0.00
+    - 'May 24'                                       float     null=0.00
+    - 'Jun 24'                                       float     null=0.00
+    - 'Jul 24'                                       float     null=0.00
+    - 'Aug 24'                                       float     null=0.00
+    - 'Sep 24'                                       float     null=0.00
+    - 'Oct 24'                                       float     null=0.00
+    - 'Nov 24'                                       float     null=0.00
+    - 'Dec 24'                                       float     null=0.00
+    - 'Jan 25'                                       float     null=0.00
+    - '12-Month Avg Totals.1'                        float     null=0.00
+
+### Overhead FTE Projections.xlsx
+  sheet 'FTE Projections'  (0 rows sampled, 19 cols)
+    - 'Department'                                   str       null=0.00
+    - 'Code'                                         str       null=0.00
+    - 'Craft/Class'                                  str       null=0.00
+    - 'Monthly Hours'                                str       null=0.00
+    - 'Last Month Actuals'                           str       null=0.00
+    - '12-Month Avg Totals'                          str       null=0.00
+    - 'Feb 24'                                       str       null=0.00
+    - 'Mar 24'                                       str       null=0.00
+    - 'Apr 24'                                       str       null=0.00
+    - 'May 24'                                       str       null=0.00
+    - 'Jun 24'                                       str       null=0.00
+    - 'Jul 24'                                       str       null=0.00
+    - 'Aug 24'                                       str       null=0.00
+    - 'Sep 24'                                       str       null=0.00
+    - 'Oct 24'                                       str       null=0.00
+    - 'Nov 24'                                       str       null=0.00
+    - 'Dec 24'                                       str       null=0.00
+    - 'Jan 25'                                       str       null=0.00
+    - '12-Month Avg Totals.1'                        str       null=0.00
+
+### Projected Hours.xlsx
+  sheet 'Projected Hours'  (50 rows sampled, 32 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Phase'                                        str       null=0.00
+    - 'Phase Master'                                 str       null=0.00
+    - 'PR Dept'                                      str       null=0.00
+    - 'Actual Hours'                                 float     null=0.00
+    - 'Progress % Complete'                          float     null=1.00 [ALL-NULL]
+    - 'Current Estimated Hours'                      float     null=0.00
+    - 'Projected Hours Remaining'                    float     null=0.00
+    - 'Projected Hours Allocated'                    float     null=0.00
+    - 'Projected Hours Unallocated'                  float     null=0.00
+    - 'Workoff Start'                                float     null=1.00 [ALL-NULL]
+    - 'Workoff Comp'                                 float     null=1.00 [ALL-NULL]
+    - "Mar – Mar '26"                                float     null=0.96 [sparse]
+    - "Apr – Jun '26"                                float     null=0.86 [sparse]
+    - "Jul – Sep '26"                                float     null=0.86 [sparse]
+    - "Oct – Dec '26"                                float     null=0.88 [sparse]
+    - '2026 Totals'                                  float     null=0.86 [sparse]
+    - "Jan – Mar '27"                                float     null=1.00 [ALL-NULL]
+    - "Apr – Jun '27"                                float     null=1.00 [ALL-NULL]
+    - "Jul – Sep '27"                                float     null=1.00 [ALL-NULL]
+    - "Oct – Dec '27"                                float     null=1.00 [ALL-NULL]
+    - '2027 Totals'                                  float     null=1.00 [ALL-NULL]
+    - "Jan – Mar '28"                                float     null=1.00 [ALL-NULL]
+    - "Apr – Jun '28"                                float     null=1.00 [ALL-NULL]
+    - "Jul – Sep '28"                                float     null=1.00 [ALL-NULL]
+    - "Oct – Dec '28"                                float     null=1.00 [ALL-NULL]
+    - '2028 Totals'                                  float     null=1.00 [ALL-NULL]
+    - "Jan – Mar '29"                                float     null=1.00 [ALL-NULL]
+    - "Apr – Jun '29"                                float     null=1.00 [ALL-NULL]
+    - "Jul – Sep '29"                                float     null=1.00 [ALL-NULL]
+    - "Oct – Dec '29"                                float     null=1.00 [ALL-NULL]
+    - '2029 Totals'                                  float     null=1.00 [ALL-NULL]
+
+### Proposal Bid Details.xlsx
+  sheet 'Proposal Bid Details'  (1 rows sampled, 17 cols)
+    - 'Competitor'                                   str       null=0.00
+    - 'Design Fee'                                   int       null=0.00
+    - 'CM Fee'                                       int       null=0.00
+    - 'CM Monthly Fee'                               int       null=0.00
+    - 'Contractor OHP Fee'                           int       null=0.00
+    - 'Contractor Bonds/Ins'                         int       null=0.00
+    - 'Contractor CO Markup'                         int       null=0.00
+    - 'City Budget'                                  int       null=0.00
+    - 'Contractor Start'                             datetime  null=0.00
+    - 'Contractor Days'                              int       null=0.00
+    - 'Contractor Projects'                          int       null=0.00
+    - 'PM Projects'                                  int       null=0.00
+    - 'Contractor PM'                                float     null=1.00 [ALL-NULL]
+    - 'Contractor Super'                             float     null=1.00 [ALL-NULL]
+    - 'Reference 1'                                  float     null=1.00 [ALL-NULL]
+    - 'Reference 2'                                  float     null=1.00 [ALL-NULL]
+    - 'Reference 3'                                  float     null=1.00 [ALL-NULL]
+
+### Proposal Bids.xlsx
+  sheet 'Proposal Bids'  (2 rows sampled, 4 cols)
+    - 'Job'                                          str       null=0.00
+    - 'Owner'                                        str       null=0.00
+    - 'Bid Type'                                     str       null=0.00
+    - 'County'                                       str       null=0.00
+
+### Rentals.xlsx
+  sheet 'Rentals'  (4 rows sampled, 17 cols)
+    - 'Equipment'                                    str       null=0.00
+    - 'Images'                                       float     null=1.00 [ALL-NULL]
+    - 'Rental Company'                               str       null=0.00
+    - 'Job'                                          str       null=0.00
+    - 'Rented By'                                    str       null=0.00
+    - 'Picked Up By'                                 str       null=0.00
+    - 'Picked Up Date'                               datetime  null=0.00
+    - 'Scheduled Return Date'                        datetime  null=0.00
+    - 'Returned Date'                                float     null=1.00 [ALL-NULL]
+    - 'Maintained By'                                bool      null=0.00
+    - 'Rental Length'                                str       null=0.00
+    - 'Rate'                                         float     null=0.25
+    - 'Rate Unit'                                    str       null=0.00
+    - 'Hours Start'                                  float     null=1.00 [ALL-NULL]
+    - 'Hours End'                                    float     null=1.00 [ALL-NULL]
+    - 'Serial Number'                                float     null=1.00 [ALL-NULL]
+    - 'Is RPO'                                       bool      null=0.00
+
+### Transfer Records.xlsx
+  sheet 'Transfer Records'  (50 rows sampled, 8 cols)
+    - 'Id'                                           int       null=0.00
+    - 'Transfer Date'                                datetime  null=0.00
+    - 'Tool/Consumable'                              str       null=0.00
+    - 'Location'                                     str       null=0.00
+    - 'Quantity'                                     int       null=0.00
+    - 'Total Price'                                  float     null=0.00
+    - 'Requested By'                                 float     null=1.00 [ALL-NULL]
+    - 'User'                                         str       null=0.00
+
+### WIP report - Job Scheduling.xlsx
+  sheet 'Job Scheduling'  (42 rows sampled, 14 cols)
+    - 'Contract Job Description'                     str       null=0.02
+    - 'Total Contract'                               float     null=0.00
+    - 'Contract Cost TD'                             float     null=0.00
+    - 'Est Cost to Complete'                         float     null=0.00
+    - 'Est Total Cost'                               float     null=0.00
+    - 'Est Gross Profit'                             float     null=0.00
+    - 'Est Gross Profit %'                           float     null=0.00
+    - 'Percent Complete'                             float     null=0.00
+    - 'Gain (Fade) From Prior Mth'                   float     null=0.00
+    - 'Billings To Date'                             float     null=0.00
+    - '(Over) / Under Billings'                      float     null=0.00
+    - 'Contract Revenues Earned'                     float     null=0.00
+    - 'Gross Profit (Loss) TD'                       float     null=0.00
+    - 'Gross Profit % TD'                            float     null=0.00

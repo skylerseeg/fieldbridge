@@ -1,0 +1,41 @@
+{
+  "EX-101": [
+    {
+      "equipment_id": "EX-101",
+      "equipment_desc": "CAT 336 Excavator",
+      "risk_score": 82,
+      "risk_level": "Critical",
+      "component_at_risk": "hydraulic pump",
+      "failure_mode": "internal seal failure under load",
+      "evidence": [
+        "Hydraulic pump replacement on 2026-04-12 (WO-50112, $11,250)",
+        "Recurring hydraulic-line and pump-flange leaks in the prior 6 months",
+        "Boom drop under load reported by operator pre-replacement"
+      ],
+      "recommended_action": "Inspect new pump for early seal weep; verify return-line filtration and replace at next 250h interval.",
+      "urgency_days": 14,
+      "prevention_cost_estimate": 1500,
+      "failure_cost_estimate": 18000,
+      "parts_to_preorder": ["pump seal kit", "return filter element"]
+    }
+  ],
+  "DZ-204": [
+    {
+      "equipment_id": "DZ-204",
+      "equipment_desc": "John Deere 850K Dozer",
+      "risk_score": 68,
+      "risk_level": "High",
+      "component_at_risk": "final drive",
+      "failure_mode": "drive-side seal degradation, oil contamination risk",
+      "evidence": [
+        "Final drive seal leaks on both sides within 6 months (WO-49850, WO-50203)",
+        "Cumulative 26 labor-hours and $7,700 in trailing 9 months on the same system"
+      ],
+      "recommended_action": "Pull final drive case oil samples; schedule full seal + bearing rebuild in next planned downtime.",
+      "urgency_days": 21,
+      "prevention_cost_estimate": 4000,
+      "failure_cost_estimate": 22000,
+      "parts_to_preorder": ["final drive seal kit", "case oil"]
+    }
+  ]
+}

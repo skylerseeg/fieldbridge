@@ -1,0 +1,62 @@
+[
+  {
+    "Equipment": "EX-101",
+    "Description": "CAT 336 Excavator",
+    "Category": "EXCAVATOR",
+    "Status": "A",
+    "HourMeter": 5240,
+    "LastPMDate": "2026-02-15",
+    "LastPMHours": 5000,
+    "NextPMHours": 5250,
+    "Location": "Yard",
+    "CostCenter": "EQ-100"
+  },
+  {
+    "Equipment": "DZ-204",
+    "Description": "John Deere 850K Dozer",
+    "Category": "DOZER",
+    "Status": "A",
+    "HourMeter": 8120,
+    "LastPMDate": "2026-01-04",
+    "LastPMHours": 7750,
+    "NextPMHours": 8000,
+    "Location": "Job 1148",
+    "CostCenter": "EQ-200"
+  },
+  {
+    "Equipment": "TR-318",
+    "Description": "Kenworth T880 Dump Truck",
+    "Category": "TRUCK",
+    "Status": "A",
+    "HourMeter": 14210,
+    "LastPMDate": "2026-04-12",
+    "LastPMHours": 14000,
+    "NextPMHours": 14500,
+    "Location": "Job 1148",
+    "CostCenter": "EQ-300"
+  },
+  {
+    "Equipment": "LD-422",
+    "Description": "Volvo L150H Wheel Loader",
+    "Category": "LOADER",
+    "Status": "A",
+    "HourMeter": 9870,
+    "LastPMDate": "2026-03-01",
+    "LastPMHours": 9500,
+    "NextPMHours": 12500,
+    "Location": "Yard",
+    "CostCenter": "EQ-200"
+  },
+  {
+    "Equipment": "PU-507",
+    "Description": "Ford F-550 Service Truck",
+    "Category": "PICKUP",
+    "Status": "A",
+    "HourMeter": 4200,
+    "LastPMDate": "2026-04-25",
+    "LastPMHours": 4150,
+    "NextPMHours": 0,
+    "Location": "Yard",
+    "CostCenter": "EQ-300"
+  }
+]

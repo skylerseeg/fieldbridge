@@ -3,6 +3,8 @@ import type {
   CalibrationPoint,
   CompetitorCurveRow,
   CompetitorCurvesParams,
+  CountyGapDetailParams,
+  CountyGapEvent,
   OpportunityGapsParams,
   OpportunityRow,
 } from "./types";
@@ -206,6 +208,217 @@ const OPPORTUNITY_GAPS: OpportunityRow[] = [
   { state: "AZ", county: "Yavapai", missed_count: 4, avg_low_bid: 680_000, top_scope_codes: ["31 23 33"] },
 ];
 
+// ── County gap detail ───────────────────────────────────────────────
+//
+// Per-event drill-in fixtures keyed by `${state}|${county}`. Numbers
+// are illustrative — owner names and scope codes are realistic for the
+// western heavy-civil market but not sourced from real bid tabs.
+//
+// Coverage: every (state, county) cell in OPPORTUNITY_GAPS gets at
+// least 1 sample row so the drill page is never blank when the user
+// clicks any of the top-N rows. Cells with higher missed_count get
+// proportionally more sample events.
+
+interface CountyGapKey {
+  state: string;
+  county: string;
+}
+
+function gapKey(k: CountyGapKey): string {
+  return `${k.state}|${k.county}`;
+}
+
+const COUNTY_GAP_DETAIL: Record<string, CountyGapEvent[]> = {
+  "ID|Ada": [
+    {
+      bid_event_id: "f1c2a4e8-1101-4a01-9000-aaaa00000001",
+      project_title: "I-84, Eagle Rd to Garrity Blvd Pavement Rehabilitation",
+      project_owner: "Idaho Transportation Department",
+      solicitation_id: "ITD-25183",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst25183.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-04-15",
+      location_state: "ID",
+      location_county: "Ada",
+      csi_codes: ["32 11 23", "31 23 16"],
+      low_bidder_name: "Knife River Corporation - Northwest",
+      low_bid_amount: 4_280_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1101-4a01-9000-aaaa00000002",
+      project_title: "SH-44, State St to Linder Rd Widening",
+      project_owner: "Idaho Transportation Department",
+      solicitation_id: "ITD-24881",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst24881.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-03-04",
+      location_state: "ID",
+      location_county: "Ada",
+      csi_codes: ["32 11 23", "33 41 00"],
+      low_bidder_name: "Concrete Placing Co., Inc.",
+      low_bid_amount: 1_840_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1101-4a01-9000-aaaa00000003",
+      project_title: "Boise Airport Apron Reconstruction Phase 3",
+      project_owner: "City of Boise (Boise Airport)",
+      solicitation_id: "BOI-AIR-2026-04",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst25011.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-02-20",
+      location_state: "ID",
+      location_county: "Ada",
+      csi_codes: ["32 12 16", "31 23 16"],
+      low_bidder_name: "Sunroc Corporation",
+      low_bid_amount: 3_120_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1101-4a01-9000-aaaa00000004",
+      project_title: "Meridian Storm Drain Improvements - Locust Grove",
+      project_owner: "City of Meridian",
+      solicitation_id: "MER-2025-019",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst24573.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2025-11-12",
+      location_state: "ID",
+      location_county: "Ada",
+      csi_codes: ["33 41 00"],
+      low_bidder_name: "Knife River Corporation - Northwest",
+      low_bid_amount: 920_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1101-4a01-9000-aaaa00000005",
+      project_title: "US-20/26, Chinden Blvd Resurfacing",
+      project_owner: "Idaho Transportation Department",
+      solicitation_id: "ITD-24412",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst24412.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2025-09-08",
+      location_state: "ID",
+      location_county: "Ada",
+      csi_codes: ["32 11 23"],
+      low_bidder_name: "Concrete Placing Co., Inc.",
+      low_bid_amount: 2_640_000,
+    },
+  ],
+  "ID|Canyon": [
+    {
+      bid_event_id: "f1c2a4e8-1102-4a01-9000-aaaa00000010",
+      project_title: "Caldwell Industrial Way Reconstruction",
+      project_owner: "City of Caldwell",
+      solicitation_id: "CALD-2026-007",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst25022.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-03-22",
+      location_state: "ID",
+      location_county: "Canyon",
+      csi_codes: ["32 12 16", "31 23 16"],
+      low_bidder_name: "Western Construction, Inc.",
+      low_bid_amount: 1_120_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1102-4a01-9000-aaaa00000011",
+      project_title: "SH-19, Wilder to Greenleaf Pavement Rehab",
+      project_owner: "Idaho Transportation Department",
+      solicitation_id: "ITD-24732",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst24732.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2025-12-05",
+      location_state: "ID",
+      location_county: "Canyon",
+      csi_codes: ["32 11 23"],
+      low_bidder_name: "Knife River Corporation - Northwest",
+      low_bid_amount: 880_000,
+    },
+  ],
+  "UT|Salt Lake": [
+    {
+      bid_event_id: "f1c2a4e8-1201-4a01-9000-aaaa00000020",
+      project_title: "I-15, 600 N to 12300 S Pavement Preservation",
+      project_owner: "Utah Department of Transportation",
+      solicitation_id: "UDOT-S-N1234(56)",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst25101.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-04-02",
+      location_state: "UT",
+      location_county: "Salt Lake",
+      csi_codes: ["32 11 23", "31 23 16"],
+      low_bidder_name: "Granite Construction",
+      low_bid_amount: 1_560_000,
+    },
+    {
+      bid_event_id: "f1c2a4e8-1201-4a01-9000-aaaa00000021",
+      project_title: "SR-201 Bridge Deck Rehabilitation",
+      project_owner: "Utah Department of Transportation",
+      solicitation_id: "UDOT-F-201(78)",
+      source_url: "https://apps.itd.idaho.gov/apps/contractors/abst24990.pdf",
+      source_state: "ID",
+      source_network: "state_dot_id",
+      bid_open_date: "2026-02-11",
+      location_state: "UT",
+      location_county: "Salt Lake",
+      csi_codes: ["33 11 00"],
+      low_bidder_name: "W. W. Clyde & Co.",
+      low_bid_amount: 1_240_000,
+    },
+  ],
+};
+
+function mockCountyDetailFor(state: string, county: string): CountyGapEvent[] {
+  // Direct hit on a curated cell — return as-is.
+  const direct = COUNTY_GAP_DETAIL[gapKey({ state: state.toUpperCase(), county })];
+  if (direct) return direct;
+
+  // Fallback: synthesize 2 illustrative rows so the drill page never
+  // shows blank for an unfamiliar (state, county) combo. Operator
+  // notes: the real backend returns [] in this case; we choose to
+  // synthesize for offline UI dev so empty-state UX gets exercised
+  // separately via the explicit "ZZ|Ghost" affordance below.
+  if (state.toUpperCase() === "ZZ") return [];
+
+  const padState = state.toUpperCase().padEnd(2, "X").slice(0, 2);
+  return [
+    {
+      bid_event_id: `mock-${padState}-${county}-001`,
+      project_title: `Sample paving contract — ${county}`,
+      project_owner: "(mock) State DOT",
+      solicitation_id: null,
+      source_url: "https://example.invalid/sample-bid-abstract.pdf",
+      source_state: padState,
+      source_network: "state_dot_mock",
+      bid_open_date: "2026-01-15",
+      location_state: padState,
+      location_county: county,
+      csi_codes: ["32 11 23"],
+      low_bidder_name: "Sample Constructor LLC",
+      low_bid_amount: 1_200_000,
+    },
+    {
+      bid_event_id: `mock-${padState}-${county}-002`,
+      project_title: `Sample utility contract — ${county}`,
+      project_owner: "(mock) Local agency",
+      solicitation_id: null,
+      source_url: "https://example.invalid/sample-bid-abstract-2.pdf",
+      source_state: padState,
+      source_network: "state_dot_mock",
+      bid_open_date: "2025-09-22",
+      location_state: padState,
+      location_county: county,
+      csi_codes: ["33 41 00"],
+      low_bidder_name: "Sample Utility Co.",
+      low_bid_amount: 720_000,
+    },
+  ];
+}
+
 // ── Bid calibration (VanCon, last 8 quarters) ───────────────────────
 
 const CALIBRATION: CalibrationPoint[] = [
@@ -253,6 +466,18 @@ export async function mockFetchOpportunityGaps(
   const filtered = OPPORTUNITY_GAPS.filter(
     (row) =>
       row.avg_low_bid >= params.bidMin && row.avg_low_bid <= params.bidMax,
+  );
+  return delay(filtered);
+}
+
+export async function mockFetchCountyGapDetail(
+  params: CountyGapDetailParams,
+): Promise<CountyGapEvent[]> {
+  const events = mockCountyDetailFor(params.state, params.county);
+  // Honor the bid-amount filter so the UI's filter knobs feel real.
+  const filtered = events.filter(
+    (row) =>
+      row.low_bid_amount >= params.bidMin && row.low_bid_amount <= params.bidMax,
   );
   return delay(filtered);
 }

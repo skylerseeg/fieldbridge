@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Path, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import get_current_tenant, require_admin
@@ -27,6 +27,7 @@ from app.modules.market_intel import service
 from app.modules.market_intel.schema import (
     CalibrationPoint,
     CompetitorCurveRow,
+    CountyGapEvent,
     ITDPipelineRunResponse,
     OpportunityRow,
 )
@@ -83,6 +84,54 @@ async def opportunity_gaps(
         bid_min=bid_min,
         bid_max=bid_max,
         months_back=months_back,
+        tenant_id=tenant.id,
+    )
+
+
+@router.get(
+    "/gap/{state}/{county}",
+    response_model=list[CountyGapEvent],
+    summary="Per-event detail for one opportunity-gap county cell",
+)
+async def county_gap_detail(
+    state: Annotated[
+        str,
+        Path(min_length=2, max_length=2, description="2-letter USPS state code"),
+    ],
+    county: Annotated[
+        str,
+        Path(min_length=1, description="County name, URL-encoded"),
+    ],
+    bid_min: Annotated[int, Query(ge=0)] = 250_000,
+    bid_max: Annotated[int, Query(ge=0)] = 5_000_000,
+    months_back: Annotated[int, Query(ge=1, le=60)] = 24,
+    contractor_name_match: Annotated[
+        str,
+        Query(
+            min_length=2,
+            description="ILIKE substring; events where ANY bidder matches are excluded",
+        ),
+    ] = "van con",
+    db: AsyncSession = Depends(get_db),
+    tenant: Tenant = Depends(get_current_tenant),
+) -> list[CountyGapEvent]:
+    """Drill-in detail for one (state, county) cell from the
+    Opportunity gaps aggregate. Returns up to 200 bid events in that
+    geography where ``contractor_name_match`` did NOT appear in the
+    bidder list.
+
+    The county name is URL-decoded by FastAPI before reaching the
+    service layer; it must match ``bid_events.location_county``
+    exactly (the same string ``opportunity_gaps.sql`` GROUPs by).
+    """
+    return await service.get_county_gap_detail(
+        db,
+        state=state,
+        county=county,
+        bid_min=bid_min,
+        bid_max=bid_max,
+        months_back=months_back,
+        caller_pattern=contractor_name_match,
         tenant_id=tenant.id,
     )
 

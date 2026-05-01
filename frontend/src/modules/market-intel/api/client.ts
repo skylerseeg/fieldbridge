@@ -5,6 +5,8 @@ import type {
   CalibrationPoint,
   CompetitorCurveRow,
   CompetitorCurvesParams,
+  CountyGapDetailParams,
+  CountyGapEvent,
   OpportunityGapsParams,
   OpportunityRow,
 } from "./types";
@@ -54,6 +56,26 @@ export async function fetchOpportunityGaps(
       },
     },
   );
+  return data;
+}
+
+export async function fetchCountyGapDetail(
+  params: CountyGapDetailParams,
+): Promise<CountyGapEvent[]> {
+  const path =
+    `${BASE}/gap/` +
+    `${encodeURIComponent(params.state.toUpperCase())}/` +
+    `${encodeURIComponent(params.county)}`;
+  const { data } = await api.get<CountyGapEvent[]>(path, {
+    params: {
+      bid_min: params.bidMin,
+      bid_max: params.bidMax,
+      months_back: params.monthsBack,
+      ...(params.contractorNameMatch
+        ? { contractor_name_match: params.contractorNameMatch }
+        : {}),
+    },
+  });
   return data;
 }
 

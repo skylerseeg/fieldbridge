@@ -44,15 +44,21 @@ Heavy civil failure cost benchmarks:
 
 def predict_failures(equipment_history: list[dict],
                      pm_schedule: list[dict],
-                     telematics_alerts: list[dict] | None = None) -> list[dict]:
+                     telematics_alerts: list[dict] | None = None,
+                     *,
+                     return_usage: bool = False):
     """
     Analyze equipment maintenance history to predict upcoming failures.
 
     equipment_history: work orders from vista_sync.get_work_orders()
     pm_schedule: equipment master data with PM intervals
     telematics_alerts: recent fault codes from GPS/telematics system
+    return_usage: when True, returns ``(alerts, usage)`` so callers can
+        meter token consumption. ``usage`` is a dict with input_tokens,
+        output_tokens, cache_read_tokens, cache_write_tokens.
 
-    Returns list of risk alerts sorted by risk score descending.
+    Returns list of risk alerts sorted by risk score descending (or a
+    tuple ``(list, usage)`` when ``return_usage=True``).
     """
     context = {
         "work_order_history": equipment_history[:50],
@@ -81,16 +87,29 @@ def predict_failures(equipment_history: list[dict],
     )
 
     text = response.content[0].text
+    alerts: list[dict] = []
     import re
     match = re.search(r'\[.*\]', text, re.DOTALL)
     if match:
         try:
-            alerts = json.loads(match.group(0))
-            return sorted(alerts, key=lambda x: x.get("risk_score", 0), reverse=True)
+            alerts = sorted(
+                json.loads(match.group(0)),
+                key=lambda x: x.get("risk_score", 0),
+                reverse=True,
+            )
         except json.JSONDecodeError:
-            pass
+            alerts = []
 
-    return []
+    if not return_usage:
+        return alerts
+
+    usage = {
+        "input_tokens": getattr(response.usage, "input_tokens", 0),
+        "output_tokens": getattr(response.usage, "output_tokens", 0),
+        "cache_read_tokens": getattr(response.usage, "cache_read_input_tokens", 0) or 0,
+        "cache_write_tokens": getattr(response.usage, "cache_creation_input_tokens", 0) or 0,
+    }
+    return alerts, usage
 
 
 def check_pm_overdue(equipment_master: list[dict]) -> list[dict]:

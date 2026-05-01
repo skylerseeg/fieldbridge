@@ -381,7 +381,15 @@
       "Bash(rm -f .git/index.lock)",
       "Bash(git rm *)",
       "Bash(sed -n '/PROPOSED_CHANGES_perf.md/,/^diff --git/p' /tmp/pr17.diff)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(grep -E \"\\\\.\\(py|yaml|json\\)$\")",
+      "PowerShell(Get-Command python)",
+      "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
+      "PowerShell(py -3 --version)",
+      "Bash(git check-ignore *)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/.claude/worktrees/agent-ab4a7cd07687a86f4/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/.claude/worktrees/agent-ab4a7cd07687a86f4/backend/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/modules/market-intel/**)"
     ]
   }
 }

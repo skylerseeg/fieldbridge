@@ -14,6 +14,7 @@ tests, Postgres for prod — without ``percentile_cont`` /
 """
 from __future__ import annotations
 
+import json
 import logging
 import statistics
 from collections import Counter, defaultdict
@@ -27,6 +28,7 @@ from app.core.seed import SHARED_NETWORK_TENANT_ID
 from app.modules.market_intel.schema import (
     CalibrationPoint,
     CompetitorCurveRow,
+    CountyGapEvent,
     OpportunityRow,
 )
 from app.services.market_intel.analytics import load_sql
@@ -187,6 +189,90 @@ async def get_opportunity_gaps(
                 avg_low_bid=float(r["avg_low_bid"] or 0.0),
                 # Filled in post-v1.5b once csi_codes is populated.
                 top_scope_codes=[],
+            )
+        )
+    return out
+
+
+# ---------------------------------------------------------------------------
+# bid_calibration
+
+async def get_county_gap_detail(
+    db: AsyncSession,
+    *,
+    state: str,
+    county: str,
+    bid_min: int,
+    bid_max: int,
+    months_back: int,
+    caller_pattern: str,
+    tenant_id: str,
+) -> list[CountyGapEvent]:
+    """Per-event detail rows for one (state, county) opportunity-gap cell.
+
+    Loads ``county_gap_detail.sql`` (one row per bid event in the geo
+    where the caller never appeared as a bidder) and produces Pydantic
+    rows. Up to 200 rows are returned, sorted by ``bid_open_date`` DESC.
+
+    The caller-never-bid filter uses the same ``LIKE`` substring match
+    as ``bid_calibration``. Until VanCon's contractor identity is
+    properly resolved across tenants, this is the best heuristic we
+    have. If the pattern matches nothing in the dataset, the
+    ``NOT EXISTS`` clause is a no-op and every event in the geo passes
+    through (consistent with ``opportunity_gaps.sql``'s aggregate).
+    """
+    cutoff = _months_back_cutoff(months_back)
+    sql = load_sql("county_gap_detail")
+    result = await db.execute(
+        text(sql),
+        {
+            "caller_tenant": tenant_id,
+            "shared_network_tenant": SHARED_NETWORK_TENANT_ID,
+            "state_code": state.upper(),
+            "county": county,
+            "bid_min": bid_min,
+            "bid_max": bid_max,
+            "cutoff_date": cutoff,
+            "caller_pattern": f"%{caller_pattern}%",
+        },
+    )
+
+    out: list[CountyGapEvent] = []
+    for r in result.mappings():
+        # csi_codes round-trip: SQLite stores JSON as TEXT, Postgres
+        # stores as jsonb. SQLAlchemy's generic JSON type usually
+        # decodes both, but text() queries can bypass the type adapter
+        # on SQLite — coerce defensively.
+        csi_codes = r["csi_codes"]
+        if isinstance(csi_codes, str):
+            try:
+                csi_codes = json.loads(csi_codes)
+            except (json.JSONDecodeError, TypeError):
+                csi_codes = []
+        if not isinstance(csi_codes, list):
+            csi_codes = []
+
+        bid_open_date = _to_date(r["bid_open_date"])
+        if bid_open_date is None:
+            # SQL filter requires bid_open_date IS NOT NULL, so this
+            # should never trigger — defensive skip rather than crash.
+            continue
+
+        out.append(
+            CountyGapEvent(
+                bid_event_id=r["bid_event_id"],
+                project_title=r["project_title"],
+                project_owner=r["project_owner"],
+                solicitation_id=r["solicitation_id"],
+                source_url=r["source_url"],
+                source_state=r["source_state"],
+                source_network=r["source_network"],
+                bid_open_date=bid_open_date,
+                location_state=r["location_state"],
+                location_county=r["location_county"],
+                csi_codes=[str(c) for c in csi_codes if c],
+                low_bidder_name=r["low_bidder_name"],
+                low_bid_amount=float(r["low_bid_amount"] or 0.0),
             )
         )
     return out

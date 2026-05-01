@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import date
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class CompetitorCurveRow(BaseModel):
@@ -48,6 +48,38 @@ class CalibrationPoint(BaseModel):
     wins: int
     avg_rank: float
     pct_above_low: float | None = None
+
+
+class CountyGapEvent(BaseModel):
+    """One bid event in an opportunity-gap county where the caller's
+    contractor never appeared on the bidder list.
+
+    Returned by ``GET /api/market-intel/gap/{state}/{county}`` — the
+    drill-in view from the Opportunity gaps tab's top-N county list.
+    """
+
+    # Pydantic v2: serialize date as ISO-8601 string for the JSON wire
+    # response so the React side gets a plain "YYYY-MM-DD" rather than
+    # a Python-style date repr.
+    model_config = ConfigDict(json_encoders={date: lambda d: d.isoformat()})
+
+    bid_event_id: str
+    project_title: str
+    project_owner: str | None = None
+    solicitation_id: str | None = None
+    source_url: str
+    source_state: str = Field(..., min_length=2, max_length=2)
+    source_network: str
+    bid_open_date: date
+    location_state: str = Field(..., min_length=2, max_length=2)
+    location_county: str | None = None
+    csi_codes: list[str] = Field(default_factory=list)
+    low_bidder_name: str
+    low_bid_amount: float = Field(
+        ...,
+        ge=0.0,
+        description="Winning low bid in USD",
+    )
 
 
 class ITDPipelineRunResponse(BaseModel):

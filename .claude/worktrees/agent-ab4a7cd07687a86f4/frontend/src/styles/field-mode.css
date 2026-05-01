@@ -1,0 +1,110 @@
+/*
+ * Field-mode theme overrides.
+ *
+ * Activated by `data-field="true"` on the AppShell root (or any ancestor).
+ * Two purposes:
+ *   1. High-contrast token shifts for outdoor glare. We re-point the
+ *      *existing* HSL CSS variables — no new color tokens. The semantic
+ *      meaning of every token (primary, info, warning, critical, ring,
+ *      border, muted-foreground) stays identical; only the L/S values
+ *      drop to push contrast above WCAG AA on the cream background.
+ *   2. 44x44px minimum tap targets per Apple HIG / Android Material
+ *      "comfortable" guideline — gloves + one-handed reach demand it.
+ *
+ * Loaded from src/index.css via `@import "./styles/field-mode.css"` once
+ * the Topbar toggle wiring lands. Keeping this file scoped to the
+ * `[data-field="true"]` selector means importing it has zero effect on
+ * sessions that don't activate field mode.
+ *
+ * NEVER add :root rules here — that would leak field-mode contrast into
+ * desktop/admin sessions and break the mockup's intentional cream theme.
+ */
+
+[data-field="true"] {
+  /* ── Surfaces: keep cream background (anchors brand) but darken text.
+     Foreground drops from L=11% to L=6% for sharper outdoor read.    */
+  --foreground: 222 47% 6%;
+  --card-foreground: 222 47% 6%;
+  --popover-foreground: 222 47% 6%;
+
+  /* Sidebar text gets the same treatment + darker muted heads. */
+  --sidebar-foreground: 215 30% 18%;
+  --sidebar-muted: 215 22% 32%;
+
+  /* ── Semantic — saturate + darken so badges punch through glare.
+     Hue stays identical; only S↑ and L↓.                              */
+  --primary: 160 90% 30%;       /* emerald, deeper          */
+  --info: 217 95% 48%;          /* blue, deeper             */
+  --warning: 22 100% 42%;       /* orange, deeper           */
+  --critical: 0 88% 48%;        /* red, deeper              */
+  --monitor: 36 100% 40%;       /* amber, deeper            */
+
+  /* Muted-foreground is the most common text-on-cream offender;
+     shift it from #64748B (4.6:1) to roughly #334155 (8.5:1).         */
+  --muted-foreground: 215 28% 27%;
+
+  /* Lines: darker borders so card edges don't disappear in glare. */
+  --border: 214 32% 70%;
+  --input: 214 32% 70%;
+
+  /* Focus ring: keep matching primary, follows the new primary above. */
+  --ring: 160 90% 30%;
+}
+
+/*
+ * 44x44 minimum tap target for any interactive primitive in field mode.
+ * Scoped to elements that already render as buttons or button-like
+ * controls so we don't bloat raw text links inside paragraphs.
+ *
+ * The `min-height` + `min-width` floor preserves visual layout for
+ * wider buttons (just enforces the floor) while bumping icon-only
+ * buttons up from the typical 32-36px shadcn default.
+ */
+[data-field="true"] button,
+[data-field="true"] [role="button"],
+[data-field="true"] a[role="button"],
+[data-field="true"] [role="menuitem"],
+[data-field="true"] [role="tab"],
+[data-field="true"] [role="switch"],
+[data-field="true"] input[type="checkbox"],
+[data-field="true"] input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/*
+ * Inputs and selects scale up alongside buttons so a glove can land in
+ * the field. Use min-height (not height) so any explicit height utility
+ * still wins when needed.
+ */
+[data-field="true"] input:not([type="checkbox"]):not([type="radio"]),
+[data-field="true"] select,
+[data-field="true"] textarea {
+  min-height: 44px;
+  font-size: 1rem; /* prevent iOS zoom-on-focus */
+}
+
+/*
+ * NavLink inside the sidebar is rendered as <a>, not [role="button"].
+ * Bump its hit area explicitly so tapping a nav item with a glove in
+ * the mobile drawer is forgiving.
+ */
+[data-field="true"] aside nav a,
+[data-field="true"] [data-mobile-sidebar] nav a {
+  min-height: 44px;
+}
+
+/*
+ * Honor user preference for reduced motion regardless of field-mode —
+ * field-mode users are often outside, motion-sensitive, or both.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-field="true"] *,
+  [data-field="true"] *::before,
+  [data-field="true"] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
