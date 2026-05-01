@@ -1,13 +1,13 @@
 # Excel Mart Ingest Report
 
 Generated after the first end-to-end run of `make ingest` against a fresh
-SQLite file (`fieldbridge/backend/ingest_run.db`). All 25 registered
+SQLite file (`fieldbridge/backend/.local/ingest_run.db`, gitignored). All 25 registered
 `IngestJob`s ran to completion; 23 landed `[ok]` and 2 landed `[partial]`
 because they fell back to the `_row_hash` dedupe strategy (which always
 emits a `WARN` — see `docs/data_mapping.md` §Dedupe key conventions).
 
 - **Tenant**: `vancon` (id seeded by `scripts/create_mart_tables.py`)
-- **DB**: `sqlite:///./ingest_run.db`
+- **DB**: `sqlite:///./.local/ingest_run.db`
 - **Tables created**: 29 total (25 mart tables + `tenants`, `users`, `usage_events`, `ingest_log`)
 - **Jobs run**: 25 / 25 — 0 hard errors
 - **Total source rows read**: 170,945

@@ -6,7 +6,7 @@ and the tenant upsert only inserts when slug is missing.
 
 Usage:
     python scripts/create_mart_tables.py                  # uses DATABASE_URL
-    python scripts/create_mart_tables.py --database-url sqlite:///./ingest_run.db
+    python scripts/create_mart_tables.py --database-url sqlite:///./.local/ingest_run.db
 """
 from __future__ import annotations
 

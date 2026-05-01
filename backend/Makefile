@@ -3,15 +3,17 @@
 # Shorthands for ops that are stable enough to deserve a name. Prefer
 # adding a target over memorizing the full python invocation.
 #
-# INGEST_DB defaults to a local SQLite file so `make ingest` runs against a
-# deterministic, disposable database — the point of these targets is to
-# produce an ingest report, not to write to prod.
+# INGEST_DB defaults to a local SQLite file under .local/ (gitignored) so
+# `make ingest` runs against a deterministic, disposable database without
+# polluting the tracked tree. The point of these targets is to produce an
+# ingest report, not to write to prod.
 
 PY ?= python
 TENANT ?= vancon
-INGEST_DB ?= sqlite:///./ingest_run.db
+INGEST_DIR ?= .local
+INGEST_DB ?= sqlite:///./$(INGEST_DIR)/ingest_run.db
 
-.PHONY: help ingest ingest-one create-mart-tables test clean-ingest-db
+.PHONY: help ingest ingest-one create-mart-tables test clean-ingest-db ingest-dir
 
 help:
 	@echo "Available targets:"
@@ -21,7 +23,10 @@ help:
 	@echo "  test                Run the pytest suite"
 	@echo "  clean-ingest-db     Remove the local SQLite ingest DB"
 
-create-mart-tables:
+ingest-dir:
+	@mkdir -p $(INGEST_DIR)
+
+create-mart-tables: ingest-dir
 	$(PY) scripts/create_mart_tables.py --database-url "$(INGEST_DB)" --tenant-slug $(TENANT)
 
 ingest: create-mart-tables
@@ -35,4 +40,4 @@ test:
 	$(PY) -m pytest -v
 
 clean-ingest-db:
-	rm -f ingest_run.db
+	rm -f $(INGEST_DIR)/ingest_run.db ingest_run.db
