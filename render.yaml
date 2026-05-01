@@ -20,7 +20,7 @@ services:
   - type: web
     name: fieldbridge-api
     runtime: docker
-    plan: starter            # $7/mo. Bump to standard ($25) when traffic warrants.
+    plan: standard           # $25/mo, 2GB RAM. Bumped from starter (512MB) on 2026-04-30 — starter OOM'd on the dep tree (anthropic + langchain + chromadb + pandas + pyodbc + asyncpg) before serving a single request. Don't drop back without trimming deps first.
     region: oregon           # closest US-West datacenter; fine for VanCon (Utah).
     dockerfilePath: ./backend/Dockerfile
     dockerContext: .         # repo root — Dockerfile copies backend/ AND agents/, since FastAPI endpoints import from agents.* at module load time.

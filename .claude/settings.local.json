@@ -361,7 +361,27 @@
       "Bash(gh run *)",
       "Bash(gh pr *)",
       "Bash(gh api *)",
-      "Bash(git fetch *)"
+      "Bash(git fetch *)",
+      "Bash(git merge *)",
+      "WebFetch(domain:fieldbridge-api.onrender.com)",
+      "WebFetch(domain:fieldbridge.vercel.app)",
+      "PowerShell(wsl -d Ubuntu-24.04 -- python3 /tmp/compute_uuids.py)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/modules/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/components/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/backend/app/modules/market_intel/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/lib/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/components/ui/**)",
+      "Read(///wsl.localhost/Ubuntu-24.04/home/sseegmiller/fieldbridge/frontend/src/test/**)",
+      "Bash(wsl --version)",
+      "Bash(sed -n '1720,1760p' /tmp/pr5.diff)",
+      "Bash(sed -n '1048,1130p' /tmp/pr5.diff)",
+      "Bash(sed -n '/competitor_curves.sql/,/^diff --git/p' /tmp/pr15.diff)",
+      "Bash(rm -f .git/index.lock)",
+      "Bash(git rm *)",
+      "Bash(sed -n '/PROPOSED_CHANGES_perf.md/,/^diff --git/p' /tmp/pr17.diff)",
+      "Bash(git pull *)"
     ]
   }
 }
