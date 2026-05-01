@@ -26,6 +26,18 @@ venv/
 .DS_Store
 Thumbs.db
 
+# Windows / WSL artifacts (NTFS alternate data streams from Windows downloads)
+*:Zone.Identifier
+*.crdownload
+*.crdownload:*
+
+# Binaries / installers — these belong in ~/Downloads, not the repo
+# (Caught a 473 MB SSMS-Setup-ENU.exe trying to sneak in via docs/)
+*.exe
+*.msi
+*.dmg
+*.iso
+
 # Logs
 *.log
 
