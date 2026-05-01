@@ -1,17 +1,32 @@
 # Vista SQL — Strategic Read
 
-**Source database**: VanCon Inc.'s Trimble Viewpoint Vista deployment.
+> 🚨 **2026-05-01 — IMPORTANT STATUS UPDATE**
+>
+> The content below was captured against **`VCC-SVR01.Viewpoint`** (SQL Server 2016 SP1-GDR, build 13.0.4259.0). Trimble support confirmed via email that this server is NOT the live production Vista — VanCon's actual production Vista lives on **`KWMFD1`** (SQL Server 2019, build 15.0.4465.1), which we have not yet introspected.
+>
+> **What this means for the strategic read below:**
+> - The 2,277 tables / 104.9M rows / module breakdown all describe a **secondary or archive server**, likely retired around April 2024 when VanCon migrated production Vista to KWMFD1. (That migration date matches the freshness ceiling on every operational table.)
+> - The module-distribution patterns are still useful as a *Vista shape primer* — the b/v/bud naming convention, the canonical join targets (bGLAC, bPMPM, bJCJM, bEMEM), the moat-data pattern (budEMGPS, etc.) all carry over to KWMFD1 since it's the same Vista application.
+> - But specific row counts, freshness ranges, and "what's empty" judgments are **not authoritative** — they reflect the secondary server, not live operations.
+>
+> **What's pending:** SQL Auth credentials for KWMFD1 (Trimble or VanCon's DBA), reconfigure `.env`, re-run `vista_introspect.py`, refresh this doc with the live KWMFD1 numbers. Until then, treat the data below as an artifact of the secondary server.
+>
+> ---
+
+**Source database (this snapshot)**: VanCon Inc.'s legacy Vista server, retained after migration to KWMFD1.
 **Connection**: `VCC-SVR01:1433/Viewpoint` as `Skyler` (privilege: `dbo`).
 **Server**: Microsoft SQL Server 2016 (SP1-GDR), 13.0.4259.0 (X64).
 **Captured**: 2026-04-30, full introspection via `backend/scripts/vista_introspect.py`.
 
+**Live production target (pending introspection)**: `KWMFD1.Viewpoint` (SQL Server 2019, build 15.0.4465.1).
+
 ---
 
-## TL;DR
+## TL;DR — secondary-server snapshot (NOT live ops)
 
-VanCon runs a complete, mature, multi-year Vista enterprise install. **2,277 tables, 104.9M rows.** Heavy data in Payroll, Imaging, Headquarters audit, Job Cost, GL, AP, Equipment. Light or empty in Service Management, Inventory, Project Management. **One unique custom dataset** — `budEMGPS` at 9.9M rows of equipment GPS coordinates, the moat asset that no other Vista contractor has by default.
+VCC-SVR01 hosts a complete Vista enterprise install with multi-year history. **2,277 tables, 104.9M rows.** Heavy data in Payroll, Imaging, Headquarters audit, Job Cost, GL, AP, Equipment. Light or empty in Service Management, Inventory, Project Management. **One unique custom dataset** — `budEMGPS` at 9.9M rows of equipment GPS coordinates, the moat asset that no other Vista contractor has by default. **All numbers below describe state as of ~April 2024**; live operations have continued on KWMFD1 since.
 
-> ⚠️ **Data-freshness flag** (2026-04-30 capture): most operational tables max out at April 2024 (~24 months stale relative to today). `bGLDT` and `bJCCD` reach December 2024. Audit log `bHQMA` reaches June 2025. **Strongly suggests `VCC-SVR01.Viewpoint` is a staging snapshot, not the live production Vista.** Confirm with VanCon's DBA before building marts that promise current operational state. See "Data freshness" section below.
+> ⚠️ **Data-freshness flag (resolved)**: the April-2024 ceiling on every operational table was the smoking gun for the secondary-server theory. Confirmed 2026-05-01 via Trimble support: VCC-SVR01 is not the live production Vista. KWMFD1 is. Old freshness section retained below for reference.
 
 > ⚠️ **`bEMWO` (Equipment Work Orders) does not exist in this database.** VanCon either doesn't use Vista's EM Work Orders module or tracks work orders in a custom table not yet identified. Phase 2 drill should locate the actual work-order surface (likely a `bud*` extension or HCSS-side data).
 
