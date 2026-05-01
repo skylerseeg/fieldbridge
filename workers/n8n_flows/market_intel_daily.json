@@ -1,0 +1,195 @@
+{
+  "name": "market_intel_daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "node-cron",
+      "name": "Cron — daily 03:00 UTC",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 300],
+      "notes": "Fires once per day at 03:00 UTC (≈8 PM Pacific previous day, ≈9 PM Mountain). Low-traffic window for ITD's apps subdomain. Adjust if you want a different window once Render's n8n service shows its actual run-time variance."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.FIELDBRIDGE_API_URL}}/api/v1/market-intel/admin/run-itd-pipeline",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$env.FIELDBRIDGE_ADMIN_TOKEN}}"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-fieldbridge/1.0 (market_intel_daily)"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 1800000,
+          "response": {
+            "response": {
+              "fullResponse": false,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "node-http",
+      "name": "POST /admin/run-itd-pipeline",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "notes": "Calls the FieldBridge backend's admin trigger. Bearer token must be a JWT for a user with role='fieldbridge_admin'. Timeout is 30 minutes — full ITD sweep with 3-6s per-host rate limit on ~187 abstracts is ~16 minutes wall clock, with headroom."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-parse-errors",
+              "leftValue": "={{$json.skipped_parse_error}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "cond-fetch-errors",
+              "leftValue": "={{$json.skipped_fetch_error}}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "or"
+        }
+      },
+      "id": "node-if-anomalies",
+      "name": "IF — parse errors OR many fetch errors",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [720, 300],
+      "notes": "Trip the alert branch if ANY parse_error fires (template change, malformed PDF) OR if more than 5 fetch errors (likely a broader ITD outage we should know about). Both are out-of-band signals; nightly counters with zeros on these are the steady state."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.FIELDBRIDGE_ALERT_WEBHOOK}}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"market_intel_daily: anomaly detected\",\n  \"counters\": {{JSON.stringify($json)}},\n  \"timestamp\": \"{{$now.toISO()}}\",\n  \"runbook\": \"https://github.com/skylerseeg/fieldbridge/blob/main/docs/market-intel.md#runbooks\"\n}",
+        "options": {}
+      },
+      "id": "node-alert",
+      "name": "Webhook — alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [980, 200],
+      "notes": "Plug FIELDBRIDGE_ALERT_WEBHOOK with whatever channel routing you want — Slack incoming-webhook URL, PagerDuty Events v2 endpoint, or a simple webhook that fans out. Body shape is opinionated for Slack but every notification target accepts arbitrary JSON."
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "fields": {
+          "values": [
+            {
+              "name": "summary",
+              "stringValue": "=ITD pipeline OK — fetched={{$json.fetched}} written={{$json.written}} skipped_legacy={{$json.skipped_legacy_template}} duration_ms={{$json.duration_ms}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-log-ok",
+      "name": "Log OK",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [980, 400],
+      "notes": "n8n's per-execution log captures the Set node's output; this gives the operator a single-line summary readable from the n8n UI without expanding the full counters dict."
+    }
+  ],
+  "connections": {
+    "Cron — daily 03:00 UTC": {
+      "main": [
+        [
+          {
+            "node": "POST /admin/run-itd-pipeline",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /admin/run-itd-pipeline": {
+      "main": [
+        [
+          {
+            "node": "IF — parse errors OR many fetch errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF — parse errors OR many fetch errors": {
+      "main": [
+        [
+          {
+            "node": "Webhook — alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "tags": [
+    {
+      "name": "market-intel"
+    },
+    {
+      "name": "production"
+    }
+  ],
+  "meta": {
+    "instanceId": "fieldbridge",
+    "description": "Daily ITD bid-abstract ingest. Fires ITDPipeline.run_state('ID') on the FieldBridge backend, branches on parse/fetch error counters, alerts on anomalies. See workers/n8n_flows/README.md for required env vars + import procedure."
+  }
+}

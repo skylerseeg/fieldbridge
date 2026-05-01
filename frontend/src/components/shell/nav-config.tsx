@@ -1,5 +1,6 @@
 import {
   Activity,
+  BarChart3,
   Bot,
   Briefcase,
   ClipboardList,
@@ -73,6 +74,7 @@ export const navGroups: NavGroup[] = [
       { label: "Predictive Maint.", icon: Gauge, to: "/predictive-maintenance" },
       { label: "Recommendations", icon: Sparkles, to: "/recommendations" },
       { label: "Bids", icon: FileSearch, to: "/bids" },
+      { label: "Bid Intelligence", icon: BarChart3, to: "/market-intel" },
       { label: "Proposals", icon: Mail, to: "/proposals" },
     ],
   },

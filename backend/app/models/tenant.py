@@ -24,6 +24,23 @@ class TenantStatus(str, PyEnum):
     CHURNED = "churned"
 
 
+class TenantKind(str, PyEnum):
+    """What this tenant row represents.
+
+    * ``customer`` — a paying VanCon-or-equivalent contractor running
+      Vista. Default; appears in billing rollups and the tenant switcher.
+    * ``shared_dataset`` — a cross-tenant data namespace
+      (e.g. the NAPC bid network). Reads are open to all tenants
+      via overlay-table joins. Never appears in the switcher; never
+      billed. Used by Market Intel v1.5+.
+    * ``internal_test`` — fixtures, integration harness, and dev
+      tenants. Excluded from production rollups.
+    """
+    CUSTOMER = "customer"
+    SHARED_DATASET = "shared_dataset"
+    INTERNAL_TEST = "internal_test"
+
+
 class Tenant(Base):
     __tablename__ = "tenants"
 
@@ -39,6 +56,12 @@ class Tenant(Base):
         Enum(SubscriptionTier), default=SubscriptionTier.STARTER)
     status: Mapped[TenantStatus] = mapped_column(
         Enum(TenantStatus), default=TenantStatus.ONBOARDING)
+    kind: Mapped[TenantKind] = mapped_column(
+        Enum(TenantKind),
+        default=TenantKind.CUSTOMER,
+        server_default=TenantKind.CUSTOMER.value,
+        nullable=False,
+    )
 
     # Vista connection — stored per tenant (encrypted at rest via Azure Key Vault in prod)
     vista_sql_host: Mapped[str] = mapped_column(String(255), default="")

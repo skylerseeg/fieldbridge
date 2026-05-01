@@ -4,17 +4,24 @@
 # After first apply, Render reads any future edits to this file and
 # proposes them as a PR-style review in the dashboard.
 #
-# Two services:
-#   * fieldbridge-api   — FastAPI web service (Dockerfile-based)
-#   * fieldbridge-db    — managed Postgres (auto-injects DATABASE_URL)
+# Three services + one database:
+#   * fieldbridge-api            — FastAPI web service (Dockerfile-based)
+#   * fieldbridge-itd-pipeline   — nightly Render Cron firing the ITD
+#                                  bid-tab pipeline (Market Intel v1.5)
+#   * fieldbridge-db             — managed Postgres (auto-injects
+#                                  DATABASE_URL into both services)
 #
 # Secret values (SECRET_KEY, ANTHROPIC_API_KEY, anything Vista/Azure)
 # are NOT committed here. They're set in the Render dashboard after the
 # Blueprint applies — see docs/deploy-render.md for the full list.
 #
-# Phase-1 scope: just the API + DB. Cron jobs / background workers /
-# Redis ship in a follow-on Phase 4. Adding them here later is a
-# Blueprint edit, not a redeploy from scratch.
+# v1 scope: API + DB.
+# v1.5 scope (added 2026-04-30): + ITD pipeline cron (Market Intel
+# data accumulation). Render's first-class Cron Job product is used
+# in preference to standing up an n8n service — single Python entry
+# point, no transformations or branching, doesn't need a workflow
+# orchestrator. n8n flow JSON committed at workers/n8n_flows/ as
+# documentation in case future workers want to lift to n8n.
 
 services:
   - type: web
@@ -84,6 +91,53 @@ services:
       - key: AZURE_CLIENT_ID
         sync: false
       - key: AZURE_CLIENT_SECRET
+        sync: false
+
+  # ──────────────────────────────────────────────────────────────────
+  # Market Intel — ITD bid-tab pipeline cron.
+  #
+  # Fires nightly. Reuses the API service's Docker image (same
+  # Dockerfile, same dependencies, same /app/backend WORKDIR) but
+  # overrides the CMD via dockerCommand so instead of starting
+  # uvicorn it runs the one-shot pipeline script.
+  #
+  # Schedule is UTC. 09:00 UTC = 03:00 MDT (summer) / 02:00 MST
+  # (winter) — middle-of-night for VanCon, off-peak for ITD.
+  # Adjust seasonally if morning-fresh-data timing matters.
+  #
+  # Cost: ~$1/mo on starter for ~30s of compute per run.
+  - type: cron
+    name: fieldbridge-itd-pipeline
+    runtime: docker
+    schedule: "0 9 * * *"     # 09:00 UTC daily
+    plan: starter
+    region: oregon
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    dockerCommand: "python scripts/run_itd_pipeline.py --state ID"
+    autoDeploy: true
+    envVars:
+      # Same DATABASE_URL plumbing as the API service — the cron
+      # writes BidEvent + BidResult rows under the shared-network
+      # tenant via the same Postgres instance.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: fieldbridge-db
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: VANCON_TENANT_SLUG
+        value: vancon
+      # SECRET_KEY is required by app.core.config import-side validation
+      # even though the cron never mints JWTs. Sync from the API
+      # service's secret to keep them in lockstep.
+      - key: SECRET_KEY
+        sync: false
+      # ANTHROPIC_API_KEY is required by app.core.config too (the
+      # config module loads on every import). Cron path doesn't call
+      # Anthropic, but the env var must be present to import the app
+      # successfully.
+      - key: ANTHROPIC_API_KEY
         sync: false
 
 databases:

@@ -45,6 +45,8 @@ and the open contract surface.
 | Cost Coding        | `app/modules/cost_coding`          | `src/modules/cost-coding`      | `mart_cost_coding`                  | Live + LLM     |
 | Frontend Polish    | (none)                             | `routes.tsx`, `layouts/`       | —                                   | Lead-owned     |
 | Tests/CI           | `backend/tests/`, `.github/`       | (vitest later)                 | —                                   | Healthy        |
+| Market Intel BE    | `app/services/market_intel/`, `app/modules/market_intel/{service,router}` SQL fill-in | (none) | `bid_events`, `bid_results`, `contractors` (NEW, not mart_*) | **v1.5 — branch only, see below** |
+| Market Intel FE    | (none)                             | `src/modules/market-intel`     | —                                   | **v1.5 — branch only, see below** |
 
 ### Adjacent modules already shipped (not in the 10 but tracked)
 
@@ -96,6 +98,23 @@ and the open contract surface.
   a thin root forwarder. **Until then**, "Healthy" status on the Tests/CI
   row is local-only — the suite is genuinely green on dev WSL but is
   not enforced at push time.
+- **Frontend Polish Worker — paired escalation** (filed 2026-04-30,
+  branch `feature/market-intel-v15`):
+  1. **Topbar INP / span.truncate audit** — Market Intel Frontend
+     Worker captured a 207.5ms INP / 170.1ms render attribution to
+     `span.truncate` on the Vercel preview. After in-lane memo
+     pass (PR #17), the residual cost lives in shell components
+     (TenantSwitcher's text-lg truncate is the strongest signal —
+     only one in `components/shell/*`; lineage from density patch
+     `6e342db`). Full evidence + 3 profiler questions + cross-
+     baseline ask in
+     `frontend/src/modules/market-intel/PROPOSED_CHANGES_perf.md`.
+  2. **Field-mode contrast for `--color-good` / `--color-watch`**
+     tokens added in slice 2 (`0037c85`). Field-mode override
+     missing because `field-mode.css` is FPW's lane, not Market
+     Intel's. Frontend Worker correctly flagged without claiming.
+  Batch (1) and (2) into a single FPW spinup — both are shell
+  /token concerns, both share lane context.
 
 ## LLM Prompts
 
@@ -541,6 +560,324 @@ and the open contract surface.
   gzip. CI build time will increase ~5-10s from the chunk-graph
   resolution but that's nothing against the runtime UX win. Awaiting
   Lead's pick.
+
+## Market Intel (v1.5 — branch-only)
+
+- **2026-04-29 — Lead** scaffolded `feature/market-intel-v15` off
+  `main`. **Do NOT merge to main until v1 deploy is locked.** The
+  branch holds the schema + module skeleton + worker briefs; auto-deploy
+  on Render only fires from main, so this branch is safe to develop in
+  parallel for weeks.
+
+  Strategic context: state-by-state public bid network scraping
+  (NAPC's `{state}bids.{com,net}` portals + state DOT bid tabs) →
+  unified dataset → Bid Intelligence layer. Full design in
+  `docs/market-intel.md`. The "Bid Intelligence" UI is a peer route
+  at `/market-intel`, sidebar entry under Intelligence between
+  Bids and Proposals. Future regrouping under `/intelligence/*`
+  parent in v3 documented as a known future move.
+
+  Scaffold landed:
+  * `app/models/{bid_event,bid_result,contractor}.py` — three new
+    tenant-scoped tables. `tenant_id` on every row; shared-network
+    sentinel for cross-tenant data.
+  * `app/models/tenant.py` extended with `kind` enum column
+    (`customer | shared_dataset | internal_test`). Defaulted to
+    `customer` so existing rows are unaffected.
+  * `app/core/seed.py` extended: deterministic UUIDv5 sentinel
+    `7744601c-1f54-5ea4-988e-63c5e2740ee3` from
+    `uuid5(NAMESPACE_DNS, "shared.fieldbridge.network")`. New
+    `_seed_shared_network_tenant` step is idempotent.
+  * `backend/scripts/migrate_tenants_add_kind.py` — one-shot
+    `ALTER TABLE tenants ADD COLUMN IF NOT EXISTS kind ...` for
+    prod environments seeded before this column existed. Run from
+    Render Shell when this branch eventually merges.
+  * `app/modules/market_intel/{router,schema,service}.py` — read API
+    mounted at `/api/market-intel/{competitor-curves,opportunity-gaps,bid-calibration}`.
+    Routes return 200 with `[]` (NOT 501) until the Backend Worker
+    fills in SQL — matches production state during dark accumulation.
+  * `app/services/market_intel/` — service folder with README +
+    worker brief. Scrapers, normalizers, analytics SQL templates,
+    pipeline orchestrator: all to be filled in by Market Intel
+    Backend Worker.
+  * `frontend/src/modules/market-intel/MarketIntelPage.tsx` —
+    placeholder shell so the route resolves. Full UI brief in
+    `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`.
+  * `frontend/src/routes.tsx` + `components/shell/nav-config.tsx`
+    wired.
+  * `docs/market-intel.md` — full design doc, locks navigation
+    contract + tenant scoping pattern + risk flags (NAPC ToS,
+    robots.txt, PII).
+
+  **Worker stream spinup (2 streams)**:
+  * **Market Intel Backend Worker** — first task: `registry.py`
+    probe across 50 NAPC state portals → commit
+    `state_portal_registry.json`. Then 50 captured Idaho post
+    fixtures + `parse_bid_post` validation. Brief at
+    `app/services/market_intel/README.md`.
+  * **Market Intel Frontend Worker** — first task: full UI per
+    brief at `frontend/src/modules/market-intel/PROPOSED_CHANGES.md`.
+    Runs against `VITE_USE_MOCK_DATA=true` until backend SQL lands.
+
+  Lane discipline: branch-isolated. Workers' PRs target
+  `feature/market-intel-v15` for review, NOT main. Lead reviews +
+  merges into the feature branch. Final feature-branch → main merge
+  is a single Lead operation gated on v1 lock.
+
+- **2026-04-29 — Backend Worker first slices landed**:
+  * PR #6 (`90e2046`): NAPC state portal registry probe — 50/50
+    states resolved, ProbeStatus 11-value enum, parking detection,
+    www-fallback, MA `mass` stem override, run_napc_probe.py
+    operator tool, 54 shape-assertion tests.
+  * PR #8 (`561ba6b`): registry follow-ups — `schema_version: "1"`
+    on JSON via `write_registry()`, drift-proof test asserts
+    (`agent == registry_module.USER_AGENT`,
+    `schema_version == REGISTRY_SCHEMA_VERSION`),
+    `beautifulsoup4>=4.12.0` and `lxml>=5.2.0` in requirements.txt.
+
+- **2026-04-29 — Frontend Worker first slices landed**:
+  * PR #5 (`0f637e1`): slice 1 — module skeleton, hooks, KPI strip.
+    15 files, 17 vitest tests, four lazy chunks split. CSS +1.83 kB
+    raw / +7.82 kB gzip.
+  * PR #7 (`0037c85`): slice 2 — Competitor curves tab.
+    Recharts ScatterChart + sortable Table + side Sheet drilldown.
+    Cross-lane semantic tokens (`--color-good` teal, `--color-watch`
+    coral) added to `index.css` + `tailwind.config.ts` per Lead's
+    PR-#5 ask. Win-rate ramp keeps hue/saturation locked, varies
+    only lightness. 6 new vitest tests = 23/23 total.
+
+- **2026-04-29 — STRATEGIC PIVOT: NAPC paused, State DOT primary**.
+  Backend Worker hit `idahobids.com/robots.txt`'s explicit
+  `User-agent: * Disallow: /` with a named-allowlist of ~21 search
+  engines. FieldBridge's UA isn't on the list. Bypassing would
+  violate the design doc's load-bearing robots commitment. Lead +
+  Operator decision:
+
+  * **A. Pivot v1.5 primary source to State DOT bid tabulations
+    (ITD first, UDOT/NDOT in v1.5b).** Government-published-as-
+    public-record. Heavy-civil precision target. PDF parsing via
+    pdfplumber. Schema/API/frontend unchanged.
+  * **B. One-time fixture-capture override for NAPC.** REJECTED.
+    "We want fixtures" isn't a real reason. Sets a bad precedent.
+  * **C. NAPC partnership outreach.** PURSUED IN PARALLEL.
+    Lead/Operator-driven, not a worker dependency. If outreach
+    succeeds the moat compounds; if it doesn't, no one's blocked.
+
+  Full rationale + the rejected-options analysis live in
+  `docs/market-intel.md` -> "Data source pivot" + "Risk flags"
+  (revised). Backend Worker's next PR pivots slice 2 to ITD and
+  drops `_napc_paused.md` documenting the pause at the
+  `napc_network/scrapers/` boundary. Registry + JSON stay
+  committed — they're an intelligence asset for the partnership
+  outreach.
+
+- **2026-04-29 — Frontend Worker (Agent #2) stood down — brief
+  closed end-to-end**. Four slices, four PRs, zero cross-lane edits.
+
+  | Slice | PR  | Commit    | Scope                                              |
+  |-------|-----|-----------|----------------------------------------------------|
+  | 1     | #5  | `0f637e1` | Module skeleton, hooks, KPI strip, four lazy chunks |
+  | 2     | #7  | `0037c85` | Competitor curves tab — Scatter + Sheet + Table; teal/coral semantic tokens added cross-lane per Lead ask |
+  | 3     | #9  | `257bc67` | Opportunity gaps tab — BarChart + top-10 + scope filter; first coral use, ramp HSL channel-locked |
+  | 4     | #10 | `d899237` | Bid calibration tab (brief-closer) — dual-axis ComposedChart + highlighted-row table; ContractorDetail + GapDetail placeholder pages shipped |
+  | wire  | -   | `b1830c0` | Lead-direct: routes.tsx wired for /market-intel/{contractor,gap} detail pages |
+
+  Final test count: 38/38 vitest passing. Cumulative CSS delta:
+  +3.09 kB raw (35.78 kB → 38.87 kB) for the entire Market Intel
+  static UI. Total deferred Recharts cost across three tabs:
+  ~58 kB raw / ~20 kB gzip — all in lazy chunks, none in the
+  main bundle.
+
+  **Lane-discipline highlights**: two harness branch-switch
+  incidents detected and recovered non-destructively via the
+  two-second pre-stage gate (`git rev-parse --abbrev-ref HEAD`
+  + `git status --short`). PROPOSED_CHANGES_routes.md is the
+  canonical worker→Lead route-handoff template — slugify
+  function verbatim, URL encoding rules, edge cases (null county),
+  copy-pasteable wiring snippet. Holding it up as the pattern
+  for any future Lead-owned-file ask from any worker.
+
+  **Open Frontend follow-ups (queued, NOT urgent)**:
+  - Real-a11y audit pass (axe-core + SR walkthrough) — Frontend
+    Worker, triggered before v2 lands after pipeline accumulates
+  - v2.1 export-to-CSV — parked, post-v2
+  - Field-mode contrast for `--color-good` / `--color-watch` —
+    routed to Frontend Polish Worker (their lane: `field-mode.css`)
+
+- **2026-04-30 — Backend Worker (Agent #1) brief closed
+  end-to-end**. v1.5 backend pipeline shipped through five PRs;
+  ITD-sourced bid network data flowing schema → fetcher →
+  pipeline → analytics → read API.
+
+  | Slice | PR  | Commit    | Scope                                                    |
+  |-------|-----|-----------|----------------------------------------------------------|
+  | 1     | #6  | `90e2046` | NAPC state portal registry probe (50 states)             |
+  | 1.1   | #8  | `561ba6b` | schema_version + drift-proof asserts + bs4/lxml          |
+  | 2     | #11 | `b9de064` | ITD bid-abstract parser + 30 fixtures + napc_paused.md   |
+  | 3     | #13 | `6e0adb9` | HttpFetcher — robots-aware, rate-limited, 25 tests       |
+  | 4a    | #14 | `91b8b89` | ITDPipeline orchestrator + idempotency + 7 e2e tests     |
+  | 4b    | #15 | `3e2f0f5` | Analytics SQL (3 templates) + service.py fill-in + 23 tests |
+
+  Total backend test footprint: 148 tests across the
+  market_intel suite (registry 55 + parser 38 + fetcher 25 +
+  pipeline 7 + service queries 23). All deterministic,
+  SQLite-only, no live network in CI.
+
+  **Live smoke (2026-04-30)** against captured fixtures:
+  - 44 unique contractors surfaced from 22 v1 fixtures
+  - Top bidders: KNIFE RIVER (10), STAKER & PARSON (8),
+    Moreno & Nelson (7) — the named regional cast from the
+    original strategy session, visible at this dataset scale
+  - LaRIVIERE INC: 75% win rate / 4 bids = precision shop signal
+  - H-K CONTRACTORS: 0% wins / 5 bids / 21.4% premium =
+    always-also-ran signal. Pricing-personality moat thesis
+    validated even at v1.5a scale.
+  - Live ITD attempt caught a 503 on robots.txt; slice 3's
+    fail-closed handling worked as designed (empty counters,
+    no exception). Resilience verified in production conditions.
+
+  **Lane-discipline patterns catalog'd this run**:
+  - **Back-compat refactor of public functions** (PR #14):
+    original signature stays as wrapper, additive `_full`
+    variant returns richer types. Slice-2's 38 tests untouched
+    across the parse_bid_abstract → parse_bid_abstract_full
+    migration.
+  - **Pre-check / enforcement separation** (PR #14):
+    `HttpFetcher.can_fetch` called pre-fetch ONLY for the
+    counter; the actual robots deny enforcement still happens
+    inside `fetch()`. Two-step pattern needed because fetcher
+    returns None for both robots-deny AND network errors.
+  - **Idempotency pre-check before insert** (PR #14):
+    SELECT-then-INSERT pattern, with comment justifying it
+    over IntegrityError-on-commit (which would abort sibling
+    writes in the same transaction).
+  - **Module-level anchor constants tied to exemplar fixtures**
+    (PR #11): when parsing breaks against new ITD output, the
+    canonical debug step is `diff <new pdf page 1 text>
+    <fixture>` against the named fixture filename. Convention
+    sticking across both lanes.
+  - **Cross-dialect SQL portability** (PR #15): correlated
+    subquery instead of CTE; Python-side aggregation
+    (statistics.median) instead of PERCENTILE_CONT — works on
+    both Postgres and SQLite without dialect branching.
+  - **SQL bind-parameter doc-header discipline** (PR #15 war
+    story): SQLAlchemy `text()`'s `:name` regex finds bind
+    references inside line comments, so doc-header
+    bind-parameter docs must use `caller_tenant` (no colon
+    prefix). Catalog'd so the next worker doesn't re-discover.
+
+  **Backend follow-ups (NOT brief-closing, can ship any time)**:
+  - `workers/n8n_flows/market_intel_daily.json` — n8n cron
+    config to fire ITDPipeline.run_state("ID") nightly.
+    Tractable after the feature branch lands main.
+  - UDOT + NDOT parsers (v1.5b) — sibling
+    `state_dot/{udot,ndot}.py` files following the ITD pattern.
+    The ITDPipeline state guard documents the "Add a sibling
+    Pipeline class" expectation.
+
+  **What v1 → main merge unblocks**:
+  - Bid Intelligence page in production stops returning
+    "Couldn't load competitor curves" errors and starts
+    showing real ITD-sourced VanCon-region data.
+  - All three tabs (Curves / Gaps / Calibration) light up
+    against `/api/market-intel/{competitor-curves,
+    opportunity-gaps, bid-calibration}` returning real
+    payloads.
+  - Operator can demo the moat dataset with real competitor
+    names and pricing curves.
+
+  Branch contract still holds: feature/market-intel-v15 → main
+  merge gated on v1 deploy lock (Equipment ingest verification
+  + Vista mart pipeline stability). The brief is closed; the
+  branch sits.
+
+- **2026-04-30 (afternoon) — Backend Worker n8n cron piece + dual-
+  trigger pattern**. Operator picked option-C (keep BOTH cron paths,
+  document the split). Final state: Render Cron Job
+  (`fieldbridge-itd-pipeline`) is the production primary;
+  `workers/n8n_flows/market_intel_daily.json` ships INACTIVE as an
+  optional observability overlay (IF-on-anomaly → Webhook alert
+  branch + Set log-OK branch).
+
+  | Item | Commit / PR |
+  |---|---|
+  | Render Cron service + wrapper script | `92ccfb3` (Lead-direct) |
+  | n8n flow JSON + admin POST endpoint + 4 endpoint tests | PR #16 (`b53113c`) |
+  | Lead-direct dual-cron docs fold + PROPOSED_CHANGES.md cleanup | `9e22311` |
+
+  Idempotency at the DB unique constraint
+  `(tenant_id, source_url, raw_html_hash)` means dual triggers
+  can't double-write — redundant invocations report
+  `skipped_already_ingested = N` and exit cleanly. Documented in
+  `docs/market-intel.md` -> "Operations / Nightly cron — dual
+  triggers" so the next worker doesn't try to dedupe paths that
+  look redundant on first glance.
+
+  Backend Worker stood down for real after this slice — six PRs
+  across the v1.5 brief (#6, #8, #11, #13, #14, #15, #16). Six
+  patterns in the agent_board catalog (back-compat refactor,
+  pre-check/enforcement, idempotency pre-check, anchor constants
+  tied to fixtures, cross-dialect SQL, doc-header bind-param
+  discipline).
+
+- **2026-04-30 (afternoon) — Frontend Worker slice 5 perf audit**.
+  Operator captured 207.5ms INP / 170.1ms `span.truncate` render
+  on the Vercel preview. Frontend Worker re-spun, executed the
+  brief's dual-outcome flow:
+
+  * **In-lane** (PR #17 / `fe16cc6`): 9 React.memo wraps
+    (ScatterPanel, BarPanel, ChartPanel, CompetitorTable,
+    CalibrationTable, DrilldownSheet, KpiCard, RampLegend,
+    Annotation) + 3 useCallback handlers in CompetitorCurves.
+    Surgical, not blanket. 38/38 vitest pass; bundle delta
+    documented in PR.
+  * **Escalated** to Frontend Polish Worker:
+    `frontend/src/modules/market-intel/PROPOSED_CHANGES_perf.md`
+    identifies TenantSwitcher's `text-lg` `span.truncate` as
+    the strongest single signal (only such element in
+    `components/shell/*`, density-patch lineage `6e342db`).
+    Three concrete profiler questions + cross-baseline ask
+    against `/equipment` to confirm shell-wide vs Market
+    Intel-specific.
+
+  Frontend Worker stood down for real after this slice. Five
+  Frontend PRs total across the v1.5 brief (#5, #7, #9, #10, #17).
+  Two PROPOSED_CHANGES templates established by this worker now
+  in the catalog: routes.md (worker → Lead) and perf.md
+  (worker → worker).
+
+### Patterns catalog — additions from this run
+
+(Cross-cutting; usable by any worker on any module.)
+
+- **Discipline-gate-as-pair**: before staging any commit, run
+
+      git rev-parse --abbrev-ref HEAD   # confirm branch
+      git status --short                # confirm cross-lane work
+                                        # didn't sweep in
+
+  Caught wrong-branch incidents three times this session
+  (Frontend Worker slices 2 and 3, Backend Worker cron piece;
+  Lead also caught one of their own). Two-second cost,
+  prevents 100% of branch-confusion bugs that have hit this
+  branch. Worth the universal pre-stage check across all worker
+  lanes.
+
+- **PROPOSED_CHANGES.md template variants**:
+  * `PROPOSED_CHANGES_<topic>.md` (worker → Lead): URL
+    contracts, slug derivations, edge cases, copy-pasteable
+    wiring snippet. Anchor: routes.md from Frontend slice 3.
+  * `PROPOSED_CHANGES_<topic>.md` (worker → worker): cross-lane
+    perf/correctness ask with profiler-grade evidence,
+    identifying signals, severity gating, cross-baseline ask.
+    Anchor: perf.md from Frontend slice 5.
+  * `PROPOSED_CHANGES.md` (no suffix; service-folder location):
+    request to Lead to mirror a section into a Lead-owned doc.
+    Lead folds, deletes the proposal file. Anchor: dual-cron
+    fold from Backend Worker.
+  Shared spine across all three: anchor in user-visible
+  behavior, include the worked example, call out severity /
+  scheduling explicitly.
 
 ## Recent Merges
 

@@ -9,6 +9,9 @@ import type { Config } from "tailwindcss";
 //   critical red      #EF4444  Critical alerts
 //   monitor  amber    #F59E0B  Monitor-tier alerts
 //   accent   near-black #0B0F19  Highlighted tile, Sign Out, Apr bar
+// Module-scoped duotones:
+//   good     teal     #14B8A6  Market Intel "active/healthy" signals
+//   watch    coral    #F87171  Market Intel "watch-this" signals
 // Backgrounds:
 //   background  cream   #F5F3EE  main content
 //   sidebar     off-white #FAFAF8  sidebar
@@ -55,6 +58,14 @@ const config: Config = {
         monitor: {
           DEFAULT: "hsl(var(--monitor))",
           foreground: "hsl(var(--monitor-foreground))",
+        },
+        good: {
+          DEFAULT: "hsl(var(--color-good))",
+          foreground: "hsl(var(--color-good-foreground))",
+        },
+        watch: {
+          DEFAULT: "hsl(var(--color-watch))",
+          foreground: "hsl(var(--color-watch-foreground))",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",

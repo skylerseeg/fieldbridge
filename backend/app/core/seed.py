@@ -4,12 +4,13 @@ Run once: python -m app.core.seed
 """
 import asyncio
 import logging
+import uuid
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.core.database import AsyncSessionLocal, engine, Base
 from app.core.auth import hash_password
 from app.core.config import settings
-from app.models.tenant import Tenant, SubscriptionTier, TenantStatus
+from app.models.tenant import Tenant, SubscriptionTier, TenantStatus, TenantKind
 from app.models.user import User, UserRole
 
 # Importing excel_marts triggers each mart's schema.py registration against
@@ -19,7 +20,71 @@ from app.models.user import User, UserRole
 # they query tables that don't exist. Must run BEFORE create_all().
 import app.services.excel_marts  # noqa: F401, E402
 
+# Importing app.models registers Market Intel models (bid_event, bid_result,
+# contractor) against Base.metadata. Same rationale as excel_marts above.
+import app.models  # noqa: F401, E402
+
 log = logging.getLogger("fieldbridge.seed")
+
+
+# ---------------------------------------------------------------------------
+# Deterministic tenant IDs — uuid.uuid5 from a fixed namespace.
+#
+# Reproducible across environments: same slug -> same UUID. Greppable in
+# logs (paired with the slug). The shared-network tenant is a sentinel
+# whose rows hold the cross-tenant bid dataset (NAPC scrapes etc.); customer
+# tenants read it via ``WHERE tenant_id IN (own, shared_network)``.
+#
+# Historical exception: VanCon's prod row was seeded before this was
+# wired, so its actual id is a random uuid4. The deterministic id below
+# is what NEW deploys use; we leave the existing prod row alone — see
+# docs/market-intel.md "Historical tenant ID" note.
+# ---------------------------------------------------------------------------
+SHARED_NETWORK_TENANT_ID = str(
+    uuid.uuid5(uuid.NAMESPACE_DNS, "shared.fieldbridge.network")
+)  # 7744601c-1f54-5ea4-988e-63c5e2740ee3
+SHARED_NETWORK_TENANT_SLUG = "shared-network"
+
+VANCON_DETERMINISTIC_TENANT_ID = str(
+    uuid.uuid5(uuid.NAMESPACE_DNS, "vancon.fieldbridge.network")
+)  # 5548b0a7-bc38-5dd2-ba4c-aef6623cee50 — used by NEW deploys only.
+
+
+async def _seed_shared_network_tenant(db: AsyncSession) -> None:
+    """Idempotent: create the shared-network sentinel tenant if missing.
+
+    This is the home for the NAPC bid scrapes and any future cross-tenant
+    dataset (Market Intel v1.5). Runs INDEPENDENTLY of the VanCon seed
+    so it lands cleanly on environments where VanCon was already created.
+    """
+    result = await db.execute(
+        select(Tenant).where(Tenant.slug == SHARED_NETWORK_TENANT_SLUG)
+    )
+    if result.scalar_one_or_none():
+        log.info(
+            "Shared-network tenant '%s' already exists.",
+            SHARED_NETWORK_TENANT_SLUG,
+        )
+        return
+
+    shared = Tenant(
+        id=SHARED_NETWORK_TENANT_ID,
+        slug=SHARED_NETWORK_TENANT_SLUG,
+        company_name="FieldBridge Shared Bid Network",
+        contact_email="market-intel@fieldbridge.io",
+        contact_name="FieldBridge Internal",
+        tier=SubscriptionTier.INTERNAL,
+        status=TenantStatus.ACTIVE,
+        kind=TenantKind.SHARED_DATASET,
+        onboarding_step=5,
+    )
+    db.add(shared)
+    await db.commit()
+    log.info(
+        "Seeded shared-network tenant: %s (id=%s)",
+        shared.slug,
+        shared.id,
+    )
 
 
 async def seed():
@@ -29,6 +94,11 @@ async def seed():
     log.info("Tables created/verified.")
 
     async with AsyncSessionLocal() as db:
+        # Shared-network sentinel always runs first (idempotent).
+        # Customer-tenant reads union with this tenant_id for cross-tenant
+        # network data (NAPC bid events etc.).
+        await _seed_shared_network_tenant(db)
+
         # Check if VanCon tenant already exists
         result = await db.execute(
             select(Tenant).where(Tenant.slug == settings.vancon_tenant_slug)
