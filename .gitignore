@@ -28,3 +28,13 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Scratch / throwaway debug scripts
+# Anything dropped under scripts/scratch/ stays local-only (README excepted),
+# as does anything matching *.scratch.*
+scripts/scratch/*
+!scripts/scratch/README.md
+*.scratch.py
+*.scratch.ts
+*.scratch.js
+*.scratch.sh
