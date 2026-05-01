@@ -304,35 +304,59 @@ def _foreign_keys(cursor) -> list[dict[str, Any]]:
     ]
 
 
-def _date_freshness(cursor, table: str, columns: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """For tables with a date-typed column, get min/max + row count.
+_DATE_TYPES = ("date", "datetime", "datetime2", "smalldatetime", "datetimeoffset")
 
-    Picks the first date/datetime column. For tables with multiple
-    date columns, the earliest-defined one is the "primary" date —
-    typically the transaction date in Vista.
+
+def _date_freshness(cursor, table: str, columns: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """For tables with date-typed columns, get min/max per column.
+
+    Vista convention: the ``Mth`` column is the **fiscal-period-close
+    bucket**, not the transaction date. Once accounting closes a
+    fiscal month, transactions for that month get stamped with the
+    Mth value. Pre-close transactions may have NULL Mth or carry
+    the open-period flag. So the script's old "first date column"
+    heuristic was reading period-close cadence as if it were
+    transaction-date cadence — misleading when the close cycle
+    runs behind the actual operations.
+
+    Fix: scan ALL date-typed columns and run min/max + non-null
+    count on each. Caller / reader picks the column that actually
+    reflects operational recency for the table:
+
+      - ``EntryDate`` / ``Created`` / ``LastUpdated`` — ideal
+        recency signals (genuine system clock at row write).
+      - ``TransDate`` / ``ActualDate`` — domain-meaningful dates.
+      - ``Mth`` / ``CertDate`` / ``ClosedDate`` — period markers,
+        lag behind actual activity by close cycle.
+
+    Returns:
+      {"columns": {col_name: {"min": ..., "max": ..., "non_null_rows": N}, ...}}
+      or None if the table has no date columns.
     """
-    date_col = None
-    for c in columns:
-        if c["type"].lower() in ("date", "datetime", "datetime2", "smalldatetime"):
-            date_col = c["col"]
-            break
-    if not date_col:
+    date_cols = [c["col"] for c in columns if c["type"].lower() in _DATE_TYPES]
+    if not date_cols:
         return None
-    # Identifier injection safe: date_col + table come from sys catalog.
-    try:
-        cursor.execute(
-            f"SELECT MIN([{date_col}]), MAX([{date_col}]), COUNT(*) FROM [{table}]"
-        )
-        row = cursor.fetchone()
-        return {
-            "date_column": date_col,
-            "min_date": row[0],
-            "max_date": row[1],
-            "row_count_with_date": int(row[2]),
-        }
-    except Exception as exc:  # pragma: no cover — defensive
-        log.warning("Freshness check failed for %s.%s: %s", table, date_col, exc)
-        return None
+
+    out: dict[str, dict[str, Any]] = {}
+    for col in date_cols:
+        # Identifier-injection safe: col + table come from sys catalog.
+        try:
+            cursor.execute(
+                f"SELECT MIN([{col}]), MAX([{col}]), "
+                f"COUNT_BIG(CASE WHEN [{col}] IS NOT NULL THEN 1 END) "
+                f"FROM [{table}]"
+            )
+            row = cursor.fetchone()
+            out[col] = {
+                "min": row[0],
+                "max": row[1],
+                "non_null_rows": int(row[2] or 0),
+            }
+        except Exception as exc:  # pragma: no cover — defensive
+            log.warning("Freshness check failed for %s.%s: %s", table, col, exc)
+            out[col] = {"error": str(exc)}
+
+    return {"columns": out}
 
 
 # ---------------------------------------------------------------------------
@@ -410,14 +434,33 @@ def _print_summary(report: dict[str, Any]) -> None:
     for r in report["top_25_by_rows"]:
         print(f"  {r['schema']}.{r['table']:<24} {r['rows']:>14,}")
 
-    print("\n--- Key tables (column counts + freshness) ---")
+    print("\n--- Key tables (column shape + per-date-column freshness) ---")
+    print("    Vista note: 'Mth' = fiscal-period-close bucket (lags real")
+    print("    activity by the close cycle). EntryDate / Created /")
+    print("    LastUpdated columns track actual transaction time.")
     for tname, info in sorted(report["key_table_columns"].items()):
         cc = len(info["columns"])
         f = info.get("freshness")
-        if f:
-            print(f"  {tname:<10} {cc:>3} cols  date={f['date_column']:<24} {f['min_date']} -> {f['max_date']}  ({f['row_count_with_date']:,} rows)")
-        else:
-            print(f"  {tname:<10} {cc:>3} cols  (no date column for freshness check)")
+        if not f or not f.get("columns"):
+            print(f"\n  {tname:<10} {cc:>3} cols  (no date columns)")
+            continue
+        print(f"\n  {tname:<10} {cc:>3} cols")
+        # Sort by max date desc so the most-recent column shows first.
+        # None-safe: missing 'max' sorts last.
+        cols = f["columns"]
+        ordered = sorted(
+            cols.items(),
+            key=lambda kv: (kv[1].get("max") or datetime.min, kv[0]),
+            reverse=True,
+        )
+        for col_name, col_info in ordered:
+            if "error" in col_info:
+                print(f"    {col_name:<24} (error: {col_info['error'][:50]}...)")
+                continue
+            mn, mx, nn = col_info["min"], col_info["max"], col_info["non_null_rows"]
+            mn_s = str(mn)[:10] if mn else "—"
+            mx_s = str(mx)[:10] if mx else "—"
+            print(f"    {col_name:<24} {mn_s} → {mx_s}  ({nn:,} non-null)")
     missing = sorted(report.get("key_tables_missing", []))
     if missing:
         print(f"\n  Key tables NOT FOUND in this DB: {', '.join(missing)}")
