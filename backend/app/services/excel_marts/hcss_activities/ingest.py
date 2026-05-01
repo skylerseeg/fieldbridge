@@ -1,4 +1,4 @@
-"""hcss_activities IngestJob — HCSS Activities.xlsx."""
+"""hcss_activities IngestJob — HCSS Activities.xlsb."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -9,7 +9,7 @@ from app.services.excel_marts.hcss_activities.schema import TABLE_NAME
 job = register_job(
     IngestJob(
         name="hcss_activities",
-        source_file="HCSS Activities.xlsx",
+        source_file="HCSS Activities.xlsb",
         target_table=TABLE_NAME,
         sheet_name="HCSS Activities",
         column_map={

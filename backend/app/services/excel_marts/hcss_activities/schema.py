@@ -1,6 +1,6 @@
 """hcss_activities — HCSS estimate activity line items.
 
-Source: HCSS Activities.xlsx
+Source: HCSS Activities.xlsb
 Dedupe: (tenant_id, estimate_code, activity_code) composite.
 """
 from __future__ import annotations

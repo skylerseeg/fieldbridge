@@ -9,6 +9,7 @@ psycopg2-binary>=2.9.9
 pyodbc>=5.1.0
 pandas>=2.2.0
 openpyxl>=3.1.0
+pyxlsb>=1.0.10                # pandas read_excel engine for .xlsb (binary Excel)
 aiosqlite>=0.20.0
 exchangelib>=5.2.0
 msal>=1.28.0

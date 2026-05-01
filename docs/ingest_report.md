@@ -54,7 +54,7 @@ that's the intended behavior.
 | `proposals` | Proposal Bids.xlsx | 2 | 2 | 2 | 5 | `tenant_id, job, owner, bid_type` | ok |
 | `proposal_line_items` | Proposal Bid Details.xlsx | 1 | 1 | 1 | 19 | `tenant_id, _row_hash` | partial — row-hash WARN; only 1 sample row in the file |
 | `bids_competitors` | Competitor Bids.xlsx | 0 | 0 | 0 | 13 | `tenant_id, job, heavy_bid_number, bid_date` | ok — **file has 0 data rows** (flagged for follow-up; see Notes) |
-| `hcss_activities` | HCSS Activities.xlsx | 144,575 | 144,575 | 103,964 | 13 | `tenant_id, estimate_code, activity_code` | ok — 40,611 rows collapsed on duplicate (estimate_code, activity_code) |
+| `hcss_activities` | HCSS Activities.xlsb | 144,575 | 144,575 | 103,964 | 13 | `tenant_id, estimate_code, activity_code` | ok — 40,611 rows collapsed on duplicate (estimate_code, activity_code) |
 | `equipment_transfers` | Transfer Records.xlsx | 1,803 | 1,803 | 1,803 | 9 | `tenant_id, id` | ok |
 | `hours_projected` | Projected Hours.xlsx | 2,367 | 2,366 | 2,366 | 33 | `tenant_id, job, phase` | ok — 1 row skipped |
 | `fte_class_actual` | Job class FTE actual projections.xlsx | 28 | 28 | 28 | 20 | `tenant_id, class_name` | ok — 12-month wide |

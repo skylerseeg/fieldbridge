@@ -161,7 +161,7 @@ def run_ingest(
             source,
             sheet_name=job.sheet_name,
             skiprows=job.skiprows,
-            engine="openpyxl",
+            engine=_engine_for_excel(source),
         )
         result.rows_read = len(df)
 
@@ -238,6 +238,29 @@ def _resolve_source_path(raw: str | Path, data_dir: Path | None) -> Path:
     if p.is_absolute():
         return p
     return (data_dir or _default_data_dir()) / p
+
+
+# Map of file extension → pandas read_excel engine. Pandas can auto-pick,
+# but stale openpyxl-only installs choke silently on .xlsb, so we force the
+# right engine and surface a clear error if the format is unsupported.
+_EXCEL_ENGINES: dict[str, str] = {
+    ".xlsx": "openpyxl",
+    ".xlsm": "openpyxl",
+    ".xlsb": "pyxlsb",      # binary Excel — much smaller than .xlsx
+    ".xls":  "xlrd",        # legacy; not currently in requirements.txt
+    ".ods":  "odf",         # ditto
+}
+
+
+def _engine_for_excel(source: Path) -> str:
+    ext = source.suffix.lower()
+    try:
+        return _EXCEL_ENGINES[ext]
+    except KeyError:
+        raise ValueError(
+            f"Unsupported Excel format {ext!r} for {source.name}. "
+            f"Supported: {sorted(_EXCEL_ENGINES)}"
+        )
 
 
 def _rename_columns(

@@ -24,7 +24,7 @@ SQLite marts under `backend/app/services/excel_marts/<mart_name>/`.
 | 6 | Competitor Bids.xlsx | `bids_competitors` | Bids | Recommendations | — | P2 |
 | 7 | Estimates.xlsx | `estimates` | Cost Coding | Bids, Jobs | `jcjm` | P1 |
 | 8 | Estimate Vs Actual.xlsx | `estimate_variance` | Executive Dashboard | Jobs | `jcjm` | P1 |
-| 9 | HCSS Activities.xlsx | `hcss_activities` | Cost Coding | Estimates | — | P2 |
+| 9 | HCSS Activities.xlsb | `hcss_activities` | Cost Coding | Estimates | — | P2 |
 | 10 | Equipment Utilization.xlsx | `equipment_utilization` | Equipment | Fleet P&L, Predictive Maint. | `emem`, `emwo` | **P0** |
 | 11 | Employee Assets.xlsx | `employee_assets` | Equipment | HR | `emem` | P1 |
 | 12 | Rentals.xlsx | `equipment_rentals` | Equipment | Fleet P&L, Vendors/AP | `apvend` | P1 |

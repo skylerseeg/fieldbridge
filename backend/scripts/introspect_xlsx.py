@@ -1,6 +1,7 @@
 """
 One-off: dump sheet names, columns, inferred dtypes, and a null-rate sample
-for every .xlsx in data/vista_data/. Output is JSON on stdout.
+for every Excel file (.xlsx, .xlsm, .xlsb) in data/vista_data/. Output is
+JSON on stdout.
 
 Used by the excel_marts ingest registration pass to build column_map /
 type_map / dedupe_keys per mart without guessing.
@@ -72,7 +73,10 @@ def main() -> int:
         print(f"data dir not found: {DATA_DIR}", file=sys.stderr)
         return 2
 
-    files = sorted(DATA_DIR.glob("*.xlsx"))
+    files: list[Path] = []
+    for ext in ("*.xlsx", "*.xlsm", "*.xlsb"):
+        files.extend(DATA_DIR.glob(ext))
+    files = sorted(files)
     result = [introspect(p) for p in files]
     json.dump(result, sys.stdout, indent=2, default=str)
     sys.stdout.write("\n")
