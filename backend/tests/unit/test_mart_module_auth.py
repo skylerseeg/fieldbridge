@@ -16,7 +16,7 @@ def test_mart_routes_require_authentication():
     with TestClient(app) as client:
         response = client.get("/api/equipment/summary")
 
-    assert response.status_code == 403
+    assert response.status_code == 401
 
 
 def test_get_tenant_id_uses_authenticated_tenant():
