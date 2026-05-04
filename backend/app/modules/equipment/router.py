@@ -9,7 +9,7 @@ Endpoints (mounted at ``/api/equipment`` in ``app.main``):
 Two lightweight dependencies — ``get_engine`` and ``get_tenant_id`` — are
 used so tests can override them via ``app.dependency_overrides`` without
 mocking SQL. In production they resolve to a sync SQLAlchemy engine
-derived from ``settings.database_url`` and the ``vancon`` tenant UUID.
+derived from ``settings.database_url`` and the authenticated tenant UUID.
 """
 from __future__ import annotations
 
@@ -18,13 +18,12 @@ from functools import lru_cache
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import Engine, create_engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Engine, create_engine
 
 from app.core.config import settings
 from app.core.ingest import _sync_url  # best existing sync-url normalizer
+from app.modules.dependencies import get_tenant_id
 from app.core.llm import InsightResponse
-from app.models.tenant import Tenant
 from app.modules.equipment import insights as insights_pipeline
 from app.modules.equipment import service
 from app.modules.equipment.schema import (
@@ -62,25 +61,6 @@ def get_engine() -> Engine:
     """Default engine dependency. Override in tests."""
     return _default_engine()
 
-
-def get_tenant_id(engine: Engine = Depends(get_engine)) -> str:
-    """Resolve the request's tenant UUID.
-
-    No auth yet on this module (it's read-only mart data); we default to
-    the ``vancon`` reference tenant. When auth is added, swap this for
-    ``app.core.auth.get_current_tenant`` and return ``tenant.id``.
-    """
-    SessionLocal = sessionmaker(engine)
-    with SessionLocal() as s:
-        tenant = s.execute(
-            select(Tenant).where(Tenant.slug == "vancon")
-        ).scalar_one_or_none()
-    if tenant is None:
-        raise HTTPException(
-            status_code=503,
-            detail="Reference tenant not seeded. Run scripts/create_mart_tables.py.",
-        )
-    return tenant.id
 
 
 # --------------------------------------------------------------------------- #

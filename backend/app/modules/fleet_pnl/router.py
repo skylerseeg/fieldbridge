@@ -22,12 +22,11 @@ from functools import lru_cache
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import Engine, create_engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Engine, create_engine
 
 from app.core.config import settings
 from app.core.ingest import _sync_url
-from app.models.tenant import Tenant
+from app.modules.dependencies import get_tenant_id
 from app.modules.fleet_pnl import service
 from app.modules.fleet_pnl.schema import (
     FleetPnlInsights,
@@ -63,25 +62,6 @@ def get_engine() -> Engine:
     """Default engine dependency. Override in tests."""
     return _default_engine()
 
-
-def get_tenant_id(engine: Engine = Depends(get_engine)) -> str:
-    """Resolve the request's tenant UUID.
-
-    No auth yet on this module (read-only mart data); we default to the
-    ``vancon`` reference tenant. When auth is added, swap this for
-    ``app.core.auth.get_current_tenant`` and return ``tenant.id``.
-    """
-    SessionLocal = sessionmaker(engine)
-    with SessionLocal() as s:
-        tenant = s.execute(
-            select(Tenant).where(Tenant.slug == "vancon")
-        ).scalar_one_or_none()
-    if tenant is None:
-        raise HTTPException(
-            status_code=503,
-            detail="Reference tenant not seeded. Run scripts/create_mart_tables.py.",
-        )
-    return tenant.id
 
 
 # --------------------------------------------------------------------------- #

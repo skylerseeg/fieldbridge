@@ -25,13 +25,12 @@ from functools import lru_cache
 from typing import Literal
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Query
-from sqlalchemy import Engine, create_engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Engine, create_engine
 
 from app.core.config import settings
 from app.core.ingest import _sync_url
+from app.modules.dependencies import get_tenant_id
 from app.core.llm import InsightResponse
-from app.models.tenant import Tenant
 from app.modules.predictive_maintenance import insights as insights_pipeline
 from app.modules.predictive_maintenance import service
 from app.modules.predictive_maintenance.schema import (
@@ -70,25 +69,6 @@ def get_engine() -> Engine:
     """Default engine dependency. Override in tests."""
     return _default_engine()
 
-
-def get_tenant_id(engine: Engine = Depends(get_engine)) -> str:
-    """Resolve the request's tenant UUID via the seeded ``vancon`` slug.
-
-    No auth on this surface yet (read-only mart data + 4 mutation
-    endpoints scoped to the same tenant). When auth is added, swap for
-    ``app.core.auth.get_current_tenant`` and return ``tenant.id``.
-    """
-    SessionLocal = sessionmaker(engine)
-    with SessionLocal() as s:
-        tenant = s.execute(
-            select(Tenant).where(Tenant.slug == "vancon")
-        ).scalar_one_or_none()
-    if tenant is None:
-        raise HTTPException(
-            status_code=503,
-            detail="Reference tenant not seeded. Run scripts/create_mart_tables.py.",
-        )
-    return tenant.id
 
 
 # --------------------------------------------------------------------------- #
