@@ -19,12 +19,11 @@ from datetime import datetime
 from functools import lru_cache
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import Engine, create_engine, select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Engine, create_engine
 
 from app.core.config import settings
 from app.core.ingest import _sync_url
-from app.models.tenant import Tenant
+from app.modules.dependencies import get_tenant_id
 from app.modules.activity_feed import service
 from app.modules.activity_feed.schema import (
     ActivityFeed,
@@ -54,24 +53,6 @@ def get_engine() -> Engine:
     """Default engine dependency. Override in tests."""
     return _default_engine()
 
-
-def get_tenant_id(engine: Engine = Depends(get_engine)) -> str:
-    """Resolve the request's tenant UUID via the seeded ``vancon`` slug.
-
-    No auth on this surface yet (read-only event data). When auth is
-    added, swap for ``app.core.auth.get_current_tenant``.
-    """
-    SessionLocal = sessionmaker(engine)
-    with SessionLocal() as s:
-        tenant = s.execute(
-            select(Tenant).where(Tenant.slug == "vancon")
-        ).scalar_one_or_none()
-    if tenant is None:
-        raise HTTPException(
-            status_code=503,
-            detail="Reference tenant not seeded. Run scripts/create_mart_tables.py.",
-        )
-    return tenant.id
 
 
 # --------------------------------------------------------------------------- #
